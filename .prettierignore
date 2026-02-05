@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Build output
+.next
+out
+dist
+build
+
+# Testing
+coverage
+playwright-report
+test-results
+
+# Package manager
+pnpm-lock.yaml
+
+# IDE
+.idea
+.vscode
+
+# OS
+.DS_Store

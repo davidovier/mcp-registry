@@ -1,0 +1,62 @@
+export default function HomePage() {
+  return (
+    <div className="container mx-auto px-4 py-16">
+      <div className="mx-auto max-w-3xl text-center">
+        <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
+          MCP Registry
+        </h1>
+        <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
+          Discover, share, and manage Model Context Protocol (MCP) servers and
+          tools. The central hub for the MCP ecosystem.
+        </p>
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a
+            href="#browse"
+            className="inline-flex items-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          >
+            Browse Registry
+          </a>
+          <a
+            href="#docs"
+            className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Documentation
+          </a>
+        </div>
+      </div>
+
+      {/* Feature highlights */}
+      <div className="mt-24 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <FeatureCard
+          title="Discover"
+          description="Find MCP servers and tools created by the community."
+        />
+        <FeatureCard
+          title="Share"
+          description="Publish your own MCP servers for others to use."
+        />
+        <FeatureCard
+          title="Integrate"
+          description="Easy integration with your AI workflows and applications."
+        />
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-200 p-6 transition-shadow hover:shadow-md dark:border-gray-700">
+      <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+        {title}
+      </h3>
+      <p className="text-gray-600 dark:text-gray-400">{description}</p>
+    </div>
+  );
+}
