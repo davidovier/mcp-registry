@@ -6,7 +6,7 @@ export { Card } from "./Card";
 export { Checkbox } from "./Checkbox";
 export { EmptyState } from "./EmptyState";
 export { Input } from "./Input";
-export { CursorPagination, Pagination } from "./Pagination";
+export { CursorPagination, PageNav, Pagination } from "./Pagination";
 export { Select } from "./Select";
 export { Skeleton } from "./Skeleton";
 export { ListRow, Table } from "./Table";

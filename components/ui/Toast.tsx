@@ -2,6 +2,21 @@
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Toast - Transient notification that appears temporarily
+ *
+ * Use for feedback after user actions (save, delete, error).
+ * Toasts should auto-dismiss or be manually dismissible via onClose.
+ * Position toasts in a fixed container (e.g., bottom-right).
+ *
+ * @example
+ * <Toast
+ *   variant="success"
+ *   title="Changes saved"
+ *   message="Your settings have been updated."
+ *   onClose={() => setShow(false)}
+ * />
+ */
 interface ToastProps {
   title?: string;
   message: string;

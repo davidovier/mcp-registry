@@ -1,5 +1,17 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * Alert - Inline contextual message
+ *
+ * Use for persistent messages within page content (validation errors,
+ * important notices, status information). Alerts are NOT dismissible
+ * and remain visible until the condition changes.
+ *
+ * @example
+ * <Alert variant="warning" title="Heads up">
+ *   Your subscription expires in 3 days.
+ * </Alert>
+ */
 interface AlertProps {
   title?: string;
   children: React.ReactNode;

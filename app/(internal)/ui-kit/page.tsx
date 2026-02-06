@@ -12,7 +12,7 @@ import {
   CursorPagination,
   EmptyState,
   Input,
-  Pagination,
+  PageNav,
   Select,
   Skeleton,
   Table,
@@ -404,24 +404,30 @@ export default function UIKitPage() {
           <Section title="Pagination" id="pagination">
             <div className="space-y-8">
               <div>
-                <h4 className="mb-4 text-heading-sm text-content-secondary">
-                  Numbered Pagination
+                <h4 className="mb-2 text-heading-sm text-content-secondary">
+                  CursorPagination (Primary)
                 </h4>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={10}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-              <div>
-                <h4 className="mb-4 text-heading-sm text-content-secondary">
-                  Cursor Pagination
-                </h4>
+                <p className="mb-4 text-body-sm text-content-tertiary">
+                  Use for cursor-based APIs. This is the default for /servers.
+                </p>
                 <CursorPagination
                   hasNextPage={true}
                   hasPrevPage={true}
                   onNext={() => {}}
                   onPrev={() => {}}
+                />
+              </div>
+              <div>
+                <h4 className="mb-2 text-heading-sm text-content-secondary">
+                  PageNav (Numbered)
+                </h4>
+                <p className="mb-4 text-body-sm text-content-tertiary">
+                  Only use when total count is known. Not for /servers.
+                </p>
+                <PageNav
+                  currentPage={currentPage}
+                  totalPages={10}
+                  onPageChange={setCurrentPage}
                 />
               </div>
             </div>
@@ -431,9 +437,12 @@ export default function UIKitPage() {
           <Section title="Toast & Alert" id="toast-alert">
             <div className="space-y-8">
               <div>
-                <h4 className="mb-4 text-heading-sm text-content-secondary">
-                  Alerts
+                <h4 className="mb-2 text-heading-sm text-content-secondary">
+                  Alert (Inline, Persistent)
                 </h4>
+                <p className="mb-4 text-body-sm text-content-tertiary">
+                  For contextual messages within content. Not dismissible.
+                </p>
                 <div className="space-y-4">
                   <Alert variant="info" title="Information">
                     This is an informational alert message.
@@ -451,9 +460,13 @@ export default function UIKitPage() {
               </div>
 
               <div>
-                <h4 className="mb-4 text-heading-sm text-content-secondary">
-                  Toast
+                <h4 className="mb-2 text-heading-sm text-content-secondary">
+                  Toast (Transient, Dismissible)
                 </h4>
+                <p className="mb-4 text-body-sm text-content-tertiary">
+                  For temporary feedback after actions. Auto-dismiss or manual
+                  close.
+                </p>
                 <div className="space-y-4">
                   <Button onClick={() => setShowToast(true)}>Show Toast</Button>
                   {showToast && (
