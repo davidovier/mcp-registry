@@ -1,9 +1,12 @@
-import Link from "next/link";
 import { Suspense } from "react";
 
+import { FiltersSidebar } from "@/components/servers/FiltersSidebar";
+import { MobileFilters } from "@/components/servers/MobileFilters";
+import { SearchHero } from "@/components/servers/SearchHero";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { createCursorFromRow, PAGINATION } from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
-import type { McpTransport, McpAuth } from "@/lib/supabase/types";
+import type { McpAuth, McpTransport } from "@/lib/supabase/types";
 
 import { ServerListClient } from "./server-list-client";
 
@@ -27,144 +30,33 @@ export default async function ServersPage({ searchParams }: Props) {
   const params = await searchParams;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
-          Browse MCP Servers
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Discover Model Context Protocol servers for your AI applications.
-        </p>
-      </div>
+    <div className="min-h-screen bg-surface-primary">
+      <SearchHero />
 
-      {/* Filters */}
-      <FilterBar
-        currentQ={params.q}
-        currentTransport={params.transport}
-        currentAuth={params.auth}
-        currentVerified={params.verified}
-      />
+      <section className="mx-auto max-w-6xl px-4 py-8">
+        <div className="flex flex-col gap-8 lg:flex-row">
+          {/* Desktop sidebar */}
+          <FiltersSidebar className="hidden lg:block" />
 
-      {/* Server List */}
-      <Suspense fallback={<ServerListSkeleton />}>
-        <ServerList
-          q={params.q}
-          transport={params.transport}
-          auth={params.auth}
-          verified={params.verified}
-        />
-      </Suspense>
+          {/* Results area */}
+          <div className="flex-1">
+            {/* Mobile filter trigger */}
+            <div className="mb-4 lg:hidden">
+              <MobileFilters />
+            </div>
+
+            <Suspense fallback={<ServerGridSkeleton />}>
+              <ServerList
+                q={params.q}
+                transport={params.transport}
+                auth={params.auth}
+                verified={params.verified}
+              />
+            </Suspense>
+          </div>
+        </div>
+      </section>
     </div>
-  );
-}
-
-function FilterBar({
-  currentQ,
-  currentTransport,
-  currentAuth,
-  currentVerified,
-}: {
-  currentQ?: string;
-  currentTransport?: string;
-  currentAuth?: string;
-  currentVerified?: string;
-}) {
-  return (
-    <form className="mb-8 space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
-      <div className="flex flex-wrap gap-4">
-        {/* Search */}
-        <div className="min-w-[200px] flex-1">
-          <label
-            htmlFor="q"
-            className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Search
-          </label>
-          <input
-            type="text"
-            id="q"
-            name="q"
-            defaultValue={currentQ}
-            placeholder="Search servers..."
-            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-          />
-        </div>
-
-        {/* Transport filter */}
-        <div className="w-40">
-          <label
-            htmlFor="transport"
-            className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Transport
-          </label>
-          <select
-            id="transport"
-            name="transport"
-            defaultValue={currentTransport}
-            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-          >
-            <option value="">All</option>
-            <option value="stdio">stdio</option>
-            <option value="http">http</option>
-            <option value="both">both</option>
-          </select>
-        </div>
-
-        {/* Auth filter */}
-        <div className="w-40">
-          <label
-            htmlFor="auth"
-            className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Auth
-          </label>
-          <select
-            id="auth"
-            name="auth"
-            defaultValue={currentAuth}
-            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-          >
-            <option value="">All</option>
-            <option value="none">none</option>
-            <option value="oauth">oauth</option>
-            <option value="api_key">api_key</option>
-            <option value="other">other</option>
-          </select>
-        </div>
-
-        {/* Verified filter */}
-        <div className="flex items-end">
-          <label className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700">
-            <input
-              type="checkbox"
-              name="verified"
-              value="true"
-              defaultChecked={currentVerified === "true"}
-              className="text-primary-600 focus:ring-primary-500 rounded"
-            />
-            <span className="text-gray-700 dark:text-gray-300">
-              Verified only
-            </span>
-          </label>
-        </div>
-      </div>
-
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-        >
-          Apply Filters
-        </button>
-        <Link
-          href="/servers"
-          className="focus:ring-primary-500 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-        >
-          Clear
-        </Link>
-      </div>
-    </form>
   );
 }
 
@@ -188,24 +80,20 @@ async function ServerList({
     .order("verified", { ascending: false })
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
-    .limit(limit + 1); // Fetch one extra for pagination
+    .limit(limit + 1);
 
-  // Apply search filter
   if (q) {
     query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
   }
 
-  // Apply transport filter
   if (transport) {
     query = query.eq("transport", transport);
   }
 
-  // Apply auth filter
   if (auth) {
     query = query.eq("auth", auth);
   }
 
-  // Apply verified filter
   if (verified === "true") {
     query = query.eq("verified", true);
   }
@@ -214,17 +102,18 @@ async function ServerList({
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-        Failed to load servers. Please try again later.
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-body-md text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+        <p className="font-medium">Failed to load servers</p>
+        <p className="mt-1 text-body-sm">
+          Please try refreshing the page or clearing your filters.
+        </p>
       </div>
     );
   }
 
-  // Determine pagination
   const hasMore = data && data.length > limit;
   const servers = hasMore ? data.slice(0, limit) : data || [];
 
-  // Create next cursor if there are more results
   let nextCursor: string | null = null;
   if (hasMore && servers.length > 0) {
     const lastRow = servers[servers.length - 1];
@@ -241,25 +130,17 @@ async function ServerList({
   );
 }
 
-function ServerListSkeleton() {
+function ServerGridSkeleton() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="animate-pulse rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800"
-        >
-          <div className="mb-3 h-5 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
-          <div className="mb-4 space-y-2">
-            <div className="h-4 w-full rounded bg-gray-200 dark:bg-gray-700" />
-            <div className="h-4 w-2/3 rounded bg-gray-200 dark:bg-gray-700" />
-          </div>
-          <div className="flex gap-2">
-            <div className="h-5 w-12 rounded bg-gray-200 dark:bg-gray-700" />
-            <div className="h-5 w-12 rounded bg-gray-200 dark:bg-gray-700" />
-          </div>
-        </div>
-      ))}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-5 w-24" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {[...Array(6)].map((_, i) => (
+          <Skeleton.Card key={i} />
+        ))}
+      </div>
     </div>
   );
 }

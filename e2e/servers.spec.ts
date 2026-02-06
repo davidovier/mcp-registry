@@ -5,38 +5,48 @@ import { test, expect } from "@playwright/test";
  * These tests do not require authentication and should always pass.
  */
 test.describe("Servers page (public)", () => {
-  test("should display the servers list heading", async ({ page }) => {
+  test("should display the hero heading and search", async ({ page }) => {
     await page.goto("/servers");
 
     await expect(
-      page.getByRole("heading", { name: /browse mcp servers/i, level: 1 })
+      page.getByRole("heading", {
+        name: /mcp server registry/i,
+        level: 1,
+      })
     ).toBeVisible();
-  });
 
-  test("should have filter controls", async ({ page }) => {
-    await page.goto("/servers");
-
-    await expect(page.getByLabel(/search/i)).toBeVisible();
-    await expect(page.getByLabel(/transport/i)).toBeVisible();
-    await expect(page.getByLabel(/auth/i)).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /apply filters/i })
+      page.getByRole("searchbox", { name: /search servers/i })
     ).toBeVisible();
   });
 
-  test("should display server list section", async ({ page }) => {
+  test("should display server cards or empty state", async ({ page }) => {
     await page.goto("/servers");
     await page.waitForLoadState("networkidle");
 
-    // The page should have either server cards or show "no servers" text
-    // Look for the main container that holds server content
     const mainContent = page.locator("main");
     await expect(mainContent).toBeVisible();
 
-    // The page renders successfully if we can see the heading
-    await expect(
-      page.getByRole("heading", { name: /browse mcp servers/i })
-    ).toBeVisible();
+    // Either server cards exist or the empty state is shown
+    const hasCards = await page
+      .locator('a[href^="/servers/"]')
+      .first()
+      .isVisible()
+      .catch(() => false);
+
+    if (!hasCards) {
+      await expect(page.getByText(/no servers found/i)).toBeVisible();
+    }
+  });
+
+  test("should have filter sidebar on desktop", async ({ page }) => {
+    // Set desktop viewport
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto("/servers");
+
+    await expect(page.getByText("Transport")).toBeVisible();
+    await expect(page.getByText("Authentication")).toBeVisible();
+    await expect(page.getByText("Verified only")).toBeVisible();
   });
 
   test("should navigate to server detail when cards exist", async ({
@@ -55,10 +65,38 @@ test.describe("Servers page (public)", () => {
     }
   });
 
-  test("should show clear filters button", async ({ page }) => {
+  test("should filter by verified and change URL", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto("/servers");
+    await page.waitForLoadState("networkidle");
+
+    // Click the Verified only checkbox in the sidebar
+    const verifiedCheckbox = page.locator("aside").getByText("Verified only");
+    await verifiedCheckbox.click();
+
+    // URL should now contain verified=true
+    await expect(page).toHaveURL(/verified=true/);
+  });
+
+  test("should show mobile filter button on small viewport", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/servers");
 
-    await expect(page.getByRole("link", { name: /clear/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /filters/i })).toBeVisible();
+  });
+
+  test("should search and update URL params", async ({ page }) => {
+    await page.goto("/servers");
+
+    const searchInput = page.getByRole("searchbox", {
+      name: /search servers/i,
+    });
+    await searchInput.fill("test");
+    await searchInput.press("Enter");
+
+    await expect(page).toHaveURL(/q=test/);
   });
 });
 
