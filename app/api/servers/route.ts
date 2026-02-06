@@ -7,6 +7,9 @@ import {
 } from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
 
+// Route segment config - cache for 5 minutes at edge
+export const revalidate = 300;
+
 /**
  * GET /api/servers
  *
