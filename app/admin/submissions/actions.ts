@@ -61,7 +61,7 @@ export async function approveSubmission(
   // Call the atomic RPC function
   const { data, error } = await supabase.rpc("approve_submission", {
     p_submission_id: submissionId,
-    p_notes: notes || null,
+    p_notes: notes || undefined,
   });
 
   if (error) {

@@ -109,7 +109,7 @@ export default async function AdminSubmissionsPage() {
             {pending.map((submission) => (
               <SubmissionCard
                 key={submission.id}
-                submission={submission as Submission}
+                submission={submission as unknown as Submission}
               />
             ))}
           </div>
@@ -133,7 +133,7 @@ export default async function AdminSubmissionsPage() {
             {reviewed.map((submission) => (
               <SubmissionCard
                 key={submission.id}
-                submission={submission as Submission}
+                submission={submission as unknown as Submission}
                 readonly
               />
             ))}

@@ -79,7 +79,8 @@ export default async function MySubmissionsPage() {
       {submissions && submissions.length > 0 && (
         <div className="space-y-4">
           {submissions.map((submission) => {
-            const payload = submission.submitted_payload as SubmittedPayload;
+            const payload =
+              submission.submitted_payload as unknown as SubmittedPayload;
 
             return (
               <div
