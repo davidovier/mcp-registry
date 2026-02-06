@@ -210,10 +210,15 @@ mcp-registry/
 
 ## Environment Variables
 
-| Variable                        | Required | Description                   |
-| ------------------------------- | -------- | ----------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Yes      | Your Supabase project URL     |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes      | Supabase anonymous/public key |
+| Variable                        | Required | Description                                   |
+| ------------------------------- | -------- | --------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Yes      | Your Supabase project URL                     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes      | Supabase anonymous/public key                 |
+| `SUPABASE_SERVICE_ROLE_KEY`     | No\*     | Service role key (server-only, for bootstrap) |
+| `ADMIN_BOOTSTRAP_TOKEN`         | No\*     | One-time bootstrap auth token                 |
+| `ADMIN_BOOTSTRAP_EMAIL`         | No\*     | Email of first admin to bootstrap             |
+
+\*Required only for initial admin bootstrap. Can be removed after bootstrap completes.
 
 **Important**: Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never put secrets in these variables.
 
@@ -312,6 +317,34 @@ supabase db push
 ```
 
 ### 4. Set first admin (production)
+
+Use the one-time bootstrap endpoint (recommended):
+
+```bash
+# 1. Set environment variables in Vercel:
+#    - SUPABASE_SERVICE_ROLE_KEY (from Supabase Dashboard → Settings → API)
+#    - ADMIN_BOOTSTRAP_TOKEN (generate a random string)
+#    - ADMIN_BOOTSTRAP_EMAIL (your email address)
+
+# 2. Sign up first by visiting /signin and clicking the magic link
+
+# 3. Call the bootstrap endpoint
+curl -X POST https://your-app.vercel.app/api/admin/bootstrap \
+  -H "Content-Type: application/json" \
+  -H "x-bootstrap-token: YOUR_ADMIN_BOOTSTRAP_TOKEN" \
+  -d '{"email": "your-email@example.com"}'
+
+# Expected response: {"success":true,"message":"Admin bootstrap completed","userId":"..."}
+```
+
+The bootstrap endpoint is:
+
+- **One-time**: Self-disables after first successful use
+- **Secure**: Requires matching token AND email
+- **Rate-limited**: Prevents brute force attacks
+- **Audited**: Logs the action to audit_log table
+
+Alternative (manual SQL):
 
 ```sql
 -- In Supabase SQL Editor

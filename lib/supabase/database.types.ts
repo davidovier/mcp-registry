@@ -14,6 +14,51 @@ export type Database = {
   };
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string;
+          actor: string | null;
+          created_at: string;
+          details: Json | null;
+          id: string;
+        };
+        Insert: {
+          action: string;
+          actor?: string | null;
+          created_at?: string;
+          details?: Json | null;
+          id?: string;
+        };
+        Update: {
+          action?: string;
+          actor?: string | null;
+          created_at?: string;
+          details?: Json | null;
+          id?: string;
+        };
+        Relationships: [];
+      };
+      bootstrap_state: {
+        Row: {
+          created_at: string;
+          key: string;
+          updated_at: string;
+          value: string;
+        };
+        Insert: {
+          created_at?: string;
+          key: string;
+          updated_at?: string;
+          value: string;
+        };
+        Update: {
+          created_at?: string;
+          key?: string;
+          updated_at?: string;
+          value?: string;
+        };
+        Relationships: [];
+      };
       mcp_server_submissions: {
         Row: {
           created_at: string;
