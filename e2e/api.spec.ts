@@ -1,9 +1,16 @@
 import { test, expect } from "@playwright/test";
 
+// Skip API tests in CI (requires real Supabase connection)
+const skipInCI = process.env.CI_SKIP_AUTH_TESTS === "true";
+
 /**
  * API endpoint tests
+ *
+ * These tests require a real Supabase connection and are skipped in CI
+ * which uses placeholder credentials.
  */
 test.describe("Servers API", () => {
+  test.skip(skipInCI, "Skipping API tests in CI - requires real database");
   test("GET /api/servers should return paginated list", async ({ request }) => {
     const response = await request.get("/api/servers");
 
@@ -111,6 +118,7 @@ test.describe("Servers API", () => {
 });
 
 test.describe("Pagination", () => {
+  test.skip(skipInCI, "Skipping API tests in CI - requires real database");
   test("should provide nextCursor for pagination", async ({ request }) => {
     // Get first page with small limit
     const response = await request.get("/api/servers?limit=2");
@@ -149,6 +157,7 @@ test.describe("Pagination", () => {
 });
 
 test.describe("Cache headers", () => {
+  test.skip(skipInCI, "Skipping API tests in CI - requires real database");
   test("GET /api/servers should have cache control headers", async ({
     request,
   }) => {
