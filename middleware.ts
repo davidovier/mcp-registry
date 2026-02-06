@@ -55,7 +55,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder files (images, etc.)
      * - api/health (health check endpoint)
+     * - api/servers (public API with custom cache headers)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api/health).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api/health|api/servers).*)",
   ],
 };

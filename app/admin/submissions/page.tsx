@@ -75,7 +75,9 @@ export default async function AdminSubmissionsPage() {
 
   // Separate by status
   const pending = submissions?.filter((s) => s.status === "pending") || [];
-  const reviewed = submissions?.filter((s) => s.status !== "pending") || [];
+  const invalid = submissions?.filter((s) => s.status === "invalid") || [];
+  const approved = submissions?.filter((s) => s.status === "approved") || [];
+  const rejected = submissions?.filter((s) => s.status === "rejected") || [];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -94,7 +96,7 @@ export default async function AdminSubmissionsPage() {
         </div>
       )}
 
-      {/* Pending Submissions */}
+      {/* Pending Submissions - Primary focus */}
       <section className="mb-12">
         <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           Pending Review ({pending.length})
@@ -118,30 +120,69 @@ export default async function AdminSubmissionsPage() {
         )}
       </section>
 
-      {/* Reviewed Submissions */}
-      <section>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-          Previously Reviewed ({reviewed.length})
-        </h2>
-
-        {reviewed.length === 0 ? (
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center dark:border-gray-700 dark:bg-gray-800/50">
-            <p className="text-gray-600 dark:text-gray-400">
-              No reviewed submissions yet
+      {/* Invalid Submissions - Failed validation, no action needed */}
+      {invalid.length > 0 && (
+        <section className="mb-12">
+          <details className="group">
+            <summary className="mb-4 cursor-pointer text-xl font-semibold text-gray-900 dark:text-white">
+              Invalid Submissions ({invalid.length})
+              <span className="ml-2 text-sm font-normal text-gray-500">
+                (click to expand)
+              </span>
+            </summary>
+            <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+              These submissions failed validation and were automatically marked
+              as invalid. No admin action required.
             </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {reviewed.map((submission) => (
-              <SubmissionCard
-                key={submission.id}
-                submission={submission as unknown as Submission}
-                readonly
-              />
-            ))}
-          </div>
-        )}
-      </section>
+            <div className="space-y-4">
+              {invalid.map((submission) => (
+                <SubmissionCard
+                  key={submission.id}
+                  submission={submission as unknown as Submission}
+                  readonly
+                />
+              ))}
+            </div>
+          </details>
+        </section>
+      )}
+
+      {/* Approved/Rejected - History */}
+      {(approved.length > 0 || rejected.length > 0) && (
+        <section>
+          <details className="group">
+            <summary className="mb-4 cursor-pointer text-xl font-semibold text-gray-900 dark:text-white">
+              Previously Reviewed ({approved.length + rejected.length})
+              <span className="ml-2 text-sm font-normal text-gray-500">
+                (click to expand)
+              </span>
+            </summary>
+            <div className="mb-2 flex gap-4 text-sm text-gray-500">
+              <span className="text-green-600 dark:text-green-400">
+                {approved.length} approved
+              </span>
+              <span className="text-red-600 dark:text-red-400">
+                {rejected.length} rejected
+              </span>
+            </div>
+            <div className="space-y-4">
+              {[...approved, ...rejected]
+                .sort(
+                  (a, b) =>
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime()
+                )
+                .map((submission) => (
+                  <SubmissionCard
+                    key={submission.id}
+                    submission={submission as unknown as Submission}
+                    readonly
+                  />
+                ))}
+            </div>
+          </details>
+        </section>
+      )}
     </div>
   );
 }

@@ -274,6 +274,11 @@ function StatusBadge({ status }: { status: string }) {
       className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
       label: "Rejected",
     },
+    invalid: {
+      className:
+        "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+      label: "Invalid",
+    },
   };
 
   const config = statusConfig[status as keyof typeof statusConfig] || {

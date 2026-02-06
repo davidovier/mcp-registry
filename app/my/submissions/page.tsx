@@ -14,6 +14,15 @@ interface SubmittedPayload {
   description: string;
 }
 
+interface Submission {
+  id: string;
+  status: string;
+  created_at: string;
+  submitted_payload: SubmittedPayload;
+  review_notes: string | null;
+  validation_errors: string[] | null;
+}
+
 export default async function MySubmissionsPage() {
   const supabase = await createClient();
 
@@ -29,7 +38,9 @@ export default async function MySubmissionsPage() {
   // Fetch user's submissions
   const { data: submissions, error } = await supabase
     .from("mcp_server_submissions")
-    .select("id, status, created_at, submitted_payload, review_notes")
+    .select(
+      "id, status, created_at, submitted_payload, review_notes, validation_errors"
+    )
     .eq("submitted_by", user.id)
     .order("created_at", { ascending: false });
 
@@ -79,44 +90,65 @@ export default async function MySubmissionsPage() {
       {submissions && submissions.length > 0 && (
         <div className="space-y-4">
           {submissions.map((submission) => {
-            const payload =
-              submission.submitted_payload as unknown as SubmittedPayload;
+            const sub = submission as unknown as Submission;
+            const payload = sub.submitted_payload;
 
             return (
               <div
-                key={submission.id}
+                key={sub.id}
                 className="rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="mb-1 flex items-center gap-2">
                       <h2 className="font-semibold text-gray-900 dark:text-white">
-                        {payload.name}
+                        {payload.name || "(unnamed)"}
                       </h2>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        ({payload.slug})
+                        ({payload.slug || "no-slug"})
                       </span>
                     </div>
                     <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                      {payload.description.slice(0, 150)}
-                      {payload.description.length > 150 ? "..." : ""}
+                      {payload.description?.slice(0, 150) || "(no description)"}
+                      {(payload.description?.length || 0) > 150 ? "..." : ""}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-500">
-                      Submitted{" "}
-                      {new Date(submission.created_at).toLocaleDateString()}
+                      Submitted {new Date(sub.created_at).toLocaleDateString()}
                     </p>
-                    {submission.review_notes && (
+
+                    {/* Validation errors for invalid submissions */}
+                    {sub.status === "invalid" && sub.validation_errors && (
+                      <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3 dark:border-orange-700 dark:bg-orange-900/20">
+                        <p className="mb-1 text-xs font-medium text-orange-700 dark:text-orange-400">
+                          Validation Errors:
+                        </p>
+                        <ul className="list-inside list-disc text-sm text-orange-700 dark:text-orange-300">
+                          {sub.validation_errors.map((err, i) => (
+                            <li key={i}>{err}</li>
+                          ))}
+                        </ul>
+                        <Link
+                          href="/submit"
+                          className="mt-2 inline-block text-sm font-medium text-orange-700 underline hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300"
+                        >
+                          Submit again with corrections →
+                        </Link>
+                      </div>
+                    )}
+
+                    {/* Admin review notes */}
+                    {sub.review_notes && (
                       <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700/50">
                         <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                           Admin Notes:
                         </p>
                         <p className="text-sm text-gray-700 dark:text-gray-300">
-                          {submission.review_notes}
+                          {sub.review_notes}
                         </p>
                       </div>
                     )}
                   </div>
-                  <StatusBadge status={submission.status} />
+                  <StatusBadge status={sub.status} />
                 </div>
               </div>
             );
@@ -142,6 +174,11 @@ function StatusBadge({ status }: { status: string }) {
     rejected: {
       className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
       label: "Rejected",
+    },
+    invalid: {
+      className:
+        "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+      label: "Invalid",
     },
   };
 

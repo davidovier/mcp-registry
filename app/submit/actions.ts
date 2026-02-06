@@ -67,11 +67,11 @@ export async function submitServer(formData: FormData) {
   if (!validationResult.success) {
     const errorMessages = formatValidationErrors(validationResult.errors!);
 
-    // Store submission with validation errors for audit
+    // Store submission with 'invalid' status for audit (not pending review)
     await supabase.from("mcp_server_submissions").insert({
       submitted_by: user.id,
       submitted_payload: rawPayload,
-      status: "pending",
+      status: "invalid",
       schema_version: CURRENT_SCHEMA_VERSION,
       validation_errors: errorMessages,
     });
