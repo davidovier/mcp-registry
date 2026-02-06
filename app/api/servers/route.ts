@@ -133,13 +133,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Return with cache headers (5 minutes for public data)
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
-      },
-    });
+    const res = NextResponse.json(response);
+    res.headers.set(
+      "Cache-Control",
+      "public, s-maxage=300, stale-while-revalidate=60"
+    );
+    return res;
   } catch (error) {
     console.error("Unexpected API error:", error);
     return NextResponse.json(
