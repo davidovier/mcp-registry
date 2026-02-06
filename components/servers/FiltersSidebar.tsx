@@ -18,12 +18,6 @@ const AUTH_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
-const CAPABILITY_OPTIONS = [
-  { value: "tools", label: "Tools" },
-  { value: "resources", label: "Resources" },
-  { value: "prompts", label: "Prompts" },
-];
-
 interface FiltersSidebarProps {
   className?: string;
 }
@@ -85,17 +79,14 @@ export function FiltersSidebar({ className }: FiltersSidebarProps) {
           ))}
         </FilterGroup>
 
-        <FilterGroup title="Capabilities">
-          {CAPABILITY_OPTIONS.map((option) => (
-            <FilterOption
-              key={option.value}
-              label={option.label}
-              checked={false}
-              disabled
-              onChange={() => {}}
-            />
-          ))}
-        </FilterGroup>
+        <div>
+          <h3 className="mb-3 text-heading-sm text-content-primary">
+            Capabilities
+          </h3>
+          <p className="text-caption text-content-tertiary">
+            Filtering by capabilities is coming soon.
+          </p>
+        </div>
 
         <div className="border-t border-border pt-4">
           <FilterOption
@@ -132,26 +123,18 @@ function FilterOption({
   checked,
   onChange,
   bold,
-  disabled,
 }: {
   label: string;
   checked: boolean;
   onChange: () => void;
   bold?: boolean;
-  disabled?: boolean;
 }) {
   return (
-    <label
-      className={cn(
-        "flex cursor-pointer items-center gap-2",
-        disabled && "cursor-not-allowed opacity-50"
-      )}
-    >
+    <label className="flex cursor-pointer items-center gap-2">
       <input
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        disabled={disabled}
         className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500 dark:border-neutral-600"
       />
       <span

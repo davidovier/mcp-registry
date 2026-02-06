@@ -4,7 +4,11 @@ import { FiltersSidebar } from "@/components/servers/FiltersSidebar";
 import { MobileFilters } from "@/components/servers/MobileFilters";
 import { SearchHero } from "@/components/servers/SearchHero";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { createCursorFromRow, PAGINATION } from "@/lib/pagination";
+import {
+  createCursorFromRow,
+  decodeCursor,
+  PAGINATION,
+} from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
 import type { McpAuth, McpTransport } from "@/lib/supabase/types";
 
@@ -15,6 +19,7 @@ interface SearchParams {
   transport?: McpTransport;
   auth?: McpAuth;
   verified?: string;
+  cursor?: string;
 }
 
 interface Props {
@@ -51,6 +56,7 @@ export default async function ServersPage({ searchParams }: Props) {
                 transport={params.transport}
                 auth={params.auth}
                 verified={params.verified}
+                cursor={params.cursor}
               />
             </Suspense>
           </div>
@@ -65,22 +71,34 @@ async function ServerList({
   transport,
   auth,
   verified,
+  cursor: cursorParam,
 }: {
   q?: string;
   transport?: McpTransport;
   auth?: McpAuth;
   verified?: string;
+  cursor?: string;
 }) {
   const supabase = await createClient();
   const limit = PAGINATION.DEFAULT_LIMIT;
+  const cursor = cursorParam ? decodeCursor(cursorParam) : null;
 
   let query = supabase
     .from("mcp_servers")
-    .select("*", { count: "exact" })
+    .select("*", { count: cursor ? undefined : "exact" })
     .order("verified", { ascending: false })
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(limit + 1);
+
+  // Apply cursor (keyset pagination)
+  if (cursor) {
+    query = query.or(
+      `verified.lt.${cursor.v},` +
+        `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
+        `and(verified.eq.${cursor.v},created_at.eq.${cursor.c},id.lt.${cursor.i})`
+    );
+  }
 
   if (q) {
     query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);

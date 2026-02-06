@@ -106,6 +106,31 @@ test.describe("Servers page (public)", () => {
 
     await expect(page).toHaveURL(/q=test/);
   });
+
+  test("should show capabilities coming soon in sidebar", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto("/servers");
+
+    const sidebar = page.locator("aside");
+    await expect(sidebar.getByText("Capabilities")).toBeVisible();
+    await expect(sidebar.getByText(/coming soon/i)).toBeVisible();
+  });
+
+  test("should update URL cursor when loading more", async ({ page }) => {
+    await page.goto("/servers");
+    await page.waitForLoadState("networkidle");
+
+    const loadMoreButton = page.getByRole("button", {
+      name: /load more/i,
+    });
+    const hasLoadMore = await loadMoreButton.isVisible().catch(() => false);
+
+    if (hasLoadMore) {
+      await loadMoreButton.click();
+      // Wait for the URL to update with cursor param
+      await expect(page).toHaveURL(/cursor=/);
+    }
+  });
 });
 
 test.describe("Sign in page (public)", () => {

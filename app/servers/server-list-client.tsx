@@ -81,6 +81,15 @@ export function ServerListClient({
         setServers((prev) => [...prev, ...data.data]);
         setNextCursor(data.nextCursor);
         setError(null);
+
+        // Update URL with new cursor for shareability
+        const urlParams = new URLSearchParams(searchParams.toString());
+        urlParams.set("cursor", nextCursor);
+        window.history.replaceState(
+          null,
+          "",
+          `/servers?${urlParams.toString()}`
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load more");
       }
@@ -176,17 +185,24 @@ function ActiveFiltersBar({
   shownCount?: number;
   onRemove: (key: string) => void;
 }) {
-  if (filters.length === 0 && totalCount === undefined) return null;
+  const hasCount = totalCount !== undefined || shownCount !== undefined;
+  if (filters.length === 0 && !hasCount) return null;
+
+  let countLabel: string | null = null;
+  if (totalCount !== undefined) {
+    if (shownCount !== undefined && shownCount < totalCount) {
+      countLabel = `Showing ${shownCount} of ${totalCount} servers`;
+    } else {
+      countLabel = `${totalCount} ${totalCount === 1 ? "server" : "servers"}`;
+    }
+  } else if (shownCount !== undefined) {
+    countLabel = `Showing ${shownCount} ${shownCount === 1 ? "server" : "servers"}`;
+  }
 
   return (
     <div className="mb-6 flex flex-wrap items-center gap-2">
-      {totalCount !== undefined && (
-        <span className="text-body-sm text-content-tertiary">
-          {shownCount !== undefined && shownCount < totalCount
-            ? `Showing ${shownCount} of ${totalCount}`
-            : totalCount}{" "}
-          {totalCount === 1 ? "server" : "servers"}
-        </span>
+      {countLabel && (
+        <span className="text-body-sm text-content-tertiary">{countLabel}</span>
       )}
       {filters.map((filter) => (
         <FilterChip

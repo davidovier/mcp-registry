@@ -174,6 +174,15 @@ export function MobileFilters({ className }: MobileFiltersProps) {
               ))}
             </MobileFilterGroup>
 
+            <div>
+              <h3 className="mb-3 text-heading-sm text-content-primary">
+                Capabilities
+              </h3>
+              <p className="text-caption text-content-tertiary">
+                Filtering by capabilities is coming soon.
+              </p>
+            </div>
+
             <div className="border-t border-border pt-4">
               <MobileFilterOption
                 label="Verified only"
