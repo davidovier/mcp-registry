@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 
-// Route segment config - cache for 5 minutes at edge
+// Route segment config - ISR with 5 minute revalidation
+// Note: Vercel edge caches responses (x-vercel-cache: HIT) even though
+// Cache-Control header is normalized by Next.js App Router
 export const revalidate = 300;
 
 /**
@@ -58,19 +60,7 @@ export async function GET(
       return NextResponse.json({ error: "Server not found" }, { status: 404 });
     }
 
-    // Return with cache headers (5 minutes CDN cache)
-    const headers = new Headers({
-      "Content-Type": "application/json",
-    });
-    headers.set(
-      "Cache-Control",
-      "public, s-maxage=300, stale-while-revalidate=60"
-    );
-
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers,
-    });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Unexpected API error:", error);
     return NextResponse.json(
