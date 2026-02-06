@@ -1,26 +1,39 @@
 /**
  * Database types for Supabase.
  *
- * This file should be regenerated when the database schema changes.
- * Run: pnpm supabase gen types typescript --project-id <project-id> > lib/supabase/types.ts
- *
- * For now, we use a placeholder type that can be extended as needed.
+ * This file re-exports generated types and adds custom type helpers.
+ * To regenerate types after schema changes:
+ *   pnpm supabase:types
  */
 
-// Placeholder database type - will be replaced with generated types
-// when the database schema is created
-export interface Database {
-  public: {
-    Tables: Record<string, never>;
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-  };
+// Re-export all generated types
+export type {
+  Database,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+  Enums,
+  Json,
+} from "./database.types";
+
+// Import for local use
+import type { Database } from "./database.types";
+
+// Convenience type aliases for common tables
+export type McpServer = Database["public"]["Tables"]["mcp_servers"]["Row"];
+export type McpServerInsert =
+  Database["public"]["Tables"]["mcp_servers"]["Insert"];
+export type McpServerUpdate =
+  Database["public"]["Tables"]["mcp_servers"]["Update"];
+
+// Transport and auth type literals (match database constraints)
+export type McpTransport = "stdio" | "http" | "both";
+export type McpAuth = "none" | "oauth" | "api_key" | "other";
+
+// Capabilities structure
+export interface McpCapabilities {
+  tools?: boolean;
+  resources?: boolean;
+  prompts?: boolean;
+  [key: string]: boolean | undefined;
 }
-
-// Export common helper types
-export type Tables<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Row"];
-
-export type Enums<T extends keyof Database["public"]["Enums"]> =
-  Database["public"]["Enums"][T];

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const navigation = [
-  { name: "Browse", href: "/browse" },
+  { name: "Browse", href: "/servers" },
   { name: "Docs", href: "/docs" },
   { name: "About", href: "/about" },
 ];

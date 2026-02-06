@@ -6,10 +6,10 @@ settings:
 
 dependencies:
   '@supabase/ssr':
-    specifier: ^0.5.2
-    version: 0.5.2(@supabase/supabase-js@2.75.1)
+    specifier: ^0.7.0
+    version: 0.7.0(@supabase/supabase-js@2.75.1)
   '@supabase/supabase-js':
-    specifier: ^2.47.10
+    specifier: ^2.75.1
     version: 2.75.1
   next:
     specifier: 15.5.9
@@ -50,8 +50,8 @@ devDependencies:
     specifier: ^9.17.0
     version: 9.38.0
   eslint-config-next:
-    specifier: 15.5.4
-    version: 15.5.4(eslint@9.38.0)(typescript@5.9.3)
+    specifier: 15.5.9
+    version: 15.5.9(eslint@9.38.0)(typescript@5.9.3)
   eslint-config-prettier:
     specifier: ^9.1.0
     version: 9.1.2(eslint@9.38.0)
@@ -1151,8 +1151,8 @@ packages:
     resolution: {integrity: sha512-4GlTZ+EJM7WaW2HEZcyU317tIQDjkQIyENDLxYJfSWlfqguN+dHkZgyQTV/7ykvobU7yEH5gKvreNrH4B6QgIg==}
     dev: false
 
-  /@next/eslint-plugin-next@15.5.4:
-    resolution: {integrity: sha512-SR1vhXNNg16T4zffhJ4TS7Xn7eq4NfKfcOsRwea7RIAHrjRpI9ALYbamqIJqkAhowLlERffiwk0FMvTLNdnVtw==}
+  /@next/eslint-plugin-next@15.5.9:
+    resolution: {integrity: sha512-kUzXx0iFiXw27cQAViE1yKWnz/nF8JzRmwgMRTMh8qMY90crNsdXJRh2e+R0vBpFR3kk1yvAR7wev7+fCCb79Q==}
     dependencies:
       fast-glob: 3.3.1
     dev: true
@@ -1499,14 +1499,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@supabase/ssr@0.5.2(@supabase/supabase-js@2.75.1):
-    resolution: {integrity: sha512-n3plRhr2Bs8Xun1o4S3k1CDv17iH5QY9YcoEvXX3bxV1/5XSasA0mNXYycFmADIdtdE6BG9MRjP5CGIs8qxC8A==}
+  /@supabase/ssr@0.7.0(@supabase/supabase-js@2.75.1):
+    resolution: {integrity: sha512-G65t5EhLSJ5c8hTCcXifSL9Q/ZRXvqgXeNo+d3P56f4U1IxwTqjB64UfmfixvmMcjuxnq2yGqEWVJqUcO+AzAg==}
     peerDependencies:
       '@supabase/supabase-js': ^2.43.4
     dependencies:
       '@supabase/supabase-js': 2.75.1
-      '@types/cookie': 0.6.0
-      cookie: 0.7.2
+      cookie: 1.0.2
     dev: false
 
   /@supabase/storage-js@2.75.1:
@@ -1624,10 +1623,6 @@ packages:
     dependencies:
       '@babel/types': 7.28.4
     dev: true
-
-  /@types/cookie@0.6.0:
-    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
-    dev: false
 
   /@types/estree@1.0.8:
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -2442,9 +2437,9 @@ packages:
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  /cookie@0.7.2:
-    resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
-    engines: {node: '>= 0.6'}
+  /cookie@1.0.2:
+    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+    engines: {node: '>=18'}
     dev: false
 
   /cross-spawn@7.0.6:
@@ -2846,8 +2841,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-config-next@15.5.4(eslint@9.38.0)(typescript@5.9.3):
-    resolution: {integrity: sha512-BzgVVuT3kfJes8i2GHenC1SRJ+W3BTML11lAOYFOOPzrk2xp66jBOAGEFRw+3LkYCln5UzvFsLhojrshb5Zfaw==}
+  /eslint-config-next@15.5.9(eslint@9.38.0)(typescript@5.9.3):
+    resolution: {integrity: sha512-852JYI3NkFNzW8CqsMhI0K2CDRxTObdZ2jQJj5CtpEaOkYHn13107tHpNuD/h0WRpU4FAbCdUaxQsrfBtNK9Kw==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0 || ^9.0.0
       typescript: '>=3.3.1'
@@ -2855,7 +2850,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 15.5.4
+      '@next/eslint-plugin-next': 15.5.9
       '@rushstack/eslint-patch': 1.14.0
       '@typescript-eslint/eslint-plugin': 8.46.1(@typescript-eslint/parser@8.46.1)(eslint@9.38.0)(typescript@5.9.3)
       '@typescript-eslint/parser': 8.46.1(eslint@9.38.0)(typescript@5.9.3)

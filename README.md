@@ -57,45 +57,54 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Available Scripts
 
-| Command              | Description                  |
-| -------------------- | ---------------------------- |
-| `pnpm dev`           | Start development server     |
-| `pnpm build`         | Build for production         |
-| `pnpm start`         | Start production server      |
-| `pnpm lint`          | Run ESLint                   |
-| `pnpm lint:fix`      | Run ESLint with auto-fix     |
-| `pnpm format`        | Format code with Prettier    |
-| `pnpm format:check`  | Check code formatting        |
-| `pnpm typecheck`     | Run TypeScript type checking |
-| `pnpm test`          | Run unit tests (Vitest)      |
-| `pnpm test:watch`    | Run tests in watch mode      |
-| `pnpm test:coverage` | Run tests with coverage      |
-| `pnpm test:e2e`      | Run E2E tests (Playwright)   |
-| `pnpm test:e2e:ui`   | Run E2E tests with UI        |
+| Command                  | Description                              |
+| ------------------------ | ---------------------------------------- |
+| `pnpm dev`               | Start development server                 |
+| `pnpm build`             | Build for production                     |
+| `pnpm start`             | Start production server                  |
+| `pnpm lint`              | Run ESLint                               |
+| `pnpm lint:fix`          | Run ESLint with auto-fix                 |
+| `pnpm format`            | Format code with Prettier                |
+| `pnpm format:check`      | Check code formatting                    |
+| `pnpm typecheck`         | Run TypeScript type checking             |
+| `pnpm test`              | Run unit tests (Vitest)                  |
+| `pnpm test:watch`        | Run tests in watch mode                  |
+| `pnpm test:coverage`     | Run tests with coverage                  |
+| `pnpm test:e2e`          | Run E2E tests (Playwright)               |
+| `pnpm test:e2e:ui`       | Run E2E tests with UI                    |
+| `pnpm supabase:start`    | Start local Supabase (Docker)            |
+| `pnpm supabase:stop`     | Stop local Supabase                      |
+| `pnpm supabase:status`   | Check local Supabase status              |
+| `pnpm supabase:db:reset` | Reset local DB (apply migrations + seed) |
+| `pnpm supabase:db:push`  | Push migrations to remote                |
+| `pnpm supabase:types`    | Generate TypeScript types                |
 
 ## Project Structure
 
 ```
 mcp-registry/
 ├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes
-│   │   └── health/        # Health check endpoint
+│   ├── api/health/        # Health check endpoint
+│   ├── servers/           # Browse MCP servers
+│   │   ├── page.tsx       # Server list with filters
+│   │   └── [slug]/        # Server detail page
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Homepage
 │   └── globals.css        # Global styles
 ├── components/            # React components
-│   ├── header.tsx         # Site header/navigation
-│   └── footer.tsx         # Site footer
 ├── lib/                   # Utility libraries
-│   ├── supabase/          # Supabase client utilities
-│   │   ├── client.ts      # Browser client
-│   │   ├── server.ts      # Server client
-│   │   └── types.ts       # Database types
-│   └── env.ts             # Environment variable validation
+│   └── supabase/          # Supabase client utilities
+│       ├── client.ts      # Browser client
+│       ├── server.ts      # Server client
+│       ├── database.types.ts  # Generated types
+│       └── types.ts       # Type helpers
+├── supabase/              # Supabase CLI
+│   ├── config.toml        # Local config
+│   ├── migrations/        # SQL migrations
+│   └── seed.sql           # Dev seed data
 ├── __tests__/             # Unit tests (Vitest)
 ├── e2e/                   # E2E tests (Playwright)
-├── .github/workflows/     # GitHub Actions CI
-└── public/                # Static assets
+└── .github/workflows/     # GitHub Actions CI
 ```
 
 ## Environment Variables
@@ -107,6 +116,62 @@ mcp-registry/
 | `NEXT_PUBLIC_APP_NAME`          | No       | App name (default: "MCP Registry") |
 
 **Important**: Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never put secrets in these variables.
+
+## Database & Migrations
+
+This project uses Supabase CLI for database migrations.
+
+### Local Development (with Docker)
+
+```bash
+# Start local Supabase (requires Docker)
+pnpm supabase:start
+
+# Apply migrations and seed data
+pnpm supabase:db:reset
+
+# Generate TypeScript types from local schema
+pnpm supabase:types
+
+# Stop local Supabase
+pnpm supabase:stop
+```
+
+Local Supabase runs at:
+
+- **Studio**: http://localhost:54323
+- **API**: http://localhost:54321
+- **DB**: postgresql://postgres:postgres@localhost:54322/postgres
+
+### Remote Development (without Docker)
+
+If you don't have Docker, connect directly to the remote Supabase project:
+
+```bash
+# Link to remote project (one-time setup)
+supabase link --project-ref <your-project-ref>
+
+# Push migrations to remote
+pnpm supabase:db:push
+
+# Generate types from remote
+supabase gen types typescript --linked > lib/supabase/database.types.ts
+```
+
+### Creating Migrations
+
+```bash
+# Create a new migration
+supabase migration new <migration_name>
+
+# Edit the migration file in supabase/migrations/
+
+# Apply locally
+pnpm supabase:db:reset
+
+# Push to remote when ready
+pnpm supabase:db:push
+```
 
 ## Connecting Supabase
 

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-16">
@@ -10,18 +12,18 @@ export default function HomePage() {
           tools. The central hub for the MCP ecosystem.
         </p>
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
-            href="#browse"
+          <Link
+            href="/servers"
             className="inline-flex items-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Browse Registry
-          </a>
-          <a
-            href="#docs"
+          </Link>
+          <Link
+            href="/docs"
             className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             Documentation
-          </a>
+          </Link>
         </div>
       </div>
 
