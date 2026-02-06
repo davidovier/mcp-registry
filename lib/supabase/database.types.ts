@@ -12,33 +12,41 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1";
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
+      mcp_server_submissions: {
+        Row: {
+          created_at: string;
+          id: string;
+          review_notes: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: string;
+          submitted_by: string;
+          submitted_payload: Json;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          review_notes?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: string;
+          submitted_by: string;
+          submitted_payload: Json;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          review_notes?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: string;
+          submitted_by?: string;
+          submitted_payload?: Json;
+        };
+        Relationships: [];
+      };
       mcp_servers: {
         Row: {
           auth: string;
@@ -90,18 +98,64 @@ export type Database = {
         };
         Relationships: [];
       };
+      profiles: {
+        Row: {
+          created_at: string;
+          id: string;
+          role: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          role?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          role?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      approve_submission: {
+        Args: { p_notes?: string; p_submission_id: string };
+        Returns: Database["public"]["CompositeTypes"]["moderation_result"];
+        SetofOptions: {
+          from: "*";
+          to: "moderation_result";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      is_admin: { Args: never; Returns: boolean };
+      reject_submission: {
+        Args: { p_notes: string; p_submission_id: string };
+        Returns: Database["public"]["CompositeTypes"]["moderation_result"];
+        SetofOptions: {
+          from: "*";
+          to: "moderation_result";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      set_user_role: {
+        Args: { p_new_role: string; p_user_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       [_ in never]: never;
     };
     CompositeTypes: {
-      [_ in never]: never;
+      moderation_result: {
+        success: boolean | null;
+        error_message: string | null;
+        server_id: string | null;
+      };
     };
   };
 };
@@ -227,9 +281,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
