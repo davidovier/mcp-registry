@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Homepage", () => {
+  test.beforeEach(async ({ page }) => {
+    // Set viewport to desktop size to ensure nav links are visible
+    await page.setViewportSize({ width: 1280, height: 720 });
+  });
+
   test("should display the main heading", async ({ page }) => {
     await page.goto("/");
 
@@ -10,33 +15,41 @@ test.describe("Homepage", () => {
     ).toBeVisible();
   });
 
-  test("should have navigation links", async ({ page }) => {
+  test("should have navigation links in header", async ({ page }) => {
     await page.goto("/");
 
-    // Check header navigation
-    await expect(page.getByRole("link", { name: /browse/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /docs/i })).toBeVisible();
+    // Check header navigation - use role navigation or header element
+    const header = page.getByRole("banner");
+    await expect(header.getByRole("link", { name: /browse/i })).toBeVisible();
+    await expect(header.getByRole("link", { name: /docs/i })).toBeVisible();
   });
 
   test("should have call-to-action buttons", async ({ page }) => {
     await page.goto("/");
 
-    // Check CTA buttons
+    // Check CTA buttons in main section
+    const main = page.getByRole("main");
     await expect(
-      page.getByRole("link", { name: /browse registry/i })
+      main.getByRole("link", { name: /browse registry/i })
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /documentation/i })
+      main.getByRole("link", { name: /documentation/i })
     ).toBeVisible();
   });
 
   test("should display feature cards", async ({ page }) => {
     await page.goto("/");
 
-    // Check feature cards
-    await expect(page.getByText("Discover")).toBeVisible();
-    await expect(page.getByText("Share")).toBeVisible();
-    await expect(page.getByText("Integrate")).toBeVisible();
+    // Check feature cards exist by looking for headings
+    await expect(
+      page.getByRole("heading", { name: "Discover", level: 3 })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Share", level: 3 })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Integrate", level: 3 })
+    ).toBeVisible();
   });
 });
 
