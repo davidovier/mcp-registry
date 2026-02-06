@@ -55,13 +55,8 @@ export async function GET(
       return NextResponse.json({ error: "Server not found" }, { status: 404 });
     }
 
-    // Return with cache headers (5 minutes for public data)
-    const res = NextResponse.json(data);
-    res.headers.set(
-      "Cache-Control",
-      "public, s-maxage=300, stale-while-revalidate=60"
-    );
-    return res;
+    // Cache headers set via vercel.json at infrastructure level
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Unexpected API error:", error);
     return NextResponse.json(
