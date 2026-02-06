@@ -56,8 +56,10 @@ export async function GET(
     }
 
     // Return with cache headers (5 minutes for public data)
-    return NextResponse.json(data, {
+    return new Response(JSON.stringify(data), {
+      status: 200,
       headers: {
+        "Content-Type": "application/json",
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
       },
     });
