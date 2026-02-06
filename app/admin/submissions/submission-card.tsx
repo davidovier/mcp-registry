@@ -154,8 +154,29 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                 value={new Date(submission.created_at).toLocaleString()}
               />
               <DetailRow label="Submitted By" value={submission.submitted_by} />
+              {submission.schema_version && (
+                <DetailRow
+                  label="Schema Version"
+                  value={submission.schema_version}
+                />
+              )}
             </div>
           </div>
+
+          {/* Validation errors (if any) */}
+          {submission.validation_errors &&
+            submission.validation_errors.length > 0 && (
+              <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-900/20">
+                <p className="mb-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+                  Validation Errors:
+                </p>
+                <ul className="list-inside list-disc text-sm text-amber-700 dark:text-amber-300">
+                  {submission.validation_errors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
           {/* Review notes (if already reviewed) */}
           {submission.review_notes && (

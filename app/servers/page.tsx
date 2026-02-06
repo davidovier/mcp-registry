@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { createCursorFromRow, PAGINATION } from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
-import type { McpServer, McpTransport, McpAuth } from "@/lib/supabase/types";
+import type { McpTransport, McpAuth } from "@/lib/supabase/types";
+
+import { ServerListClient } from "./server-list-client";
 
 interface SearchParams {
   q?: string;
@@ -48,7 +51,7 @@ export default async function ServersPage({ searchParams }: Props) {
           q={params.q}
           transport={params.transport}
           auth={params.auth}
-          verified={params.verified === "true"}
+          verified={params.verified}
         />
       </Suspense>
     </div>
@@ -174,17 +177,20 @@ async function ServerList({
   q?: string;
   transport?: McpTransport;
   auth?: McpAuth;
-  verified?: boolean;
+  verified?: string;
 }) {
   const supabase = await createClient();
+  const limit = PAGINATION.DEFAULT_LIMIT;
 
   let query = supabase
     .from("mcp_servers")
-    .select("*")
+    .select("*", { count: "exact" })
     .order("verified", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1); // Fetch one extra for pagination
 
-  // Apply search filter (case-insensitive search in name and description)
+  // Apply search filter
   if (q) {
     query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
   }
@@ -200,11 +206,11 @@ async function ServerList({
   }
 
   // Apply verified filter
-  if (verified) {
+  if (verified === "true") {
     query = query.eq("verified", true);
   }
 
-  const { data: servers, error } = await query;
+  const { data, error, count } = await query;
 
   if (error) {
     return (
@@ -214,76 +220,24 @@ async function ServerList({
     );
   }
 
-  if (!servers || servers.length === 0) {
-    return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50">
-        <p className="text-gray-600 dark:text-gray-400">
-          No servers found matching your criteria.
-        </p>
-      </div>
-    );
+  // Determine pagination
+  const hasMore = data && data.length > limit;
+  const servers = hasMore ? data.slice(0, limit) : data || [];
+
+  // Create next cursor if there are more results
+  let nextCursor: string | null = null;
+  if (hasMore && servers.length > 0) {
+    const lastRow = servers[servers.length - 1];
+    nextCursor = createCursorFromRow(lastRow);
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {servers.map((server) => (
-        <ServerCard key={server.id} server={server} />
-      ))}
-    </div>
-  );
-}
-
-function ServerCard({ server }: { server: McpServer }) {
-  const capabilities = server.capabilities as Record<string, boolean>;
-
-  return (
-    <Link
-      href={`/servers/${server.slug}`}
-      className="group block rounded-lg border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
-    >
-      <div className="mb-3 flex items-start justify-between">
-        <h2 className="font-semibold text-gray-900 group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-400">
-          {server.name}
-        </h2>
-        {server.verified && (
-          <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
-            ✓ Verified
-          </span>
-        )}
-      </div>
-
-      <p className="mb-4 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
-        {server.description}
-      </p>
-
-      <div className="mb-3 flex flex-wrap gap-1">
-        {server.tags.slice(0, 4).map((tag) => (
-          <span
-            key={tag}
-            className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400"
-          >
-            {tag}
-          </span>
-        ))}
-        {server.tags.length > 4 && (
-          <span className="text-xs text-gray-500">
-            +{server.tags.length - 4}
-          </span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-500">
-        <span className="rounded bg-gray-100 px-2 py-0.5 dark:bg-gray-700">
-          {server.transport}
-        </span>
-        <span className="rounded bg-gray-100 px-2 py-0.5 dark:bg-gray-700">
-          {server.auth}
-        </span>
-        {capabilities.tools && <span title="Provides tools">🔧</span>}
-        {capabilities.resources && <span title="Provides resources">📁</span>}
-        {capabilities.prompts && <span title="Provides prompts">💬</span>}
-      </div>
-    </Link>
+    <ServerListClient
+      initialServers={servers}
+      initialNextCursor={nextCursor}
+      initialTotal={count ?? undefined}
+      filters={{ q, transport, auth, verified }}
+    />
   );
 }
 

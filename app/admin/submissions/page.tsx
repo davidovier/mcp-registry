@@ -33,6 +33,8 @@ export interface Submission {
   submitted_payload: SubmittedPayload;
   submitted_by: string;
   review_notes: string | null;
+  schema_version: string | null;
+  validation_errors: string[] | null;
 }
 
 export default async function AdminSubmissionsPage() {
@@ -63,7 +65,7 @@ export default async function AdminSubmissionsPage() {
   const { data: submissions, error } = await supabase
     .from("mcp_server_submissions")
     .select(
-      "id, status, created_at, submitted_payload, submitted_by, review_notes"
+      "id, status, created_at, submitted_payload, submitted_by, review_notes, schema_version, validation_errors"
     )
     .order("created_at", { ascending: false });
 
