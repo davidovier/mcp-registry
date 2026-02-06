@@ -132,8 +132,19 @@ export async function GET(request: NextRequest) {
       response.total = count;
     }
 
-    // Cache headers set via vercel.json at infrastructure level
-    return NextResponse.json(response);
+    // Return with cache headers (5 minutes CDN cache)
+    const headers = new Headers({
+      "Content-Type": "application/json",
+    });
+    headers.set(
+      "Cache-Control",
+      "public, s-maxage=300, stale-while-revalidate=60"
+    );
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers,
+    });
   } catch (error) {
     console.error("Unexpected API error:", error);
     return NextResponse.json(
