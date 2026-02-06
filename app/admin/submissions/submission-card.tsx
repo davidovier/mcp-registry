@@ -119,7 +119,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                     href={payload.homepage_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary-600 hover:underline"
+                    className="text-primary-600 text-sm hover:underline"
                   >
                     {payload.homepage_url}
                   </a>
@@ -131,7 +131,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                     href={payload.repo_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary-600 hover:underline"
+                    className="text-primary-600 text-sm hover:underline"
                   >
                     {payload.repo_url}
                   </a>
@@ -143,7 +143,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                     href={payload.docs_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary-600 hover:underline"
+                    className="text-primary-600 text-sm hover:underline"
                   >
                     {payload.docs_url}
                   </a>
@@ -203,7 +203,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                   placeholder="Add optional notes for approval, or required reason for rejection..."
                   rows={2}
                   disabled={isPending}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 />
               </div>
 

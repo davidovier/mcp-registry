@@ -94,7 +94,7 @@ export function ServerListClient({
           <button
             onClick={loadMore}
             disabled={isPending}
-            className="rounded-md bg-primary-600 px-6 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
+            className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 rounded-md px-6 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
           >
             {isPending ? "Loading..." : "Load More"}
           </button>
@@ -113,7 +113,7 @@ function ServerCard({ server }: { server: McpServer }) {
       className="group block rounded-lg border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
     >
       <div className="mb-3 flex items-start justify-between">
-        <h2 className="font-semibold text-gray-900 group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-400">
+        <h2 className="group-hover:text-primary-600 dark:group-hover:text-primary-400 font-semibold text-gray-900 dark:text-white">
           {server.name}
         </h2>
         {server.verified && (

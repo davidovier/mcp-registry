@@ -19,7 +19,7 @@ export function AuthButtons({ user, isAdmin }: AuthButtonsProps) {
       <div className="flex items-center gap-4">
         <Link
           href="/signin"
-          className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700"
+          className="bg-primary-600 hover:bg-primary-700 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
         >
           Sign In
         </Link>

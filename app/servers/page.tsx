@@ -86,7 +86,7 @@ function FilterBar({
             name="q"
             defaultValue={currentQ}
             placeholder="Search servers..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           />
         </div>
 
@@ -102,7 +102,7 @@ function FilterBar({
             id="transport"
             name="transport"
             defaultValue={currentTransport}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="">All</option>
             <option value="stdio">stdio</option>
@@ -123,7 +123,7 @@ function FilterBar({
             id="auth"
             name="auth"
             defaultValue={currentAuth}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="">All</option>
             <option value="none">none</option>
@@ -141,7 +141,7 @@ function FilterBar({
               name="verified"
               value="true"
               defaultChecked={currentVerified === "true"}
-              className="rounded text-primary-600 focus:ring-primary-500"
+              className="text-primary-600 focus:ring-primary-500 rounded"
             />
             <span className="text-gray-700 dark:text-gray-300">
               Verified only
@@ -153,13 +153,13 @@ function FilterBar({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
         >
           Apply Filters
         </button>
         <Link
           href="/servers"
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="focus:ring-primary-500 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           Clear
         </Link>

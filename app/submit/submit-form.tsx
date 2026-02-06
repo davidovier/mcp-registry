@@ -157,7 +157,7 @@ export function SubmitForm() {
           maxLength={50}
           required
           disabled={isPending}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
         {errors.slug && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -185,7 +185,7 @@ export function SubmitForm() {
           maxLength={100}
           required
           disabled={isPending}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
         {errors.name && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -210,7 +210,7 @@ export function SubmitForm() {
           maxLength={500}
           required
           disabled={isPending}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
         {errors.description && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -234,7 +234,7 @@ export function SubmitForm() {
             name="homepage_url"
             placeholder="https://..."
             disabled={isPending}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           />
           {errors.homepage_url && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -255,7 +255,7 @@ export function SubmitForm() {
             name="repo_url"
             placeholder="https://github.com/..."
             disabled={isPending}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           />
           {errors.repo_url && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -276,7 +276,7 @@ export function SubmitForm() {
             name="docs_url"
             placeholder="https://..."
             disabled={isPending}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           />
           {errors.docs_url && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -300,7 +300,7 @@ export function SubmitForm() {
           name="tags"
           placeholder="ai, tools, database"
           disabled={isPending}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
         {errors.tags && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -327,7 +327,7 @@ export function SubmitForm() {
             required
             disabled={isPending}
             defaultValue=""
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="" disabled>
               Select transport...
@@ -355,7 +355,7 @@ export function SubmitForm() {
             required
             disabled={isPending}
             defaultValue=""
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="" disabled>
               Select auth method...
@@ -384,7 +384,7 @@ export function SubmitForm() {
               type="checkbox"
               name="cap_tools"
               disabled={isPending}
-              className="rounded text-primary-600 focus:ring-primary-500"
+              className="text-primary-600 focus:ring-primary-500 rounded"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">
               Tools
@@ -395,7 +395,7 @@ export function SubmitForm() {
               type="checkbox"
               name="cap_resources"
               disabled={isPending}
-              className="rounded text-primary-600 focus:ring-primary-500"
+              className="text-primary-600 focus:ring-primary-500 rounded"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">
               Resources
@@ -406,7 +406,7 @@ export function SubmitForm() {
               type="checkbox"
               name="cap_prompts"
               disabled={isPending}
-              className="rounded text-primary-600 focus:ring-primary-500"
+              className="text-primary-600 focus:ring-primary-500 rounded"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">
               Prompts
@@ -419,7 +419,7 @@ export function SubmitForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="flex-1 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 sm:flex-none"
+          className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 flex-1 rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 sm:flex-none"
         >
           {isPending ? "Submitting..." : "Submit for Review"}
         </button>

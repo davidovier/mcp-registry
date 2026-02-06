@@ -3,20 +3,80 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Neutrals — warm gray base */
+  --color-neutral-50: #fafaf9;
+  --color-neutral-100: #f5f5f4;
+  --color-neutral-200: #e7e5e4;
+  --color-neutral-300: #d6d3d1;
+  --color-neutral-400: #a8a29e;
+  --color-neutral-500: #78716c;
+  --color-neutral-600: #57534e;
+  --color-neutral-700: #44403c;
+  --color-neutral-800: #292524;
+  --color-neutral-900: #1c1917;
+  --color-neutral-950: #0c0a09;
+
+  /* Primary — deep teal for trust */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+
+  /* Accent — warm amber for highlights */
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+
+  /* Semantic */
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+
+  /* Surfaces — Light Mode */
+  --surface-primary: var(--color-neutral-50);
+  --surface-secondary: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-sunken: var(--color-neutral-100);
+
+  /* Text — Light Mode */
+  --text-primary: var(--color-neutral-900);
+  --text-secondary: var(--color-neutral-600);
+  --text-tertiary: var(--color-neutral-500);
+  --text-inverse: #ffffff;
+
+  /* Borders */
+  --border-default: var(--color-neutral-200);
+  --border-strong: var(--color-neutral-300);
+  --border-focus: var(--color-primary-500);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --surface-primary: var(--color-neutral-950);
+  --surface-secondary: var(--color-neutral-900);
+  --surface-elevated: var(--color-neutral-800);
+  --surface-sunken: #000000;
+
+  --text-primary: var(--color-neutral-100);
+  --text-secondary: var(--color-neutral-400);
+  --text-tertiary: var(--color-neutral-500);
+  --text-inverse: var(--color-neutral-900);
+
+  --border-default: var(--color-neutral-800);
+  --border-strong: var(--color-neutral-700);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text-primary);
+  background: var(--surface-primary);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -27,6 +87,6 @@ html {
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid theme("colors.primary.500");
+  outline: 2px solid var(--border-focus);
   outline-offset: 2px;
 }

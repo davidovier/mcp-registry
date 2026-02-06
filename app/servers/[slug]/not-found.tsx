@@ -12,7 +12,7 @@ export default function ServerNotFound() {
       </p>
       <Link
         href="/servers"
-        className="inline-flex items-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-700"
+        className="bg-primary-600 hover:bg-primary-700 inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold text-white transition-colors"
       >
         Browse All Servers
       </Link>
