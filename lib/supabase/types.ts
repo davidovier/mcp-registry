@@ -19,7 +19,7 @@ export type {
 // Import for local use
 import type { Database } from "./database.types";
 
-// Convenience type aliases for common tables
+// Convenience type aliases for mcp_servers table
 export type McpServer = Database["public"]["Tables"]["mcp_servers"]["Row"];
 export type McpServerInsert =
   Database["public"]["Tables"]["mcp_servers"]["Insert"];
@@ -36,4 +36,24 @@ export interface McpCapabilities {
   resources?: boolean;
   prompts?: boolean;
   [key: string]: boolean | undefined;
+}
+
+// Role types
+export type UserRole = "user" | "admin";
+
+// Submission status types
+export type SubmissionStatus = "pending" | "approved" | "rejected";
+
+// Submission payload structure (what users submit)
+export interface SubmissionPayload {
+  slug: string;
+  name: string;
+  description: string;
+  homepage_url: string | null;
+  repo_url: string | null;
+  docs_url: string | null;
+  tags: string[];
+  transport: McpTransport;
+  auth: McpAuth;
+  capabilities: McpCapabilities;
 }

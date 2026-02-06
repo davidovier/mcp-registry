@@ -1,12 +1,35 @@
 import Link from "next/link";
 
+import { createClient } from "@/lib/supabase/server";
+
+import { AuthButtons } from "./auth-buttons";
+
 const navigation = [
   { name: "Browse", href: "/servers" },
   { name: "Docs", href: "/docs" },
   { name: "About", href: "/about" },
 ];
 
-export function Header() {
+export async function Header() {
+  const supabase = await createClient();
+
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Get user profile if logged in
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    isAdmin = profile?.role === "admin";
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -32,21 +55,8 @@ export function Header() {
           ))}
         </div>
 
-        {/* Auth placeholder - will be implemented later */}
-        <div className="flex items-center gap-4">
-          <Link
-            href="/sign-in"
-            className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/sign-up"
-            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700"
-          >
-            Sign Up
-          </Link>
-        </div>
+        {/* Auth buttons */}
+        <AuthButtons user={user} isAdmin={isAdmin} />
       </nav>
     </header>
   );

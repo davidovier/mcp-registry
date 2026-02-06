@@ -15,7 +15,8 @@ A production-quality web application for discovering, sharing, and managing Mode
 
 - Node.js 18.17.0 or higher
 - pnpm 9.x (`npm install -g pnpm`)
-- A Supabase project (free tier works)
+- Docker (for local Supabase)
+- Supabase CLI (`npm install -g supabase`)
 
 ## Local Development Setup
 
@@ -32,28 +33,91 @@ cd mcp-registry
 pnpm install
 ```
 
-### 3. Configure environment variables
+### 3. Start Local Supabase
 
-Copy the example environment file and fill in your values:
+Local development uses Supabase running in Docker:
 
 ```bash
-cp .env.local.example .env.local
+# Start Supabase (requires Docker)
+pnpm supabase:start
+
+# Apply migrations and seed data
+pnpm supabase:db:reset
+
+# Generate TypeScript types
+pnpm supabase:types
 ```
 
-Edit `.env.local` with your Supabase credentials:
+After starting, Supabase will output the local URLs and keys. Use these in your `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key-from-supabase-start-output>
 ```
 
-### 4. Start the development server
+Local Supabase services:
+
+- **Studio**: http://localhost:54323 (database admin UI)
+- **API**: http://localhost:54321
+- **Inbucket**: http://localhost:54324 (email testing - view magic links here!)
+- **DB**: postgresql://postgres:postgres@localhost:54322/postgres
+
+### 4. Set up the first admin user
+
+After starting local Supabase:
+
+1. Start the dev server: `pnpm dev`
+2. Go to http://localhost:3000/signin
+3. Enter your email and check Inbucket (http://localhost:54324) for the magic link
+4. Click the magic link to sign in
+5. Open Supabase Studio (http://localhost:54323)
+6. Go to Table Editor → profiles
+7. Find your user row and change `role` from `user` to `admin`
+
+Alternatively, use SQL:
+
+```sql
+-- Replace with your actual user ID from auth.users table
+UPDATE public.profiles
+SET role = 'admin'
+WHERE id = '<your-user-id>';
+```
+
+### 5. Start the development server
 
 ```bash
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Submission & Moderation Workflow
+
+### For Users
+
+1. **Sign in** via `/signin` using email magic link
+2. **Submit** a new MCP server via `/submit`
+   - Fill in required fields: slug, name, description, transport, auth
+   - Optionally add URLs, tags, and capabilities
+3. **Track** your submissions at `/my/submissions`
+   - View status: pending, approved, or rejected
+   - See admin review notes
+
+### For Admins
+
+1. Access `/admin/submissions` (requires admin role)
+2. Review pending submissions:
+   - Click to expand and see full details
+   - **Approve**: Publishes the server to `/servers`
+   - **Reject**: Must provide a reason (visible to submitter)
+3. Previously reviewed submissions are shown for reference
+
+### Security Model
+
+- **RLS (Row Level Security)**: All data access is controlled at the database level
+- **Admin verification**: Server-side checks in addition to RLS (defense in depth)
+- **No service role in browser**: All admin actions use authenticated user context
+- **Magic link auth**: No password storage, emails verified automatically
 
 ## Available Scripts
 
@@ -85,6 +149,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 mcp-registry/
 ├── app/                    # Next.js App Router pages
 │   ├── api/health/        # Health check endpoint
+│   ├── auth/callback/     # Magic link auth callback
+│   ├── signin/            # Sign in page
+│   ├── submit/            # Submit new server form
+│   ├── my/submissions/    # User's submission list
+│   ├── admin/submissions/ # Admin moderation page
 │   ├── servers/           # Browse MCP servers
 │   │   ├── page.tsx       # Server list with filters
 │   │   └── [slug]/        # Server detail page
@@ -92,6 +161,9 @@ mcp-registry/
 │   ├── page.tsx           # Homepage
 │   └── globals.css        # Global styles
 ├── components/            # React components
+│   ├── header.tsx         # Site header with auth state
+│   ├── footer.tsx         # Site footer
+│   └── auth-buttons.tsx   # Auth-aware navigation
 ├── lib/                   # Utility libraries
 │   └── supabase/          # Supabase client utilities
 │       ├── client.ts      # Browser client
@@ -104,22 +176,48 @@ mcp-registry/
 │   └── seed.sql           # Dev seed data
 ├── __tests__/             # Unit tests (Vitest)
 ├── e2e/                   # E2E tests (Playwright)
+├── middleware.ts          # Auth session refresh
 └── .github/workflows/     # GitHub Actions CI
 ```
 
+## Database Schema
+
+### Tables
+
+**mcp_servers** - Published MCP servers
+
+- `id`, `slug`, `name`, `description`, `homepage_url`, `repo_url`, `docs_url`
+- `tags`, `transport`, `auth`, `capabilities`, `verified`
+- `created_at`, `updated_at`
+
+**profiles** - User profiles with roles
+
+- `id` (references auth.users)
+- `role` ('user' or 'admin')
+- `created_at`
+
+**mcp_server_submissions** - User submissions pending review
+
+- `id`, `submitted_by`, `status`, `submitted_payload`
+- `review_notes`, `reviewed_at`, `reviewed_by`
+- `created_at`
+
+### RLS Policies
+
+- **mcp_servers**: Public read, admin-only insert
+- **profiles**: Users read/update own, admins read all
+- **submissions**: Users CRUD own, admins read/update all
+
 ## Environment Variables
 
-| Variable                        | Required | Description                        |
-| ------------------------------- | -------- | ---------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Yes      | Your Supabase project URL          |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes      | Supabase anonymous/public key      |
-| `NEXT_PUBLIC_APP_NAME`          | No       | App name (default: "MCP Registry") |
+| Variable                        | Required | Description                   |
+| ------------------------------- | -------- | ----------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Yes      | Your Supabase project URL     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes      | Supabase anonymous/public key |
 
 **Important**: Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never put secrets in these variables.
 
 ## Database & Migrations
-
-This project uses Supabase CLI for database migrations.
 
 ### Local Development (with Docker)
 
@@ -136,12 +234,6 @@ pnpm supabase:types
 # Stop local Supabase
 pnpm supabase:stop
 ```
-
-Local Supabase runs at:
-
-- **Studio**: http://localhost:54323
-- **API**: http://localhost:54321
-- **DB**: postgresql://postgres:postgres@localhost:54322/postgres
 
 ### Remote Development (without Docker)
 
@@ -173,7 +265,33 @@ pnpm supabase:db:reset
 pnpm supabase:db:push
 ```
 
-## Connecting Supabase
+### Migration Immutability Rule
+
+**IMPORTANT**: Once a migration has been committed to git or applied to any environment (local, staging, production), it must NEVER be modified. This is critical for database consistency.
+
+If you need to change something in an applied migration:
+
+1. **DO NOT** edit the existing migration file
+2. **DO** create a new migration that makes the necessary changes
+3. The new migration should be additive (ALTER, CREATE OR REPLACE, etc.)
+
+Example - fixing a function:
+
+```bash
+# Wrong: Editing 20260101_create_function.sql after it was applied
+
+# Correct: Create a new migration
+supabase migration new fix_function_xyz
+# Then add ALTER/CREATE OR REPLACE statements in the new file
+```
+
+This ensures:
+
+- All environments can replay migrations consistently
+- `supabase db reset` works from scratch
+- No drift between local, staging, and production databases
+
+## Connecting to Production Supabase
 
 ### 1. Create a Supabase project
 
@@ -186,29 +304,24 @@ pnpm supabase:db:push
 2. Copy the **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
 3. Copy the **anon public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-### 3. Using Supabase in code
+### 3. Push migrations
 
-**Client Components** (use `'use client'` directive):
-
-```tsx
-"use client";
-import { createClient } from "@/lib/supabase/client";
-
-export function MyComponent() {
-  const supabase = createClient();
-  // Use supabase...
-}
+```bash
+supabase link --project-ref <your-project-ref>
+supabase db push
 ```
 
-**Server Components/API Routes**:
+### 4. Set first admin (production)
 
-```tsx
-import { createClient } from "@/lib/supabase/server";
+```sql
+-- In Supabase SQL Editor
+-- First, find your user ID after signing in
+SELECT id, email FROM auth.users;
 
-export default async function MyServerComponent() {
-  const supabase = await createClient();
-  // Use supabase...
-}
+-- Then update their profile
+UPDATE public.profiles
+SET role = 'admin'
+WHERE id = '<your-user-id>';
 ```
 
 ## Deployment on Vercel
@@ -220,24 +333,12 @@ export default async function MyServerComponent() {
 3. Configure environment variables in Vercel dashboard
 4. Deploy!
 
-Vercel automatically detects Next.js and configures the build.
-
 ### Environment Variables in Vercel
 
 Add these in your Vercel project settings:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-### Manual Deployment
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
 
 ## Testing
 
@@ -265,6 +366,18 @@ pnpm test:e2e:ui
 
 # Install browsers (first time)
 pnpm exec playwright install
+```
+
+### Validate Everything Locally
+
+```bash
+# Full local validation workflow
+pnpm supabase:start
+pnpm supabase:db:reset
+pnpm supabase:types
+pnpm dev &
+pnpm test
+pnpm test:e2e
 ```
 
 ## Git Hooks

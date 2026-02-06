@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:ci": "CI_SKIP_AUTH_TESTS=true playwright test",
     "test:e2e:ui": "playwright test --ui",
     "prepare": "husky",
     "supabase:start": "supabase start",

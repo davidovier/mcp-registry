@@ -1,0 +1,159 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { createClient } from "@/lib/supabase/server";
+
+export const metadata = {
+  title: "My Submissions",
+  description: "View your MCP server submissions",
+};
+
+interface SubmittedPayload {
+  slug: string;
+  name: string;
+  description: string;
+}
+
+export default async function MySubmissionsPage() {
+  const supabase = await createClient();
+
+  // Require authentication
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/signin?next=/my/submissions");
+  }
+
+  // Fetch user's submissions
+  const { data: submissions, error } = await supabase
+    .from("mcp_server_submissions")
+    .select("id, status, created_at, submitted_payload, review_notes")
+    .eq("submitted_by", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching submissions:", error);
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+            My Submissions
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Track the status of your submitted MCP servers
+          </p>
+        </div>
+        <Link
+          href="/submit"
+          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+        >
+          Submit New
+        </Link>
+      </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+          Failed to load submissions. Please try again later.
+        </div>
+      )}
+
+      {!error && (!submissions || submissions.length === 0) && (
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50">
+          <p className="mb-4 text-gray-600 dark:text-gray-400">
+            You haven&apos;t submitted any MCP servers yet.
+          </p>
+          <Link
+            href="/submit"
+            className="inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          >
+            Submit Your First Server
+          </Link>
+        </div>
+      )}
+
+      {submissions && submissions.length > 0 && (
+        <div className="space-y-4">
+          {submissions.map((submission) => {
+            const payload = submission.submitted_payload as SubmittedPayload;
+
+            return (
+              <div
+                key={submission.id}
+                className="rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <h2 className="font-semibold text-gray-900 dark:text-white">
+                        {payload.name}
+                      </h2>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        ({payload.slug})
+                      </span>
+                    </div>
+                    <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                      {payload.description.slice(0, 150)}
+                      {payload.description.length > 150 ? "..." : ""}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                      Submitted{" "}
+                      {new Date(submission.created_at).toLocaleDateString()}
+                    </p>
+                    {submission.review_notes && (
+                      <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700/50">
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                          Admin Notes:
+                        </p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          {submission.review_notes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <StatusBadge status={submission.status} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const statusConfig = {
+    pending: {
+      className:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+      label: "Pending Review",
+    },
+    approved: {
+      className:
+        "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+      label: "Approved",
+    },
+    rejected: {
+      className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+      label: "Rejected",
+    },
+  };
+
+  const config = statusConfig[status as keyof typeof statusConfig] || {
+    className: "bg-gray-100 text-gray-800",
+    label: status,
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.className}`}
+    >
+      {config.label}
+    </span>
+  );
+}
