@@ -112,8 +112,12 @@ test.describe("Servers page (public)", () => {
     await page.goto("/servers");
 
     const sidebar = page.locator("aside");
-    await expect(sidebar.getByText("Capabilities")).toBeVisible();
-    await expect(sidebar.getByText(/coming soon/i)).toBeVisible();
+    await expect(
+      sidebar.getByRole("heading", { name: "Capabilities" })
+    ).toBeVisible();
+    await expect(
+      sidebar.getByText("Filtering by capabilities is coming soon.")
+    ).toBeVisible();
   });
 
   test("should update URL cursor when loading more", async ({ page }) => {
