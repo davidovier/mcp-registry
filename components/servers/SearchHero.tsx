@@ -31,7 +31,7 @@ export function SearchHero({ totalCount }: SearchHeroProps) {
   );
 
   return (
-    <section className="border-b border-border bg-surface-secondary">
+    <section className="bg-surface-secondary">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <h1 className="mb-2 text-center text-display-lg text-content-primary">
           MCP Server Registry

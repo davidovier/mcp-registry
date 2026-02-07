@@ -78,13 +78,15 @@ export function CapabilityBadges({ data }: CapabilityBadgesProps) {
         {capabilities.map((cap) => {
           const enabled = data[cap.key];
           return (
-            <Card
-              key={cap.key}
-              padding="sm"
-              className={!enabled ? "opacity-50" : ""}
-            >
+            <Card key={cap.key} padding="sm">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
+                <div
+                  className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg ${
+                    enabled
+                      ? "bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400"
+                      : "bg-surface-sunken text-content-tertiary"
+                  }`}
+                >
                   {cap.icon}
                 </div>
                 <div>

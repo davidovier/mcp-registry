@@ -44,6 +44,24 @@ const eslintConfig = [
     },
   },
   {
+    files: ["**/*.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "Literal[value=/gray-/]",
+          message:
+            "Avoid raw gray-* Tailwind classes. Use semantic tokens instead (text-content-*, bg-surface-*, border-border).",
+        },
+        {
+          selector: "TemplateLiteral[quasis.0.value.raw=/gray-/]",
+          message:
+            "Avoid raw gray-* Tailwind classes. Use semantic tokens instead (text-content-*, bg-surface-*, border-border).",
+        },
+      ],
+    },
+  },
+  {
     ignores: [
       ".next/**",
       "node_modules/**",

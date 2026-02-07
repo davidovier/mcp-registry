@@ -43,7 +43,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-lg border border-border bg-surface-secondary">
       {/* Header */}
       <div
         className="flex cursor-pointer items-center justify-between p-4"
@@ -51,34 +51,34 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
       >
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-content-primary">
               {payload.name}
             </h3>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="text-sm text-content-tertiary">
               ({payload.slug})
             </span>
             <StatusBadge status={submission.status} />
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-content-secondary">
             {payload.description.slice(0, 100)}
             {payload.description.length > 100 ? "..." : ""}
           </p>
         </div>
-        <button className="ml-4 text-gray-400 hover:text-gray-600">
+        <button className="ml-4 text-content-tertiary hover:text-content-secondary">
           {isExpanded ? "▲" : "▼"}
         </button>
       </div>
 
       {/* Expanded details */}
       {isExpanded && (
-        <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+        <div className="border-t border-border p-4">
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Left column - Server details */}
             <div className="space-y-3">
               <DetailRow label="Slug" value={payload.slug} />
               <DetailRow label="Name" value={payload.name} />
               <DetailRow label="Description">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-content-secondary">
                   {payload.description}
                 </p>
               </DetailRow>
@@ -89,7 +89,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                   {payload.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                      className="rounded bg-surface-sunken px-2 py-0.5 text-xs text-content-secondary"
                     >
                       {tag}
                     </span>
@@ -119,7 +119,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                     href={payload.homepage_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-600 text-sm hover:underline"
+                    className="text-sm text-brand-600 hover:underline"
                   >
                     {payload.homepage_url}
                   </a>
@@ -131,7 +131,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                     href={payload.repo_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-600 text-sm hover:underline"
+                    className="text-sm text-brand-600 hover:underline"
                   >
                     {payload.repo_url}
                   </a>
@@ -143,7 +143,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                     href={payload.docs_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-600 text-sm hover:underline"
+                    className="text-sm text-brand-600 hover:underline"
                   >
                     {payload.docs_url}
                   </a>
@@ -180,11 +180,11 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
 
           {/* Review notes (if already reviewed) */}
           {submission.review_notes && (
-            <div className="mt-4 rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700/50">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            <div className="mt-4 rounded-md border border-border bg-surface-sunken p-3">
+              <p className="text-xs font-medium text-content-tertiary">
                 Review Notes:
               </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+              <p className="text-sm text-content-secondary">
                 {submission.review_notes}
               </p>
             </div>
@@ -192,9 +192,9 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
 
           {/* Action buttons (only for pending) */}
           {!readonly && submission.status === "pending" && (
-            <div className="mt-4 space-y-3 border-t border-gray-200 pt-4 dark:border-gray-700">
+            <div className="mt-4 space-y-3 border-t border-border pt-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="mb-1 block text-sm font-medium text-content-primary">
                   Notes (required for rejection)
                 </label>
                 <textarea
@@ -203,7 +203,7 @@ export function SubmissionCard({ submission, readonly }: SubmissionCardProps) {
                   placeholder="Add optional notes for approval, or required reason for rejection..."
                   rows={2}
                   disabled={isPending}
-                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="w-full rounded-md border border-border bg-surface-secondary px-3 py-2 text-sm text-content-primary focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50"
                 />
               </div>
 
@@ -248,12 +248,8 @@ function DetailRow({
 }) {
   return (
     <div>
-      <dt className="text-xs font-medium text-gray-500 dark:text-gray-400">
-        {label}
-      </dt>
-      <dd className="text-sm text-gray-900 dark:text-white">
-        {value || children}
-      </dd>
+      <dt className="text-xs font-medium text-content-tertiary">{label}</dt>
+      <dd className="text-sm text-content-primary">{value || children}</dd>
     </div>
   );
 }
@@ -282,7 +278,7 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   const config = statusConfig[status as keyof typeof statusConfig] || {
-    className: "bg-gray-100 text-gray-800",
+    className: "bg-surface-sunken text-content-secondary",
     label: status,
   };
 

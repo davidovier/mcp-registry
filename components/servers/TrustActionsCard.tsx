@@ -1,5 +1,3 @@
-import { Card } from "@/components/ui/Card";
-
 import { RequestVerificationButton } from "./RequestVerificationButton";
 
 interface TrustActionsCardProps {
@@ -20,7 +18,7 @@ export function TrustActionsCard({
   const showPendingBadge = hasPendingRequest && !isVerified;
 
   return (
-    <Card padding="md" className={!isOwner ? "border-dashed" : undefined}>
+    <div>
       <h3 className="mb-3 text-heading-sm text-content-primary">
         Trust &amp; ownership
       </h3>
@@ -92,9 +90,9 @@ export function TrustActionsCard({
         )}
 
         {isVerified && (
-          <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-body-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
+          <div className="flex items-center gap-2 px-3 py-2 text-body-sm text-content-secondary">
             <svg
-              className="h-4 w-4"
+              className="h-4 w-4 text-green-600 dark:text-green-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -141,7 +139,7 @@ export function TrustActionsCard({
           Sign in as owner to manage this server
         </p>
       )}
-    </Card>
+    </div>
   );
 }
 

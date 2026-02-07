@@ -135,23 +135,23 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="mb-2 text-display-md text-content-primary">
           Admin Moderation
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-content-secondary">
           Review submissions and verification requests
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="mb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="mb-6 border-b border-border">
         <nav className="-mb-px flex gap-4">
           <Link
             href="/admin/submissions?tab=submissions"
             className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
               activeTab === "submissions"
                 ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
-                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                : "border-transparent text-content-tertiary hover:border-border-strong hover:text-content-secondary"
             }`}
           >
             Submissions
@@ -166,7 +166,7 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
             className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
               activeTab === "verifications"
                 ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
-                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                : "border-transparent text-content-tertiary hover:border-border-strong hover:text-content-secondary"
             }`}
           >
             Verifications
@@ -191,13 +191,13 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
         <>
           {/* Pending Submissions */}
           <section className="mb-12">
-            <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="mb-4 text-heading-lg text-content-primary">
               Pending Review ({pendingSubmissions.length})
             </h2>
 
             {pendingSubmissions.length === 0 ? (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center dark:border-gray-700 dark:bg-gray-800/50">
-                <p className="text-gray-600 dark:text-gray-400">
+              <div className="rounded-lg border border-border bg-surface-sunken p-6 text-center">
+                <p className="text-content-secondary">
                   No submissions pending review
                 </p>
               </div>
@@ -217,13 +217,13 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
           {invalidSubmissions.length > 0 && (
             <section className="mb-12">
               <details className="group">
-                <summary className="mb-4 cursor-pointer text-xl font-semibold text-gray-900 dark:text-white">
+                <summary className="mb-4 cursor-pointer text-heading-lg text-content-primary">
                   Invalid Submissions ({invalidSubmissions.length})
-                  <span className="ml-2 text-sm font-normal text-gray-500">
+                  <span className="ml-2 text-body-sm font-normal text-content-tertiary">
                     (click to expand)
                   </span>
                 </summary>
-                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mb-4 text-body-sm text-content-tertiary">
                   These submissions failed validation and were automatically
                   marked as invalid. No admin action required.
                 </p>
@@ -244,13 +244,13 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
           {reviewedSubmissions.length > 0 && (
             <section>
               <details className="group">
-                <summary className="mb-4 cursor-pointer text-xl font-semibold text-gray-900 dark:text-white">
+                <summary className="mb-4 cursor-pointer text-heading-lg text-content-primary">
                   Previously Reviewed ({reviewedSubmissions.length})
-                  <span className="ml-2 text-sm font-normal text-gray-500">
+                  <span className="ml-2 text-body-sm font-normal text-content-tertiary">
                     (click to expand)
                   </span>
                 </summary>
-                <div className="mb-2 flex gap-4 text-sm text-gray-500">
+                <div className="mb-2 flex gap-4 text-sm text-content-tertiary">
                   <span className="text-green-600 dark:text-green-400">
                     {
                       reviewedSubmissions.filter((s) => s.status === "approved")
@@ -292,13 +292,13 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
         <>
           {/* Pending Verifications */}
           <section className="mb-12">
-            <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="mb-4 text-heading-lg text-content-primary">
               Pending Verification Requests ({pendingVerifications.length})
             </h2>
 
             {pendingVerifications.length === 0 ? (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center dark:border-gray-700 dark:bg-gray-800/50">
-                <p className="text-gray-600 dark:text-gray-400">
+              <div className="rounded-lg border border-border bg-surface-sunken p-6 text-center">
+                <p className="text-content-secondary">
                   No verification requests pending review
                 </p>
               </div>
@@ -320,13 +320,13 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
           {reviewedVerifications.length > 0 && (
             <section>
               <details className="group">
-                <summary className="mb-4 cursor-pointer text-xl font-semibold text-gray-900 dark:text-white">
+                <summary className="mb-4 cursor-pointer text-heading-lg text-content-primary">
                   Previously Reviewed ({reviewedVerifications.length})
-                  <span className="ml-2 text-sm font-normal text-gray-500">
+                  <span className="ml-2 text-body-sm font-normal text-content-tertiary">
                     (click to expand)
                   </span>
                 </summary>
-                <div className="mb-2 flex gap-4 text-sm text-gray-500">
+                <div className="mb-2 flex gap-4 text-sm text-content-tertiary">
                   <span className="text-green-600 dark:text-green-400">
                     {
                       reviewedVerifications.filter(

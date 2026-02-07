@@ -146,7 +146,7 @@ export function ServerListClient({
         onRemove={removeFilter}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         {servers.map((server) => (
           <ServerCard key={server.id} server={server} />
         ))}

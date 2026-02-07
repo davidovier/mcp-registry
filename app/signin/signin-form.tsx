@@ -37,7 +37,7 @@ export function SignInForm() {
       <div>
         <label
           htmlFor="email"
-          className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="mb-1 block text-body-sm font-medium text-content-primary"
         >
           Email address
         </label>
@@ -50,7 +50,7 @@ export function SignInForm() {
           placeholder="you@example.com"
           required
           disabled={isLoading}
-          className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="w-full rounded-md border border-border bg-surface-secondary px-3 py-2 text-sm text-content-primary focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50"
         />
       </div>
 
@@ -69,12 +69,12 @@ export function SignInForm() {
       <button
         type="submit"
         disabled={isLoading || !email}
-        className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 w-full rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
+        className="w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50"
       >
         {isLoading ? "Sending..." : "Send Magic Link"}
       </button>
 
-      <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+      <p className="text-center text-caption text-content-tertiary">
         We&apos;ll send you an email with a link to sign in.
         <br />
         No password required.

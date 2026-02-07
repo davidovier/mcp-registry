@@ -29,12 +29,12 @@ export default async function SignInPage({
   return (
     <div className="container mx-auto flex min-h-[60vh] items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
-        <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="rounded-lg border border-border bg-surface-secondary p-8 shadow-card">
           <div className="mb-6 text-center">
-            <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="mb-2 text-display-md text-content-primary">
               Sign In
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-body-sm text-content-secondary">
               Enter your email to receive a magic link
             </p>
           </div>

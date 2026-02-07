@@ -1,5 +1,3 @@
-import { Card } from "@/components/ui/Card";
-
 interface QualitySignalsProps {
   hasDocumentation: boolean;
   hasRepository: boolean;
@@ -42,7 +40,7 @@ export function QualitySignals({
   const metCount = signals.filter((s) => s.met).length;
 
   return (
-    <Card padding="md">
+    <div>
       <h3 className="mb-3 text-heading-sm text-content-primary">
         Quality signals
       </h3>
@@ -93,6 +91,6 @@ export function QualitySignals({
       <p className="mt-3 text-caption text-content-tertiary">
         {metCount} of {signals.length} signals met
       </p>
-    </Card>
+    </div>
   );
 }

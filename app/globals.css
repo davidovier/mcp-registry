@@ -66,9 +66,8 @@
   --surface-sunken: #000000;
 
   --text-primary: var(--color-neutral-100);
-  --text-secondary: var(--color-neutral-400);
-  /* Lightened from neutral-500 to neutral-400 for better contrast (4.12:1 -> 7.83:1) */
-  --text-tertiary: var(--color-neutral-400);
+  --text-secondary: var(--color-neutral-300);
+  --text-tertiary: var(--color-neutral-500);
   --text-inverse: var(--color-neutral-900);
 
   --border-default: var(--color-neutral-800);

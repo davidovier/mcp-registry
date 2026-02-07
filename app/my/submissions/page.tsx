@@ -52,16 +52,16 @@ export default async function MySubmissionsPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="mb-2 text-display-md text-content-primary">
             My Submissions
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-content-secondary">
             Track the status of your submitted MCP servers
           </p>
         </div>
         <Link
           href="/submit"
-          className="bg-primary-600 hover:bg-primary-700 rounded-md px-4 py-2 text-sm font-medium text-white"
+          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           Submit New
         </Link>
@@ -74,13 +74,13 @@ export default async function MySubmissionsPage() {
       )}
 
       {!error && (!submissions || submissions.length === 0) && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800/50">
-          <p className="mb-4 text-gray-600 dark:text-gray-400">
+        <div className="rounded-lg border border-border bg-surface-sunken p-8 text-center">
+          <p className="mb-4 text-content-secondary">
             You haven&apos;t submitted any MCP servers yet.
           </p>
           <Link
             href="/submit"
-            className="bg-primary-600 hover:bg-primary-700 inline-block rounded-md px-4 py-2 text-sm font-medium text-white"
+            className="inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
           >
             Submit Your First Server
           </Link>
@@ -96,23 +96,23 @@ export default async function MySubmissionsPage() {
             return (
               <div
                 key={sub.id}
-                className="rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800"
+                className="rounded-lg border border-border bg-surface-secondary p-5"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="mb-1 flex items-center gap-2">
-                      <h2 className="font-semibold text-gray-900 dark:text-white">
+                      <h2 className="font-semibold text-content-primary">
                         {payload.name || "(unnamed)"}
                       </h2>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="text-sm text-content-tertiary">
                         ({payload.slug || "no-slug"})
                       </span>
                     </div>
-                    <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p className="mb-2 text-sm text-content-secondary">
                       {payload.description?.slice(0, 150) || "(no description)"}
                       {(payload.description?.length || 0) > 150 ? "..." : ""}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                    <p className="text-xs text-content-tertiary">
                       Submitted {new Date(sub.created_at).toLocaleDateString()}
                     </p>
 
@@ -138,11 +138,11 @@ export default async function MySubmissionsPage() {
 
                     {/* Admin review notes */}
                     {sub.review_notes && (
-                      <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700/50">
-                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                      <div className="mt-3 rounded-md border border-border bg-surface-sunken p-3">
+                        <p className="text-xs font-medium text-content-tertiary">
                           Admin Notes:
                         </p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                        <p className="text-sm text-content-secondary">
                           {sub.review_notes}
                         </p>
                       </div>
@@ -183,7 +183,7 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   const config = statusConfig[status as keyof typeof statusConfig] || {
-    className: "bg-gray-100 text-gray-800",
+    className: "bg-surface-sunken text-content-secondary",
     label: status,
   };
 

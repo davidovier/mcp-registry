@@ -14,6 +14,7 @@ import {
 } from "@/components/servers";
 import { Badge } from "@/components/ui/Badge";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { Card } from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/server";
 import type { McpCapabilities } from "@/lib/supabase/types";
 
@@ -106,8 +107,8 @@ export default async function ServerDetailPage({ params }: Props) {
         <header className="mb-8">
           <div className="flex items-start gap-4">
             {/* Avatar initial block */}
-            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-100 to-brand-200 dark:from-brand-900 dark:to-brand-800">
-              <span className="text-display-md text-brand-600 dark:text-brand-400">
+            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
+              <span className="text-display-md text-content-secondary">
                 {server.name.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -177,31 +178,35 @@ export default async function ServerDetailPage({ params }: Props) {
               repoUrl={server.repo_url}
             />
 
-            {/* Quality signals */}
-            <QualitySignals
-              hasDocumentation={Boolean(server.docs_url)}
-              hasRepository={Boolean(server.repo_url)}
-              requiresAuth={server.auth !== "none"}
-              recentlyUpdated={daysSinceUpdate <= 90}
-              verified={server.verified}
-            />
+            {/* Server info panel: consolidated sidebar card */}
+            <Card padding="md">
+              <QualitySignals
+                hasDocumentation={Boolean(server.docs_url)}
+                hasRepository={Boolean(server.repo_url)}
+                requiresAuth={server.auth !== "none"}
+                recentlyUpdated={daysSinceUpdate <= 90}
+                verified={server.verified}
+              />
 
-            {/* Details metadata */}
-            <MetadataCard
-              transport={server.transport}
-              auth={server.auth}
-              verified={server.verified}
-              createdAt={server.created_at}
-              updatedAt={server.updated_at}
-            />
+              <div className="my-4 border-t border-border" />
 
-            {/* Trust & ownership */}
-            <TrustActionsCard
-              serverId={server.id}
-              isOwner={isOwner}
-              isVerified={server.verified}
-              hasPendingRequest={hasPendingRequest}
-            />
+              <MetadataCard
+                transport={server.transport}
+                auth={server.auth}
+                verified={server.verified}
+                createdAt={server.created_at}
+                updatedAt={server.updated_at}
+              />
+
+              <div className="my-4 border-t border-border" />
+
+              <TrustActionsCard
+                serverId={server.id}
+                isOwner={isOwner}
+                isVerified={server.verified}
+                hasPendingRequest={hasPendingRequest}
+              />
+            </Card>
           </aside>
         </div>
       </div>

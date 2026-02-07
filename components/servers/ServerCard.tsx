@@ -19,7 +19,7 @@ export function ServerCard({ server }: ServerCardProps) {
       <Link href={`/servers/${server.slug}`} className="block p-4">
         <Card.Header>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-100 to-brand-200 text-heading-md font-semibold text-brand-600 dark:from-brand-900 dark:to-brand-800 dark:text-brand-400">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-neutral-100 to-neutral-200 text-heading-md font-semibold text-content-secondary dark:from-neutral-800 dark:to-neutral-700">
               {server.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">

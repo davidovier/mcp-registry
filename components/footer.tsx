@@ -21,19 +21,19 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+    <footer className="border-t border-border bg-surface-secondary">
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
             <Link
               href="/"
-              className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white"
+              className="flex items-center gap-2 text-lg font-bold text-content-primary"
             >
-              <span className="text-primary-600">MCP</span>
+              <span className="text-brand-600">MCP</span>
               <span>Registry</span>
             </Link>
-            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-sm text-content-secondary">
               The central hub for discovering and sharing Model Context Protocol
               servers and tools.
             </p>
@@ -41,7 +41,7 @@ export function Footer() {
 
           {/* Product links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+            <h3 className="mb-4 text-sm font-semibold text-content-primary">
               Product
             </h3>
             <ul className="space-y-2">
@@ -49,7 +49,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    className="text-sm text-content-secondary transition-colors hover:text-content-primary"
                   >
                     {link.name}
                   </Link>
@@ -60,7 +60,7 @@ export function Footer() {
 
           {/* Resources links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+            <h3 className="mb-4 text-sm font-semibold text-content-primary">
               Resources
             </h3>
             <ul className="space-y-2">
@@ -68,7 +68,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    className="text-sm text-content-secondary transition-colors hover:text-content-primary"
                     {...(link.href.startsWith("http")
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
@@ -82,7 +82,7 @@ export function Footer() {
 
           {/* Legal links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+            <h3 className="mb-4 text-sm font-semibold text-content-primary">
               Legal
             </h3>
             <ul className="space-y-2">
@@ -90,7 +90,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    className="text-sm text-content-secondary transition-colors hover:text-content-primary"
                   >
                     {link.name}
                   </Link>
@@ -101,8 +101,8 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="mt-12 border-t border-border pt-8">
+          <p className="text-center text-sm text-content-tertiary">
             &copy; {currentYear} MCP Registry. All rights reserved.
           </p>
         </div>

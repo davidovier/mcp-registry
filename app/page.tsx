@@ -4,10 +4,10 @@ export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="mx-auto max-w-3xl text-center">
-        <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+        <h1 className="mb-6 text-display-lg tracking-tight text-content-primary sm:text-5xl">
           MCP Registry
         </h1>
-        <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
+        <p className="mb-8 text-body-lg text-content-secondary">
           Discover, share, and manage Model Context Protocol (MCP) servers and
           tools. The central hub for the MCP ecosystem.
         </p>
@@ -20,7 +20,7 @@ export default function HomePage() {
           </Link>
           <Link
             href="/docs"
-            className="focus:ring-primary-500 inline-flex items-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="inline-flex items-center rounded-lg border border-border bg-surface-secondary px-6 py-3 text-sm font-semibold text-content-primary shadow-sm transition-colors hover:bg-surface-sunken focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
           >
             Documentation
           </Link>
@@ -54,11 +54,11 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 p-6 transition-shadow hover:shadow-md dark:border-gray-700">
-      <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+    <div className="rounded-xl border border-border p-6 transition-shadow hover:shadow-md">
+      <h3 className="mb-2 text-lg font-semibold text-content-primary">
         {title}
       </h3>
-      <p className="text-gray-600 dark:text-gray-400">{description}</p>
+      <p className="text-content-secondary">{description}</p>
     </div>
   );
 }

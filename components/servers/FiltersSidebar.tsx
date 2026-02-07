@@ -56,7 +56,7 @@ export function FiltersSidebar({ className }: FiltersSidebarProps) {
 
   return (
     <aside className={cn("flex-shrink-0 lg:w-64", className)}>
-      <div className="sticky top-20 space-y-6">
+      <div className="sticky top-20 space-y-6 rounded-xl bg-surface-secondary p-4">
         <FilterGroup title="Transport">
           {TRANSPORT_OPTIONS.map((option) => (
             <FilterOption

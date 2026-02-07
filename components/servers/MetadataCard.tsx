@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/Badge";
-import { Card } from "@/components/ui/Card";
 
 interface MetadataCardProps {
   transport: string;
@@ -25,7 +24,7 @@ export function MetadataCard({
   updatedAt,
 }: MetadataCardProps) {
   return (
-    <Card padding="md">
+    <div>
       <h3 className="mb-2 text-heading-sm text-content-primary">Details</h3>
       <dl>
         <MetadataItem
@@ -145,7 +144,7 @@ export function MetadataCard({
           isLast
         />
       </dl>
-    </Card>
+    </div>
   );
 }
 

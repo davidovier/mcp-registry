@@ -31,14 +31,14 @@ export async function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80">
+    <header className="bg-surface-secondary/80 sticky top-0 z-50 border-b border-border backdrop-blur-sm">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white"
+          className="flex items-center gap-2 text-xl font-bold text-content-primary"
         >
-          <span className="text-primary-600">MCP</span>
+          <span className="text-brand-600">MCP</span>
           <span>Registry</span>
         </Link>
 
@@ -48,7 +48,7 @@ export async function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              className="text-sm font-medium text-content-secondary transition-colors hover:text-content-primary"
             >
               {item.name}
             </Link>
