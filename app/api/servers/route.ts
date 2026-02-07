@@ -137,7 +137,11 @@ export async function GET(request: NextRequest) {
       response.total = count;
     }
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+      },
+    });
   } catch (error) {
     console.error("Unexpected API error:", error);
     return NextResponse.json(

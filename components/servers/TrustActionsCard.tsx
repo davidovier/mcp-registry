@@ -1,14 +1,34 @@
 import { Card } from "@/components/ui/Card";
 
-export function TrustActionsCard() {
+import { RequestVerificationButton } from "./RequestVerificationButton";
+
+interface TrustActionsCardProps {
+  serverId: string;
+  isOwner: boolean;
+  isVerified: boolean;
+  hasPendingRequest: boolean;
+}
+
+export function TrustActionsCard({
+  serverId,
+  isOwner,
+  isVerified,
+  hasPendingRequest,
+}: TrustActionsCardProps) {
+  // Determine what to show for verification
+  const showVerificationButton = isOwner && !isVerified && !hasPendingRequest;
+  const showPendingBadge = hasPendingRequest && !isVerified;
+
   return (
-    <Card padding="md" className="border-dashed">
+    <Card padding="md" className={!isOwner ? "border-dashed" : undefined}>
       <h3 className="mb-3 text-heading-sm text-content-primary">
         Trust &amp; ownership
       </h3>
       <div className="space-y-2">
+        {/* Report an issue - placeholder */}
         <TrustActionButton
           label="Report an issue"
+          disabled
           icon={
             <svg
               className="h-4 w-4"
@@ -25,8 +45,11 @@ export function TrustActionsCard() {
             </svg>
           }
         />
+
+        {/* Claim ownership - placeholder */}
         <TrustActionButton
           label="Claim ownership"
+          disabled
           icon={
             <svg
               className="h-4 w-4"
@@ -43,9 +66,14 @@ export function TrustActionsCard() {
             </svg>
           }
         />
-        <TrustActionButton
-          label="Request verification"
-          icon={
+
+        {/* Verification section */}
+        {showVerificationButton && (
+          <RequestVerificationButton serverId={serverId} />
+        )}
+
+        {showPendingBadge && (
+          <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-body-sm text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
             <svg
               className="h-4 w-4"
               fill="none"
@@ -56,13 +84,63 @@ export function TrustActionsCard() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={1.5}
-                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-          }
-        />
+            Verification pending review
+          </div>
+        )}
+
+        {isVerified && (
+          <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-body-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Verified by registry
+          </div>
+        )}
+
+        {!isOwner &&
+          !showVerificationButton &&
+          !showPendingBadge &&
+          !isVerified && (
+            <TrustActionButton
+              label="Request verification"
+              disabled
+              icon={
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                  />
+                </svg>
+              }
+            />
+          )}
       </div>
-      <p className="mt-3 text-caption text-content-tertiary">Coming soon</p>
+
+      {!isOwner && (
+        <p className="mt-3 text-caption text-content-tertiary">
+          Sign in as owner to manage this server
+        </p>
+      )}
     </Card>
   );
 }
@@ -70,13 +148,15 @@ export function TrustActionsCard() {
 function TrustActionButton({
   label,
   icon,
+  disabled,
 }: {
   label: string;
   icon: React.ReactNode;
+  disabled?: boolean;
 }) {
   return (
     <button
-      disabled
+      disabled={disabled}
       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-body-sm text-content-secondary transition-colors hover:bg-surface-sunken disabled:cursor-not-allowed disabled:opacity-50"
     >
       {icon}

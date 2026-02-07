@@ -7,6 +7,7 @@ import {
   ExternalLinks,
   InstallSnippet,
   MetadataCard,
+  QualitySignals,
   QuickActionsCard,
   TrustActionsCard,
   VerifiedBadge,
@@ -46,6 +47,7 @@ export default async function ServerDetailPage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
 
+  // Fetch server data
   const { data: server, error } = await supabase
     .from("mcp_servers")
     .select("*")
@@ -56,7 +58,34 @@ export default async function ServerDetailPage({ params }: Props) {
     notFound();
   }
 
+  // Fetch current user for ownership check
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Check if user is the owner
+  const isOwner = Boolean(user && server.owner_id === user.id);
+
+  // Check for pending verification request
+  let hasPendingRequest = false;
+  if (server.id) {
+    const { data: pendingRequest } = await supabase
+      .from("verification_requests")
+      .select("id")
+      .eq("server_id", server.id)
+      .eq("status", "pending")
+      .maybeSingle();
+    hasPendingRequest = Boolean(pendingRequest);
+  }
+
   const capabilities = server.capabilities as McpCapabilities;
+
+  // Calculate quality signals
+  const now = new Date();
+  const updatedAt = new Date(server.updated_at);
+  const daysSinceUpdate = Math.floor(
+    (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24)
+  );
 
   return (
     <div>
@@ -148,6 +177,15 @@ export default async function ServerDetailPage({ params }: Props) {
               repoUrl={server.repo_url}
             />
 
+            {/* Quality signals */}
+            <QualitySignals
+              hasDocumentation={Boolean(server.docs_url)}
+              hasRepository={Boolean(server.repo_url)}
+              requiresAuth={server.auth !== "none"}
+              recentlyUpdated={daysSinceUpdate <= 90}
+              verified={server.verified}
+            />
+
             {/* Details metadata */}
             <MetadataCard
               transport={server.transport}
@@ -158,7 +196,12 @@ export default async function ServerDetailPage({ params }: Props) {
             />
 
             {/* Trust & ownership */}
-            <TrustActionsCard />
+            <TrustActionsCard
+              serverId={server.id}
+              isOwner={isOwner}
+              isVerified={server.verified}
+              hasPendingRequest={hasPendingRequest}
+            />
           </aside>
         </div>
       </div>

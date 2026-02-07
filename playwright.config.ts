@@ -1,4 +1,10 @@
+import path from "path";
+
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+
+// Load environment variables from .env.local
+dotenv.config({ path: path.resolve(__dirname, ".env.local") });
 
 /**
  * Playwright configuration for E2E tests.
@@ -19,16 +25,15 @@ import { defineConfig, devices } from "@playwright/test";
  * @see https://playwright.dev/docs/test-configuration
  */
 
-// Check if auth testing is available (all required env vars present)
-const hasAuthConfig =
-  !!process.env.SUPABASE_SERVICE_ROLE_KEY &&
-  !!process.env.E2E_TEST_USER_EMAIL &&
-  !!process.env.E2E_TEST_USER_PASSWORD;
+// Check if Supabase is configured (required for any tests to work)
+const hasSupabaseConfig =
+  !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Skip auth tests in CI unless explicitly configured
+// Skip auth tests if explicitly disabled or in CI without Supabase
 const skipAuthTests =
   process.env.CI_SKIP_AUTH_TESTS === "true" ||
-  (!hasAuthConfig && !!process.env.CI);
+  (!hasSupabaseConfig && !!process.env.CI);
 
 export default defineConfig({
   testDir: "./e2e",
@@ -60,7 +65,11 @@ export default defineConfig({
     {
       name: "chromium",
       testMatch: /^(?!.*auth\.).*\.spec\.ts$/,
-      testIgnore: skipAuthTests ? [/auth\.spec\.ts/, /submit\.spec\.ts/] : [],
+      // Always ignore submit.spec.ts in chromium - it requires authentication
+      // Also ignore auth.spec.ts when auth tests are skipped
+      testIgnore: skipAuthTests
+        ? [/auth\.spec\.ts/, /submit\.spec\.ts/]
+        : [/submit\.spec\.ts/],
       use: { ...devices["Desktop Chrome"] },
     },
 

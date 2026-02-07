@@ -44,6 +44,22 @@ export type UserRole = "user" | "admin";
 // Submission status types
 export type SubmissionStatus = "pending" | "approved" | "rejected";
 
+// Verification request status types
+export type VerificationRequestStatus = "pending" | "approved" | "rejected";
+
+// Verification request structure
+export interface VerificationRequest {
+  id: string;
+  server_id: string;
+  requested_by: string;
+  status: VerificationRequestStatus;
+  request_notes: string | null;
+  review_notes: string | null;
+  created_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+}
+
 // Submission payload structure (what users submit)
 export interface SubmissionPayload {
   slug: string;

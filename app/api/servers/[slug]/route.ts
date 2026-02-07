@@ -60,7 +60,11 @@ export async function GET(
       return NextResponse.json({ error: "Server not found" }, { status: 404 });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+      },
+    });
   } catch (error) {
     console.error("Unexpected API error:", error);
     return NextResponse.json(

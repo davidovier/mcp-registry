@@ -133,6 +133,7 @@ export type Database = {
           homepage_url: string | null;
           id: string;
           name: string;
+          owner_id: string | null;
           repo_url: string | null;
           slug: string;
           tags: string[];
@@ -149,6 +150,7 @@ export type Database = {
           homepage_url?: string | null;
           id?: string;
           name: string;
+          owner_id?: string | null;
           repo_url?: string | null;
           slug: string;
           tags?: string[];
@@ -165,6 +167,7 @@ export type Database = {
           homepage_url?: string | null;
           id?: string;
           name?: string;
+          owner_id?: string | null;
           repo_url?: string | null;
           slug?: string;
           tags?: string[];
@@ -192,6 +195,50 @@ export type Database = {
         };
         Relationships: [];
       };
+      verification_requests: {
+        Row: {
+          id: string;
+          server_id: string;
+          requested_by: string;
+          status: string;
+          request_notes: string | null;
+          review_notes: string | null;
+          created_at: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          server_id: string;
+          requested_by: string;
+          status?: string;
+          request_notes?: string | null;
+          review_notes?: string | null;
+          created_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          server_id?: string;
+          requested_by?: string;
+          status?: string;
+          request_notes?: string | null;
+          review_notes?: string | null;
+          created_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_server_id_fkey";
+            columns: ["server_id"];
+            isOneToOne: false;
+            referencedRelation: "mcp_servers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -207,6 +254,16 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      approve_verification: {
+        Args: { p_request_id: string; p_notes?: string };
+        Returns: Database["public"]["CompositeTypes"]["verification_result"];
+        SetofOptions: {
+          from: "*";
+          to: "verification_result";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       is_admin: { Args: never; Returns: boolean };
       reject_submission: {
         Args: { p_notes: string; p_submission_id: string };
@@ -214,6 +271,26 @@ export type Database = {
         SetofOptions: {
           from: "*";
           to: "moderation_result";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      reject_verification: {
+        Args: { p_request_id: string; p_notes: string };
+        Returns: Database["public"]["CompositeTypes"]["verification_result"];
+        SetofOptions: {
+          from: "*";
+          to: "verification_result";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      request_verification: {
+        Args: { p_server_id: string; p_notes?: string };
+        Returns: Database["public"]["CompositeTypes"]["verification_result"];
+        SetofOptions: {
+          from: "*";
+          to: "verification_result";
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -231,6 +308,11 @@ export type Database = {
         success: boolean | null;
         error_message: string | null;
         server_id: string | null;
+      };
+      verification_result: {
+        success: boolean | null;
+        error_message: string | null;
+        request_id: string | null;
       };
     };
   };
