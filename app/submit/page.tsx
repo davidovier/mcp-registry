@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 
+import { SubmitForm } from "@/components/submit";
 import { createClient } from "@/lib/supabase/server";
 
-import { SubmitForm } from "./submit-form";
-
 export const metadata = {
-  title: "Submit MCP Server",
-  description: "Submit a new MCP server to the registry",
+  title: "Submit a Server | MCP Registry",
+  description: "Submit a new MCP server to the registry for review",
 };
 
 export default async function SubmitPage() {
@@ -22,17 +21,17 @@ export default async function SubmitPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
-            Submit MCP Server
+    <div className="container mx-auto px-4 py-8 lg:py-12">
+      <div className="mx-auto max-w-5xl">
+        {/* Page header */}
+        <header className="mb-8 lg:mb-12">
+          <h1 className="text-display-md text-content-primary">
+            Submit a server
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Submit a new MCP server to the registry. Your submission will be
-            reviewed by an admin before being published.
+          <p className="mt-2 text-body-lg text-content-secondary">
+            All submissions are reviewed before publishing.
           </p>
-        </div>
+        </header>
 
         <SubmitForm />
       </div>

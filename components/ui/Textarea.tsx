@@ -4,63 +4,58 @@ import { forwardRef } from "react";
 
 import { cn } from "@/lib/utils";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   hint?: string;
   error?: string;
-  icon?: React.ReactNode;
   showCount?: boolean;
+  maxLength?: number;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       className,
       label,
       hint,
       error,
-      icon,
-      id,
       showCount,
-      value,
       maxLength,
+      id,
+      value,
       ...props
     },
     ref
   ) => {
-    const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
+    const textareaId = id || label?.toLowerCase().replace(/\s+/g, "-");
     const currentLength = typeof value === "string" ? value.length : 0;
 
     return (
       <div className="space-y-1.5">
         {label && (
           <label
-            htmlFor={inputId}
+            htmlFor={textareaId}
             className="block text-body-sm font-medium text-content-primary"
           >
             {label}
           </label>
         )}
         <div className="relative">
-          {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-content-tertiary">
-              {icon}
-            </div>
-          )}
-          <input
+          <textarea
             ref={ref}
-            id={inputId}
+            id={textareaId}
             value={value}
             maxLength={maxLength}
             className={cn(
-              `h-10 w-full rounded-lg border border-border bg-surface-secondary px-3 text-content-primary transition-colors duration-150 placeholder:text-content-tertiary focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50`,
-              icon && "pl-10",
+              `min-h-[100px] w-full resize-y rounded-lg border border-border bg-surface-secondary px-3 py-2.5 text-content-primary transition-colors duration-150 placeholder:text-content-tertiary focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50`,
               error && "border-red-500 focus:border-red-500 focus:ring-red-500",
               className
             )}
             {...props}
           />
         </div>
+
         <div className="flex items-center justify-between gap-2">
           {hint && !error && (
             <p className="text-caption text-content-tertiary">{hint}</p>
@@ -81,7 +76,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               {error}
             </p>
           )}
-          {!hint && !error && showCount && <span />}
+          {!hint && !error && <span />}
           {showCount && maxLength && (
             <span
               className={cn(
@@ -102,5 +97,5 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-Input.displayName = "Input";
-export { Input };
+Textarea.displayName = "Textarea";
+export { Textarea };
