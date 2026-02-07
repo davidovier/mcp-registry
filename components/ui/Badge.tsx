@@ -29,7 +29,7 @@ export function Badge({
     error: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     info: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
     brand:
-      "bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400",
+      "bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300",
   };
 
   const dotColors = {

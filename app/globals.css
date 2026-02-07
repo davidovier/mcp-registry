@@ -67,7 +67,8 @@
 
   --text-primary: var(--color-neutral-100);
   --text-secondary: var(--color-neutral-400);
-  --text-tertiary: var(--color-neutral-500);
+  /* Lightened from neutral-500 to neutral-400 for better contrast (4.12:1 -> 7.83:1) */
+  --text-tertiary: var(--color-neutral-400);
   --text-inverse: var(--color-neutral-900);
 
   --border-default: var(--color-neutral-800);

@@ -13,6 +13,8 @@ playwright-report
 test-results
 playwright/.cache
 playwright/.auth
+e2e/screenshots
+e2e/design-audit-results.json
 
 # Environment variables (NEVER commit these)
 .env

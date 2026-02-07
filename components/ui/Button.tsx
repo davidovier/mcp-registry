@@ -39,7 +39,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary: `
         bg-brand-600 text-white
         hover:bg-brand-700
-        dark:bg-brand-500 dark:hover:bg-brand-600
+        dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400
       `,
       secondary: `
         bg-surface-secondary text-content-primary

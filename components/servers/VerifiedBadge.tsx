@@ -8,7 +8,7 @@ export function VerifiedBadge({ className }: VerifiedBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand-500 text-white",
+        "text-brand-950 dark:text-brand-950 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand-500",
         className
       )}
       title="Verified Server"
