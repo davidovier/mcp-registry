@@ -180,16 +180,19 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string;
+          display_name: string | null;
           id: string;
           role: string;
         };
         Insert: {
           created_at?: string;
+          display_name?: string | null;
           id: string;
           role?: string;
         };
         Update: {
           created_at?: string;
+          display_name?: string | null;
           id?: string;
           role?: string;
         };

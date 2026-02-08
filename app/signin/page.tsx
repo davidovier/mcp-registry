@@ -35,7 +35,7 @@ export default async function SignInPage({
               Sign In
             </h1>
             <p className="text-body-sm text-content-secondary">
-              Enter your email to receive a magic link
+              Sign in to your account or create a new one
             </p>
           </div>
 

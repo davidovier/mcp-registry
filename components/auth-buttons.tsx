@@ -19,7 +19,7 @@ export function AuthButtons({ user, isAdmin }: AuthButtonsProps) {
       <div className="flex items-center gap-4">
         <Link
           href="/signin"
-          className="bg-primary-600 hover:bg-primary-700 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700"
         >
           Sign In
         </Link>
@@ -31,13 +31,13 @@ export function AuthButtons({ user, isAdmin }: AuthButtonsProps) {
     <div className="flex items-center gap-4">
       <Link
         href="/submit"
-        className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+        className="text-sm font-medium text-content-secondary transition-colors hover:text-content-primary"
       >
         Submit
       </Link>
       <Link
         href="/my/submissions"
-        className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+        className="text-sm font-medium text-content-secondary transition-colors hover:text-content-primary"
       >
         My Submissions
       </Link>
@@ -49,10 +49,16 @@ export function AuthButtons({ user, isAdmin }: AuthButtonsProps) {
           Admin
         </Link>
       )}
+      <Link
+        href="/my/account"
+        className="text-sm font-medium text-content-secondary transition-colors hover:text-content-primary"
+      >
+        Account
+      </Link>
       <button
         onClick={() => startTransition(() => signOut())}
         disabled={isPending}
-        className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 disabled:opacity-50 dark:text-gray-300 dark:hover:text-white"
+        className="text-sm font-medium text-content-secondary transition-colors hover:text-content-primary disabled:opacity-50"
       >
         {isPending ? "..." : "Sign Out"}
       </button>

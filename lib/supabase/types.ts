@@ -38,6 +38,10 @@ export interface McpCapabilities {
   [key: string]: boolean | undefined;
 }
 
+// Convenience type aliases for profiles table
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
+
 // Role types
 export type UserRole = "user" | "admin";
 

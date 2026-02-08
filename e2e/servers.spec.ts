@@ -233,15 +233,17 @@ test.describe("Sign in page (public)", () => {
       page.getByRole("heading", { name: /sign in/i, level: 1 })
     ).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
+    // Default tab is "Sign In" with a password form — scope to form to avoid tab button
     await expect(
-      page.getByRole("button", { name: /send magic link/i })
+      page.locator("form").getByRole("button", { name: /^sign in$/i })
     ).toBeVisible();
   });
 
-  test("should have magic link button", async ({ page }) => {
+  test("should have magic link tab", async ({ page }) => {
     await page.goto("/signin");
 
-    // Be more specific - look for the button
+    // Click the Magic Link tab
+    await page.getByRole("button", { name: /magic link/i }).click();
     await expect(
       page.getByRole("button", { name: /send magic link/i })
     ).toBeVisible();
