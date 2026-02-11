@@ -24,7 +24,7 @@ export function Card({
     default: "",
     interactive: `
       cursor-pointer shadow-card
-      hover:shadow-card-hover hover:border-border-strong
+      hover:shadow-card-hover hover:border-border-strong hover:-translate-y-[1px]
       active:scale-[0.995]
     `,
     selected: `

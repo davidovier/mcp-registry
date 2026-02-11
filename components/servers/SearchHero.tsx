@@ -63,7 +63,7 @@ export function SearchHero({ totalCount }: SearchHeroProps) {
               defaultValue={currentQ}
               placeholder="Search servers by name or description..."
               aria-label="Search servers"
-              className="h-14 w-full rounded-xl border border-border bg-surface-primary pl-12 pr-4 text-body-lg text-content-primary transition-all placeholder:text-content-tertiary focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="h-14 w-full rounded-xl border border-border bg-surface-primary pl-12 pr-4 text-body-lg text-content-primary transition-all placeholder:text-content-tertiary focus:border-brand-500 focus:shadow-[0_0_0_4px_rgba(13,148,136,0.08)] focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
         </form>

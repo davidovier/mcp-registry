@@ -32,7 +32,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       font-medium transition-all duration-150
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2
       disabled:opacity-50 disabled:cursor-not-allowed
-      active:scale-[0.98]
+      hover:-translate-y-[1px] active:scale-[0.98]
     `;
 
     const variants = {

@@ -94,6 +94,7 @@ const config: Config = {
         "fade-in": "fadeIn 0.2s ease-out",
         "slide-up": "slideUp 0.3s ease-out",
         "pulse-subtle": "pulseSubtle 2s ease-in-out infinite",
+        "slide-down": "slideDown 0.2s ease-in forwards",
       },
       keyframes: {
         fadeIn: {
@@ -107,6 +108,10 @@ const config: Config = {
         pulseSubtle: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
+        },
+        slideDown: {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(8px)" },
         },
       },
     },
