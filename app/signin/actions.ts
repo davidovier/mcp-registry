@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -58,6 +59,7 @@ export async function signInWithPassword(email: string, password: string) {
     return { error: "Invalid email or password." };
   }
 
+  revalidatePath("/", "layout");
   return { success: true };
 }
 
