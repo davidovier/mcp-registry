@@ -177,6 +177,8 @@ export function SignInForm() {
           placeholder="you@example.com"
           required
           disabled={isLoading}
+          autoComplete="email"
+          inputMode="email"
         />
 
         {tab !== "magic-link" && (
@@ -188,6 +190,9 @@ export function SignInForm() {
             placeholder="At least 6 characters"
             required
             disabled={isLoading}
+            autoComplete={
+              tab === "signup" ? "new-password" : "current-password"
+            }
           />
         )}
 
@@ -200,6 +205,7 @@ export function SignInForm() {
             placeholder="Repeat your password"
             required
             disabled={isLoading}
+            autoComplete="new-password"
           />
         )}
 

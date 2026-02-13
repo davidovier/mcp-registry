@@ -208,8 +208,8 @@ test.describe("Submit page accessibility", () => {
     await expect(h1).toBeVisible();
     await expect(h1).toContainText("Submit a server");
 
-    // Should have h2 for sections
-    const h2s = page.locator("h2");
+    // Should have h2 for sections (scoped to main content)
+    const h2s = page.locator("main h2");
     await expect(h2s).toHaveCount(4); // Identity, Connection, Links, Review
   });
 });

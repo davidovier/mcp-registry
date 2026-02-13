@@ -21,22 +21,22 @@ export const metadata: Metadata = {
     default: "MCP Registry",
     template: "%s | MCP Registry",
   },
-  description: "A registry for Model Context Protocol (MCP) servers and tools.",
+  description: "A curated registry of Model Context Protocol (MCP) servers.",
   keywords: ["MCP", "Model Context Protocol", "registry", "AI", "tools"],
   authors: [{ name: "MCP Registry Team" }],
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     siteName: "MCP Registry",
     title: "MCP Registry",
-    description:
-      "A registry for Model Context Protocol (MCP) servers and tools.",
+    description: "A curated registry of Model Context Protocol servers.",
+    url: "https://mcp-registry.vercel.app",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MCP Registry",
-    description:
-      "A registry for Model Context Protocol (MCP) servers and tools.",
   },
   robots: {
     index: true,
@@ -54,8 +54,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col antialiased`}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-white"
+        >
+          Skip to content
+        </a>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

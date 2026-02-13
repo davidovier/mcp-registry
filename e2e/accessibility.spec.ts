@@ -18,6 +18,8 @@ const PUBLIC_PAGES = [
   { name: "docs", path: "/docs" },
   { name: "about", path: "/about" },
   { name: "signin", path: "/signin" },
+  { name: "privacy", path: "/privacy" },
+  { name: "terms", path: "/terms" },
   { name: "404", path: "/servers/non-existent-slug-xyz" },
 ];
 
@@ -71,7 +73,7 @@ async function checkStructure(page: Page) {
 
     // Check for skip-to-content link
     const skipLink = document.querySelector(
-      'a[href="#main"], a[href="#content"], [class*="skip"]'
+      'a[href="#main"], a[href="#content"], a[href="#main-content"], [class*="skip"]'
     );
 
     return {
@@ -212,6 +214,82 @@ for (const pageDef of PUBLIC_PAGES) {
     });
   });
 }
+
+// Skip-to-content link tests
+test.describe("Accessibility: skip-to-content link", () => {
+  test("skip link is present in the DOM", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" });
+    const skipLink = page.locator('a[href="#main-content"]');
+    await expect(skipLink).toHaveCount(1);
+  });
+
+  test("skip link becomes visible on keyboard focus", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" });
+    const skipLink = page.locator('a[href="#main-content"]');
+
+    // Initially sr-only — clipped and tiny
+    const initialBox = await skipLink.boundingBox();
+    const isHiddenInitially =
+      !initialBox || (initialBox.width <= 1 && initialBox.height <= 1);
+    expect(isHiddenInitially).toBe(true);
+
+    // Tab to focus the skip link — should become fully visible
+    await page.keyboard.press("Tab");
+    await expect(skipLink).toBeFocused();
+    const focusedBox = await skipLink.boundingBox();
+    expect(focusedBox).not.toBeNull();
+    expect(focusedBox!.width).toBeGreaterThan(10);
+    expect(focusedBox!.height).toBeGreaterThan(10);
+    await expect(skipLink).toContainText("Skip to content");
+  });
+
+  test("skip link navigates to main content", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" });
+
+    // Focus the skip link
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+
+    // Verify the main-content element exists
+    const mainContent = page.locator("#main-content");
+    await expect(mainContent).toBeVisible();
+  });
+});
+
+// Heading hierarchy tests for legal pages
+test.describe("Accessibility: legal page headings", () => {
+  for (const pagePath of ["/privacy", "/terms"]) {
+    test(`${pagePath} has exactly one h1`, async ({ page }) => {
+      await page.goto(pagePath, { waitUntil: "networkidle" });
+      const h1s = page.locator("h1");
+      await expect(h1s).toHaveCount(1);
+    });
+
+    test(`${pagePath} has sequential heading levels`, async ({ page }) => {
+      await page.goto(pagePath, { waitUntil: "networkidle" });
+      const headingInfo = await page.evaluate(() => {
+        const main = document.querySelector("main");
+        if (!main) return { valid: true, skips: [] };
+        const headings = main.querySelectorAll("h1, h2, h3, h4, h5, h6");
+        const levels = Array.from(headings).map((h) => ({
+          level: parseInt(h.tagName[1]),
+          text: h.textContent?.trim().substring(0, 40) || "",
+        }));
+        const skips: string[] = [];
+        for (let i = 1; i < levels.length; i++) {
+          if (levels[i].level > levels[i - 1].level + 1) {
+            skips.push(`h${levels[i - 1].level} -> h${levels[i].level}`);
+          }
+        }
+        return { valid: skips.length === 0, skips };
+      });
+      expect(
+        headingInfo.valid,
+        `Heading skips: ${headingInfo.skips.join(", ")}`
+      ).toBe(true);
+    });
+  }
+});
 
 // Specific form accessibility checks for signin page
 test.describe("Accessibility: signin form", () => {
