@@ -7,6 +7,7 @@ import { AuthButtons } from "./auth-buttons";
 const navigation = [
   { name: "Browse", href: "/servers" },
   { name: "Docs", href: "/docs" },
+  { name: "API", href: "/api" },
   { name: "About", href: "/about" },
 ];
 
