@@ -270,7 +270,7 @@ export function SubmitForm() {
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/my/submissions"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 font-medium text-white transition-all duration-150 hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.98] dark:bg-brand-500 dark:hover:bg-brand-600"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.98] dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
           >
             View my submissions
           </Link>

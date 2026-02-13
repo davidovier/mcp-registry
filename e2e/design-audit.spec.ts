@@ -14,7 +14,7 @@ import { createContrastCheck, type ContrastCheck } from "./utils/contrast";
 
 // Configuration
 const VIEWPORTS = {
-  desktop: { width: 1440, height: 900 },
+  desktop: { width: 1280, height: 720 },
   mobile: { width: 390, height: 844 },
 };
 
@@ -23,6 +23,9 @@ const PUBLIC_PAGES = [
   { name: "servers", path: "/servers" },
   { name: "server-detail", path: "/servers/github" },
   { name: "signin", path: "/signin" },
+  { name: "docs", path: "/docs" },
+  { name: "about", path: "/about" },
+  { name: "404", path: "/servers/non-existent-slug-xyz" },
 ];
 
 const AUTH_PAGES = [
@@ -106,6 +109,7 @@ async function extractStyles(page: Page) {
     // Button primary
     const btnPrimary = findElement([
       "button[class*='bg-brand']",
+      "[class*='bg-brand-700']",
       "[class*='bg-brand-600']",
       "[class*='bg-brand-500']",
     ]);

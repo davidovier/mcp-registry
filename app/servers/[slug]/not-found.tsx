@@ -43,7 +43,7 @@ export default function ServerNotFound() {
           </p>
           <Link
             href="/servers"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-6 py-2.5 text-body-md font-medium text-white transition-all duration-150 hover:bg-brand-700 active:scale-[0.98] dark:bg-brand-500 dark:hover:bg-brand-600"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-700 px-6 py-2.5 text-body-md font-medium text-white transition-all duration-150 hover:bg-brand-800 active:scale-[0.98] dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
           >
             Back to servers
           </Link>

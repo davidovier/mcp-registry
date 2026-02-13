@@ -14,7 +14,7 @@ export default function HomePage() {
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             href="/servers"
-            className="inline-flex items-center rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+            className="inline-flex items-center rounded-lg bg-brand-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
           >
             Browse Registry
           </Link>
@@ -55,9 +55,9 @@ function FeatureCard({
 }) {
   return (
     <div className="rounded-xl border border-border p-6 transition-shadow hover:shadow-md">
-      <h3 className="mb-2 text-lg font-semibold text-content-primary">
+      <h2 className="mb-2 text-lg font-semibold text-content-primary">
         {title}
-      </h3>
+      </h2>
       <p className="text-content-secondary">{description}</p>
     </div>
   );

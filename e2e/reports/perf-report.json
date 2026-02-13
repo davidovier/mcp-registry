@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-02-13",
+  "auditSprint": 2,
+  "environment": "local dev server (pnpm dev, not production build)",
+  "note": "Dev mode metrics include HMR overhead. Production numbers will be significantly better.",
+  "pages": {
+    "servers": {
+      "url": "/servers",
+      "wallClockMs": 1050,
+      "ttfbMs": 89,
+      "domContentLoadedMs": 502,
+      "resourceCount": 10,
+      "totalTransferKB": 2082,
+      "cacheControl": "no-store, must-revalidate",
+      "statusCode": 200
+    },
+    "homepage": {
+      "url": "/",
+      "wallClockMs": 905,
+      "ttfbMs": 48,
+      "domContentLoadedMs": 68,
+      "resourceCount": 9,
+      "totalTransferKB": 1938,
+      "cacheControl": "no-store, must-revalidate",
+      "statusCode": 200
+    },
+    "docs": {
+      "url": "/docs",
+      "wallClockMs": 953,
+      "ttfbMs": 76,
+      "domContentLoadedMs": 108,
+      "resourceCount": 9,
+      "totalTransferKB": 1938,
+      "cacheControl": "no-store, must-revalidate",
+      "statusCode": 200
+    },
+    "about": {
+      "url": "/about",
+      "wallClockMs": 914,
+      "ttfbMs": 52,
+      "domContentLoadedMs": 74,
+      "resourceCount": 9,
+      "totalTransferKB": 1938,
+      "cacheControl": "no-store, must-revalidate",
+      "statusCode": 200
+    },
+    "signin": {
+      "url": "/signin",
+      "wallClockMs": 943,
+      "ttfbMs": 90,
+      "domContentLoadedMs": 110,
+      "resourceCount": 10,
+      "totalTransferKB": 2349,
+      "cacheControl": "no-store, must-revalidate",
+      "statusCode": 200
+    }
+  },
+  "api": {
+    "/api/servers": {
+      "statusCode": 200,
+      "responseSizeBytes": 3448,
+      "cacheControl": "public, s-maxage=300, stale-while-revalidate=60",
+      "cachingCorrect": true,
+      "note": "Properly configured with 5-minute server cache and 60s stale-while-revalidate"
+    }
+  },
+  "observations": [
+    "HTML pages serve no-store in dev mode (expected; Vercel production will use ISR/cache)",
+    "API endpoint correctly uses public caching with s-maxage=300",
+    "Resource count is low (9-10 per page) indicating good bundling",
+    "TTFB is fast (<100ms) even in dev mode",
+    "/servers has slightly higher DOMContentLoaded (502ms) due to client-side data fetch",
+    "Signin page has largest transfer (2349KB) due to Supabase auth client JS"
+  ]
+}

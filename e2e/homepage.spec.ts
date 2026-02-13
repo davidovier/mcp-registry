@@ -42,13 +42,13 @@ test.describe("Homepage", () => {
 
     // Check feature cards exist by looking for headings
     await expect(
-      page.getByRole("heading", { name: "Discover", level: 3 })
+      page.getByRole("heading", { name: "Discover", level: 2 })
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Share", level: 3 })
+      page.getByRole("heading", { name: "Share", level: 2 })
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Integrate", level: 3 })
+      page.getByRole("heading", { name: "Integrate", level: 2 })
     ).toBeVisible();
   });
 });

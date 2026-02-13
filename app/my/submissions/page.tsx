@@ -61,7 +61,7 @@ export default async function MySubmissionsPage() {
         </div>
         <Link
           href="/submit"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          className="rounded-md bg-brand-700 px-4 py-2 text-sm font-medium text-white hover:bg-brand-800 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
         >
           Submit New
         </Link>
@@ -80,7 +80,7 @@ export default async function MySubmissionsPage() {
           </p>
           <Link
             href="/submit"
-            className="inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            className="inline-block rounded-md bg-brand-700 px-4 py-2 text-sm font-medium text-white hover:bg-brand-800 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
           >
             Submit Your First Server
           </Link>

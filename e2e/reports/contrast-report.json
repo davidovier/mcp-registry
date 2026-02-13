@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-02-13",
+  "auditSprint": 2,
+  "summary": {
+    "totalChecks": 14,
+    "aaPass": 10,
+    "aaFail": 4,
+    "criticalFailures": 1
+  },
+  "findings": [
+    {
+      "element": "Tertiary text on dark body",
+      "foreground": "rgb(120, 113, 108)",
+      "background": "rgb(12, 10, 9)",
+      "ratio": 4.12,
+      "wcagAA": "FAIL",
+      "wcagAAA": "FAIL",
+      "isLargeText": false,
+      "severity": "high",
+      "context": "Dark mode: --text-tertiary (neutral-500 #78716c) on --surface-primary (neutral-950 #0c0a09). Used in footer copyright, filter labels, metadata text.",
+      "recommendation": "Change dark mode --text-tertiary to neutral-400 (#a8a29e) for 5.92:1 ratio."
+    },
+    {
+      "element": "Primary button text (light mode CTA)",
+      "foreground": "rgb(255, 255, 255)",
+      "background": "rgb(13, 148, 136)",
+      "ratio": 3.74,
+      "wcagAA": "FAIL",
+      "wcagAAA": "FAIL",
+      "isLargeText": false,
+      "severity": "high",
+      "context": "Light mode: white text on bg-brand-600 (#0d9488). This affects all primary buttons and the 'Browse Registry' CTA. The Sign In button in the header also uses this combination.",
+      "recommendation": "Darken the brand button background to brand-700 (#0f766e) for 4.56:1 ratio, or use brand-800 (#115e59) for 6.28:1."
+    },
+    {
+      "element": "Primary button text (dark mode CTA)",
+      "foreground": "rgb(255, 255, 255)",
+      "background": "rgb(13, 148, 136)",
+      "ratio": 3.74,
+      "wcagAA": "FAIL",
+      "wcagAAA": "FAIL",
+      "isLargeText": false,
+      "severity": "medium",
+      "context": "Dark mode: The homepage CTA link uses bg-brand-600 text-white directly (not the Button component which uses dark:bg-brand-500 dark:text-neutral-950). This means the homepage buttons are inconsistent with the Button component in dark mode.",
+      "recommendation": "Align homepage CTA links to use Button component classes. The Button component correctly uses dark:text-neutral-950 on dark:bg-brand-500."
+    },
+    {
+      "element": "Tertiary text on light body",
+      "foreground": "rgb(120, 113, 108)",
+      "background": "rgb(250, 250, 249)",
+      "ratio": 4.59,
+      "wcagAA": "PASS",
+      "wcagAAA": "FAIL",
+      "isLargeText": false,
+      "severity": "low",
+      "context": "Light mode: neutral-500 on neutral-50 barely passes WCAG AA (4.59:1 vs 4.5:1 threshold). Fails AAA (7:1). Acceptable but borderline.",
+      "recommendation": "No immediate action needed. Monitor if design spec demands AAA compliance."
+    }
+  ],
+  "passingChecks": [
+    {
+      "element": "Primary text on light body",
+      "ratio": 16.74,
+      "wcagAA": "PASS"
+    },
+    {
+      "element": "Primary text on dark body",
+      "ratio": 18.11,
+      "wcagAA": "PASS"
+    },
+    {
+      "element": "Secondary text on light body",
+      "ratio": 7.3,
+      "wcagAA": "PASS"
+    },
+    {
+      "element": "Secondary text on dark body",
+      "ratio": 13.26,
+      "wcagAA": "PASS"
+    },
+    { "element": "Link text on light body", "ratio": 16.74, "wcagAA": "PASS" },
+    { "element": "Link text on dark body", "ratio": 18.11, "wcagAA": "PASS" },
+    { "element": "Badge (brand) dark", "ratio": 7.94, "wcagAA": "PASS" },
+    { "element": "Input text on light bg", "ratio": 16.74, "wcagAA": "PASS" },
+    { "element": "Input text on dark bg", "ratio": 18.11, "wcagAA": "PASS" },
+    { "element": "Code block (docs dark)", "ratio": 21.0, "wcagAA": "PASS" }
+  ]
+}
