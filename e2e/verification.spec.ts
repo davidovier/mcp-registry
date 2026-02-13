@@ -4,6 +4,108 @@ import { test, expect } from "@playwright/test";
  * Verification system tests - public page elements only.
  * Auth-dependent tests are skipped in CI.
  */
+
+test.describe("/verification page", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+  });
+
+  test("should load and display page header", async ({ page }) => {
+    await page.goto("/verification");
+
+    await expect(
+      page.getByRole("heading", { name: "Verification", level: 1 })
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        /verification is how the mcp registry signals additional review/i
+      )
+    ).toBeVisible();
+  });
+
+  test("should display breadcrumb navigation", async ({ page }) => {
+    await page.goto("/verification");
+
+    const breadcrumb = page.getByLabel("Breadcrumb");
+    await expect(breadcrumb).toBeVisible();
+    await expect(breadcrumb.getByText("Home")).toBeVisible();
+    await expect(breadcrumb.getByText("Verification")).toBeVisible();
+  });
+
+  test("should display all 6 section headings", async ({ page }) => {
+    await page.goto("/verification");
+
+    // Use regex patterns for curly quotes in headings
+    const expectedHeadings = [
+      /What.*Verified.*means/i,
+      /What.*Verified.*does not mean/i,
+      /How verification works/i,
+      /Governance.*neutrality/i,
+      /Re-verification/i,
+      /Requesting verification/i,
+    ];
+
+    for (const heading of expectedHeadings) {
+      await expect(
+        page.getByRole("heading", { name: heading, level: 2 })
+      ).toBeVisible();
+    }
+  });
+
+  test("should work on mobile viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto("/verification");
+
+    await expect(
+      page.getByRole("heading", { name: "Verification", level: 1 })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /What.*Verified.*means/i, level: 2 })
+    ).toBeVisible();
+  });
+
+  test("should work in dark mode", async ({ page }) => {
+    await page.goto("/verification");
+
+    // Enable dark mode
+    await page.evaluate(() => {
+      document.documentElement.classList.add("dark");
+    });
+
+    await expect(
+      page.getByRole("heading", { name: "Verification", level: 1 })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Governance & neutrality", level: 2 })
+    ).toBeVisible();
+  });
+
+  test("should have proper heading hierarchy", async ({ page }) => {
+    await page.goto("/verification");
+
+    // Check h1
+    const h1 = page.locator("h1");
+    await expect(h1).toHaveCount(1);
+
+    // Check h2s (6 section headings + 1 sr-only "Site footer" in footer)
+    const h2s = page.locator("h2");
+    await expect(h2s).toHaveCount(7);
+
+    // Check h3s exist in first section (numbered criteria)
+    const h3s = page.locator("h3");
+    const h3Count = await h3s.count();
+    expect(h3Count).toBeGreaterThanOrEqual(5);
+  });
+
+  test("should have link to browse registry", async ({ page }) => {
+    await page.goto("/verification");
+
+    const browseLink = page.getByRole("link", { name: /browse the registry/i });
+    await expect(browseLink).toBeVisible();
+    await expect(browseLink).toHaveAttribute("href", "/servers");
+  });
+});
+
 test.describe("Quality Signals on server detail page", () => {
   test("should display quality signals card when viewing a server", async ({
     page,
@@ -25,7 +127,7 @@ test.describe("Quality Signals on server detail page", () => {
       await expect(qualitySignals).toBeVisible();
 
       // Should show signal count text
-      await expect(page.getByText(/of 5 signals met/i)).toBeVisible();
+      await expect(page.getByText(/quality signals:.*of 5 met/i)).toBeVisible();
     }
   });
 
@@ -166,6 +268,70 @@ test.describe("Verification status display", () => {
         .locator("text=Quality signals")
         .locator("..");
       await expect(qualityCard.getByText("Verified by registry")).toBeVisible();
+    }
+  });
+
+  test("should show verification metadata block on verified server with verified_at", async ({
+    page,
+  }) => {
+    // Filter for verified servers
+    await page.goto("/servers?verified=true");
+    await page.waitForLoadState("networkidle");
+
+    const serverCard = page.locator('a[href^="/servers/"]').first();
+    const hasCards = await serverCard.isVisible().catch(() => false);
+
+    if (hasCards) {
+      await serverCard.click();
+      await expect(page).toHaveURL(/\/servers\/.+/);
+
+      // Scope to sidebar to avoid strict mode issues
+      const sidebar = page.locator("aside");
+
+      // Check for enhanced verification metadata block (only shows when verified_at is set)
+      // If verified_at is not set, the old "Yes"/"No" display is used
+      const hasEnhancedBlock = await sidebar
+        .getByText("Verified by MCP Registry")
+        .isVisible()
+        .catch(() => false);
+
+      if (hasEnhancedBlock) {
+        // Check for verification criteria link
+        const criteriaLink = sidebar.getByRole("link", {
+          name: /read verification criteria/i,
+        });
+        await expect(criteriaLink).toBeVisible();
+        await expect(criteriaLink).toHaveAttribute("href", "/verification");
+      } else {
+        // Fallback: verified without verified_at timestamp shows "Yes"
+        // This is expected when migration hasn't been run yet
+        const verifiedRow = sidebar.locator("text=Verified").first();
+        await expect(verifiedRow).toBeVisible();
+      }
+    }
+  });
+
+  test("should NOT show verification metadata block on unverified server", async ({
+    page,
+  }) => {
+    // Filter for unverified servers
+    await page.goto("/servers?verified=false");
+    await page.waitForLoadState("networkidle");
+
+    const serverCard = page.locator('a[href^="/servers/"]').first();
+    const hasCards = await serverCard.isVisible().catch(() => false);
+
+    if (hasCards) {
+      await serverCard.click();
+      await expect(page).toHaveURL(/\/servers\/.+/);
+
+      // Scope to sidebar
+      const sidebar = page.locator("aside");
+
+      // Should NOT show "Verified by MCP Registry" metadata
+      await expect(
+        sidebar.getByText("Verified by MCP Registry")
+      ).not.toBeVisible();
     }
   });
 

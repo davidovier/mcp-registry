@@ -584,6 +584,16 @@ export function SubmitForm() {
             disabled={isPending}
           />
 
+          <p className="text-body-sm text-content-secondary">
+            Want verification?{" "}
+            <Link
+              href="/verification"
+              className="text-content-primary hover:text-brand-600 dark:hover:text-brand-400"
+            >
+              Review the criteria before requesting →
+            </Link>
+          </p>
+
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
               type="submit"

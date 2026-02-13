@@ -140,6 +140,7 @@ export type Database = {
           transport: string;
           updated_at: string;
           verified: boolean;
+          verified_at: string | null;
         };
         Insert: {
           auth: string;
@@ -157,6 +158,7 @@ export type Database = {
           transport: string;
           updated_at?: string;
           verified?: boolean;
+          verified_at?: string | null;
         };
         Update: {
           auth?: string;
@@ -174,6 +176,7 @@ export type Database = {
           transport?: string;
           updated_at?: string;
           verified?: boolean;
+          verified_at?: string | null;
         };
         Relationships: [];
       };

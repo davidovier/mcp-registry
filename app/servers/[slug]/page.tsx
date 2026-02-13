@@ -194,6 +194,7 @@ export default async function ServerDetailPage({ params }: Props) {
                 transport={server.transport}
                 auth={server.auth}
                 verified={server.verified}
+                verifiedAt={server.verified_at}
                 createdAt={server.created_at}
                 updatedAt={server.updated_at}
               />

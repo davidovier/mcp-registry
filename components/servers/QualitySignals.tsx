@@ -88,8 +88,17 @@ export function QualitySignals({
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-caption text-content-tertiary">
-        {metCount} of {signals.length} signals met
+      {/* Progress bar */}
+      <div className="mt-3">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-sunken">
+          <div
+            className="h-full rounded-full bg-content-tertiary transition-all duration-300"
+            style={{ width: `${(metCount / signals.length) * 100}%` }}
+          />
+        </div>
+      </div>
+      <p className="mt-2 text-caption text-content-tertiary">
+        Quality signals: {metCount} of {signals.length} met
       </p>
     </div>
   );

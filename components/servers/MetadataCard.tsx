@@ -1,9 +1,12 @@
+import Link from "next/link";
+
 import { Badge } from "@/components/ui/Badge";
 
 interface MetadataCardProps {
   transport: string;
   auth: string;
   verified: boolean;
+  verifiedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -20,6 +23,7 @@ export function MetadataCard({
   transport,
   auth,
   verified,
+  verifiedAt,
   createdAt,
   updatedAt,
 }: MetadataCardProps) {
@@ -91,9 +95,24 @@ export function MetadataCard({
           }
           label="Verified"
           value={
-            <span className="text-body-md text-content-primary">
-              {verified ? "Yes" : "No"}
-            </span>
+            verified && verifiedAt ? (
+              <div className="space-y-1">
+                <p className="text-body-sm text-content-primary">
+                  Verified by MCP Registry
+                </p>
+                <p className="text-body-sm text-content-secondary">
+                  Verified on: {formatDate(verifiedAt)}
+                </p>
+                <Link
+                  href="/verification"
+                  className="inline-block text-body-sm text-content-secondary hover:text-content-primary"
+                >
+                  Read verification criteria →
+                </Link>
+              </div>
+            ) : (
+              <span className="text-body-md text-content-primary">No</span>
+            )
           }
         />
         <MetadataItem

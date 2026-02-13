@@ -9,6 +9,7 @@ const footerLinks = {
   resources: [
     { name: "Documentation", href: "/docs" },
     { name: "About", href: "/about" },
+    { name: "Verification", href: "/verification" },
     { name: "MCP Specification", href: "https://modelcontextprotocol.io" },
     { name: "GitHub", href: "https://github.com" },
   ],
