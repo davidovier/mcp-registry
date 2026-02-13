@@ -3,6 +3,7 @@ export { ExternalLinks } from "./ExternalLinks";
 export { FilterChip } from "./FilterChip";
 export { FiltersSidebar } from "./FiltersSidebar";
 export { InstallSnippet } from "./InstallSnippet";
+export { JsonLdScript } from "./JsonLdScript";
 export { MetadataCard } from "./MetadataCard";
 export { MobileFilters } from "./MobileFilters";
 export { QualitySignals } from "./QualitySignals";

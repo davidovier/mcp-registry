@@ -6,6 +6,7 @@ import {
   CapabilityBadges,
   ExternalLinks,
   InstallSnippet,
+  JsonLdScript,
   MetadataCard,
   QualitySignals,
   QuickActionsCard,
@@ -90,6 +91,23 @@ export default async function ServerDetailPage({ params }: Props) {
 
   return (
     <div>
+      {/* JSON-LD structured data for verified servers */}
+      {server.verified && (
+        <JsonLdScript
+          server={{
+            name: server.name,
+            description: server.description,
+            slug: server.slug,
+            repo_url: server.repo_url,
+            docs_url: server.docs_url,
+            tags: server.tags,
+            created_at: server.created_at,
+            updated_at: server.updated_at,
+            verified_at: server.verified_at,
+          }}
+        />
+      )}
+
       {/* Breadcrumb bar */}
       <div className="border-b border-border bg-surface-secondary">
         <div className="mx-auto max-w-5xl px-4 py-3">
