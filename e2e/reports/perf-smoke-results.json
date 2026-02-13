@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-02-13T09:06:32.536Z",
+  "thresholds": {
+    "maxWallClockMs": 15000,
+    "maxTTFBMs": 5000,
+    "maxDOMContentLoadedMs": 10000,
+    "maxResourceCount": 50,
+    "maxTransferKB": 10000
+  },
+  "results": [
+    {
+      "page": "signin",
+      "url": "/signin",
+      "wallClockMs": 976,
+      "ttfbMs": 200,
+      "domContentLoadedMs": 250,
+      "resourceCount": 9,
+      "totalTransferKB": 2408,
+      "statusCode": 200
+    }
+  ]
+}
