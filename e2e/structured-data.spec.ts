@@ -13,11 +13,15 @@ test.describe("JSON-LD structured data", () => {
     await page.goto("/servers/github");
     await page.waitForLoadState("networkidle");
 
-    // Check if page loaded correctly (not 404)
-    const heading = page.getByRole("heading", { level: 1 });
-    const hasHeading = await heading.isVisible().catch(() => false);
+    // Check if page loaded correctly (not 404/not-found)
+    // The not-found page shows "Server Not Found" heading, so check for the actual server name
+    const serverHeading = page.getByRole("heading", {
+      name: /github/i,
+      level: 1,
+    });
+    const hasServerHeading = await serverHeading.isVisible().catch(() => false);
 
-    if (!hasHeading) {
+    if (!hasServerHeading) {
       // In CI without DB, server may not exist - skip test
       test.skip();
       return;
@@ -61,10 +65,13 @@ test.describe("JSON-LD structured data", () => {
     await page.goto("/servers/github");
     await page.waitForLoadState("networkidle");
 
-    const heading = page.getByRole("heading", { level: 1 });
-    const hasHeading = await heading.isVisible().catch(() => false);
+    const serverHeading = page.getByRole("heading", {
+      name: /github/i,
+      level: 1,
+    });
+    const hasServerHeading = await serverHeading.isVisible().catch(() => false);
 
-    if (!hasHeading) {
+    if (!hasServerHeading) {
       test.skip();
       return;
     }
@@ -90,11 +97,14 @@ test.describe("JSON-LD structured data", () => {
     await page.goto("/servers/web-search");
     await page.waitForLoadState("networkidle");
 
-    // Check if page loaded correctly (not 404)
-    const heading = page.getByRole("heading", { level: 1 });
-    const hasHeading = await heading.isVisible().catch(() => false);
+    // Check if page loaded correctly (not 404/not-found)
+    const serverHeading = page.getByRole("heading", {
+      name: /web search/i,
+      level: 1,
+    });
+    const hasServerHeading = await serverHeading.isVisible().catch(() => false);
 
-    if (!hasHeading) {
+    if (!hasServerHeading) {
       // In CI without DB, server may not exist - skip test
       test.skip();
       return;
