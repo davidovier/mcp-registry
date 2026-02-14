@@ -1,0 +1,459 @@
+{
+  "generatedAt": "2026-02-14T22:05:06.610Z",
+  "baseUrl": "http://localhost:3000",
+  "pages": [
+    {
+      "route": "/",
+      "name": "Homepage",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:04:56.226Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 170
+      },
+      "gaps": []
+    },
+    {
+      "route": "/about",
+      "name": "About",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:02.836Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 436
+      },
+      "gaps": [
+        {
+          "id": "about-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/about",
+          "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        },
+        {
+          "id": "about-ux-no-primary-action",
+          "title": "No clear primary action",
+          "severity": "medium",
+          "category": "ux",
+          "description": "Page lacks a clear primary call-to-action button or link",
+          "route": "/about",
+          "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/no-primary-action.png",
+          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+          "effortEstimate": "S"
+        }
+      ]
+    },
+    {
+      "route": "/api",
+      "name": "API Docs",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:04:59.932Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
+        "codeBlockCount": 6,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "main-content",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 792
+      },
+      "gaps": []
+    },
+    {
+      "route": "/changelog",
+      "name": "Changelog",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:01.296Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 1,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 442
+      },
+      "gaps": [
+        {
+          "id": "changelog-ux-no-primary-action",
+          "title": "No clear primary action",
+          "severity": "medium",
+          "category": "ux",
+          "description": "Page lacks a clear primary call-to-action button or link",
+          "route": "/changelog",
+          "screenshotPath": "e2e/screenshots/product-heuristics/changelog/light/desktop/no-primary-action.png",
+          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+          "effortEstimate": "S"
+        }
+      ]
+    },
+    {
+      "route": "/contributing",
+      "name": "Contributing",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:01.985Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "main-content",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 495
+      },
+      "gaps": []
+    },
+    {
+      "route": "/docs",
+      "name": "Documentation",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:04:58.961Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 2,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 639
+      },
+      "gaps": [
+        {
+          "id": "docs-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/docs",
+          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        },
+        {
+          "id": "docs-ux-no-primary-action",
+          "title": "No clear primary action",
+          "severity": "medium",
+          "category": "ux",
+          "description": "Page lacks a clear primary call-to-action button or link",
+          "route": "/docs",
+          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/no-primary-action.png",
+          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+          "effortEstimate": "S"
+        }
+      ]
+    },
+    {
+      "route": "/privacy",
+      "name": "Privacy Policy",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:03.560Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 479
+      },
+      "gaps": [
+        {
+          "id": "privacy-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/privacy",
+          "screenshotPath": "e2e/screenshots/product-heuristics/privacy/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        }
+      ]
+    },
+    {
+      "route": "/servers",
+      "name": "Browse Servers",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:04:57.807Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 1,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 1414
+      },
+      "gaps": [
+        {
+          "id": "servers-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/servers",
+          "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        },
+        {
+          "id": "servers-ux-no-primary-action",
+          "title": "No clear primary action",
+          "severity": "medium",
+          "category": "ux",
+          "description": "Page lacks a clear primary call-to-action button or link",
+          "route": "/servers",
+          "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/no-primary-action.png",
+          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+          "effortEstimate": "S"
+        },
+        {
+          "id": "servers-friction-coming-soon",
+          "title": "Contains 'Coming Soon' placeholder",
+          "severity": "low",
+          "category": "friction",
+          "description": "Page contains 1 'Coming Soon' blocks",
+          "route": "/servers",
+          "evidence": "1 coming soon blocks",
+          "suggestedFix": "Replace placeholder content with actual functionality or remove",
+          "effortEstimate": "M"
+        }
+      ]
+    },
+    {
+      "route": "/signin",
+      "name": "Sign In",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:05.492Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 1,
+        "domContentLoadedMs": 1045
+      },
+      "gaps": [
+        {
+          "id": "signin-friction-disabled-controls",
+          "title": "Disabled controls in main content",
+          "severity": "low",
+          "category": "friction",
+          "description": "Page has 1 disabled interactive controls",
+          "route": "/signin",
+          "evidence": "1 disabled controls",
+          "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+          "effortEstimate": "S"
+        }
+      ]
+    },
+    {
+      "route": "/submit",
+      "name": "Submit Server",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:06.602Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 1,
+        "domContentLoadedMs": 872
+      },
+      "gaps": [
+        {
+          "id": "submit-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/submit",
+          "screenshotPath": "e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        },
+        {
+          "id": "submit-friction-disabled-controls",
+          "title": "Disabled controls in main content",
+          "severity": "low",
+          "category": "friction",
+          "description": "Page has 1 disabled interactive controls",
+          "route": "/submit",
+          "evidence": "1 disabled controls",
+          "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+          "effortEstimate": "S"
+        }
+      ]
+    },
+    {
+      "route": "/terms",
+      "name": "Terms of Service",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:04.245Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 410
+      },
+      "gaps": [
+        {
+          "id": "terms-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/terms",
+          "screenshotPath": "e2e/screenshots/product-heuristics/terms/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        }
+      ]
+    },
+    {
+      "route": "/verification",
+      "name": "Verification",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T22:05:00.541Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 1,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 424
+      },
+      "gaps": []
+    }
+  ],
+  "summary": {
+    "totalPages": 12,
+    "totalGaps": 13,
+    "gapsBySeverity": {
+      "critical": 0,
+      "high": 0,
+      "medium": 10,
+      "low": 3
+    },
+    "topOffenders": [
+      {
+        "route": "/servers",
+        "gapCount": 3
+      },
+      {
+        "route": "/docs",
+        "gapCount": 2
+      },
+      {
+        "route": "/about",
+        "gapCount": 2
+      },
+      {
+        "route": "/submit",
+        "gapCount": 2
+      },
+      {
+        "route": "/changelog",
+        "gapCount": 1
+      }
+    ]
+  }
+}

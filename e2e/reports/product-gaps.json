@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-14T21:40:58.758Z",
+  "timestamp": "2026-02-14T22:05:53.453Z",
   "routesAudited": [
     "/",
     "/about",
@@ -170,5 +170,186 @@
     "flags": [],
     "note": "Performance flags are informative and do not block CI unless severe."
   },
-  "notes": ["No major product gaps detected in current audit."]
+  "notes": ["No major product gaps detected in current audit."],
+  "heuristicGaps": {
+    "source": "/Users/davidvos/Vibe projects/MCP/mcp-registry/e2e/reports/product-heuristics.json",
+    "generatedAt": "2026-02-14T22:05:06.610Z",
+    "gaps": [
+      {
+        "id": "about-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/about",
+        "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "about-ux-no-primary-action",
+        "title": "No clear primary action",
+        "severity": "medium",
+        "category": "ux",
+        "description": "Page lacks a clear primary call-to-action button or link",
+        "route": "/about",
+        "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/no-primary-action.png",
+        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "changelog-ux-no-primary-action",
+        "title": "No clear primary action",
+        "severity": "medium",
+        "category": "ux",
+        "description": "Page lacks a clear primary call-to-action button or link",
+        "route": "/changelog",
+        "screenshotPath": "e2e/screenshots/product-heuristics/changelog/light/desktop/no-primary-action.png",
+        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "docs-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/docs",
+        "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "docs-ux-no-primary-action",
+        "title": "No clear primary action",
+        "severity": "medium",
+        "category": "ux",
+        "description": "Page lacks a clear primary call-to-action button or link",
+        "route": "/docs",
+        "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/no-primary-action.png",
+        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "privacy-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/privacy",
+        "screenshotPath": "e2e/screenshots/product-heuristics/privacy/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "servers-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/servers",
+        "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "servers-ux-no-primary-action",
+        "title": "No clear primary action",
+        "severity": "medium",
+        "category": "ux",
+        "description": "Page lacks a clear primary call-to-action button or link",
+        "route": "/servers",
+        "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/no-primary-action.png",
+        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "submit-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/submit",
+        "screenshotPath": "e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "terms-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/terms",
+        "screenshotPath": "e2e/screenshots/product-heuristics/terms/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "servers-friction-coming-soon",
+        "title": "Contains 'Coming Soon' placeholder",
+        "severity": "low",
+        "category": "friction",
+        "description": "Page contains 1 'Coming Soon' blocks",
+        "route": "/servers",
+        "evidence": "1 coming soon blocks",
+        "suggestedFix": "Replace placeholder content with actual functionality or remove",
+        "effortEstimate": "M"
+      },
+      {
+        "id": "signin-friction-disabled-controls",
+        "title": "Disabled controls in main content",
+        "severity": "low",
+        "category": "friction",
+        "description": "Page has 1 disabled interactive controls",
+        "route": "/signin",
+        "evidence": "1 disabled controls",
+        "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "submit-friction-disabled-controls",
+        "title": "Disabled controls in main content",
+        "severity": "low",
+        "category": "friction",
+        "description": "Page has 1 disabled interactive controls",
+        "route": "/submit",
+        "evidence": "1 disabled controls",
+        "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+        "effortEstimate": "S"
+      }
+    ],
+    "summary": {
+      "totalPages": 12,
+      "totalGaps": 13,
+      "gapsBySeverity": {
+        "critical": 0,
+        "high": 0,
+        "medium": 10,
+        "low": 3
+      },
+      "topOffenders": [
+        {
+          "route": "/servers",
+          "gapCount": 3
+        },
+        {
+          "route": "/docs",
+          "gapCount": 2
+        },
+        {
+          "route": "/about",
+          "gapCount": 2
+        },
+        {
+          "route": "/submit",
+          "gapCount": 2
+        },
+        {
+          "route": "/changelog",
+          "gapCount": 1
+        }
+      ]
+    }
+  }
 }

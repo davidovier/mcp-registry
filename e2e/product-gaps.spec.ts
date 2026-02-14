@@ -4,7 +4,43 @@ import * as path from "path";
 import { test, expect } from "@playwright/test";
 
 const GAP_REPORT_PATH = path.join(__dirname, "reports", "product-gaps.json");
+const HEURISTICS_REPORT_PATH = path.join(
+  __dirname,
+  "reports",
+  "product-heuristics.json"
+);
 const TEST_RUN_STARTED_AT = Date.now();
+
+type Severity = "critical" | "high" | "medium" | "low";
+
+interface HeuristicGap {
+  id: string;
+  title: string;
+  severity: Severity;
+  category: string;
+  description: string;
+  route: string;
+  evidence?: string;
+  screenshotPath?: string;
+  suggestedFix: string;
+  effortEstimate: "S" | "M" | "L";
+}
+
+interface HeuristicReport {
+  generatedAt: string;
+  baseUrl: string;
+  pages: {
+    route: string;
+    name: string;
+    gaps: HeuristicGap[];
+  }[];
+  summary: {
+    totalPages: number;
+    totalGaps: number;
+    gapsBySeverity: Record<Severity, number>;
+    topOffenders: { route: string; gapCount: number }[];
+  };
+}
 
 interface GapReport {
   timestamp: string;
@@ -31,6 +67,16 @@ interface GapReport {
     }[];
     note: string;
   };
+  heuristicGaps?: {
+    source: string | null;
+    generatedAt: string | null;
+    gaps: HeuristicGap[];
+    summary: {
+      totalGaps: number;
+      gapsBySeverity: Record<Severity, number>;
+      topOffenders: { route: string; gapCount: number }[];
+    };
+  };
   notes: string[];
 }
 
@@ -38,6 +84,70 @@ function isSorted(values: string[]): boolean {
   return values.every(
     (value, index) => index === 0 || values[index - 1] <= value
   );
+}
+
+function readHeuristicsReport(): HeuristicReport | null {
+  if (!fs.existsSync(HEURISTICS_REPORT_PATH)) {
+    return null;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(HEURISTICS_REPORT_PATH, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+function mergeHeuristicsIntoGapReport(gapReport: GapReport): GapReport {
+  const heuristics = readHeuristicsReport();
+
+  if (!heuristics) {
+    gapReport.heuristicGaps = {
+      source: null,
+      generatedAt: null,
+      gaps: [],
+      summary: {
+        totalGaps: 0,
+        gapsBySeverity: { critical: 0, high: 0, medium: 0, low: 0 },
+        topOffenders: [],
+      },
+    };
+    return gapReport;
+  }
+
+  // Collect all gaps and sort deterministically
+  const allGaps = heuristics.pages
+    .flatMap((p) => p.gaps)
+    .sort((a, b) => {
+      const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+      const severityDiff =
+        severityOrder[a.severity] - severityOrder[b.severity];
+      if (severityDiff !== 0) return severityDiff;
+      const routeDiff = a.route.localeCompare(b.route);
+      if (routeDiff !== 0) return routeDiff;
+      return a.id.localeCompare(b.id);
+    });
+
+  gapReport.heuristicGaps = {
+    source: HEURISTICS_REPORT_PATH,
+    generatedAt: heuristics.generatedAt,
+    gaps: allGaps,
+    summary: heuristics.summary,
+  };
+
+  // Add heuristic summary to notes if there are critical/high gaps
+  const criticalHigh =
+    heuristics.summary.gapsBySeverity.critical +
+    heuristics.summary.gapsBySeverity.high;
+  if (criticalHigh > 0) {
+    gapReport.notes.push(
+      `${criticalHigh} critical/high heuristic gaps detected`
+    );
+  }
+
+  // Keep notes sorted and limited
+  gapReport.notes = gapReport.notes.slice(0, 8);
+
+  return gapReport;
 }
 
 async function waitForGapReport(
@@ -80,6 +190,12 @@ test.describe("Product Gap Report (Non-Gating)", () => {
     expect(typeof report.a11yIssuesSummary).toBe("object");
     expect(typeof report.performanceFlags.note).toBe("string");
     expect(Array.isArray(report.performanceFlags.flags)).toBeTruthy();
+
+    // heuristicGaps may or may not be present yet (added after merge test)
+    if (report.heuristicGaps) {
+      expect(Array.isArray(report.heuristicGaps.gaps)).toBeTruthy();
+      expect(typeof report.heuristicGaps.summary).toBe("object");
+    }
   });
 
   test("deterministic arrays are sorted", async () => {
@@ -111,5 +227,67 @@ test.describe("Product Gap Report (Non-Gating)", () => {
       (flag) => `${flag.route}:${flag.metric}`
     );
     expect(isSorted(perfSortTokens)).toBeTruthy();
+  });
+
+  test("merge heuristics data into gap report", async () => {
+    const exists = await waitForGapReport(45000, TEST_RUN_STARTED_AT);
+    expect(exists).toBeTruthy();
+
+    // Read current gap report
+    let report = JSON.parse(
+      fs.readFileSync(GAP_REPORT_PATH, "utf-8")
+    ) as GapReport;
+
+    // Merge heuristics data
+    report = mergeHeuristicsIntoGapReport(report);
+
+    // Write merged report
+    fs.writeFileSync(GAP_REPORT_PATH, JSON.stringify(report, null, 2));
+
+    console.log("\n=== Gap Report Merged ===\n");
+    console.log(
+      `Heuristic gaps source: ${report.heuristicGaps?.source || "none"}`
+    );
+    console.log(
+      `Total heuristic gaps: ${report.heuristicGaps?.summary.totalGaps || 0}`
+    );
+
+    if (report.heuristicGaps?.summary.totalGaps) {
+      console.log("\nGaps by severity:");
+      console.log(
+        `  Critical: ${report.heuristicGaps.summary.gapsBySeverity.critical}`
+      );
+      console.log(
+        `  High: ${report.heuristicGaps.summary.gapsBySeverity.high}`
+      );
+      console.log(
+        `  Medium: ${report.heuristicGaps.summary.gapsBySeverity.medium}`
+      );
+      console.log(`  Low: ${report.heuristicGaps.summary.gapsBySeverity.low}`);
+    }
+
+    // Verify structure
+    expect(report.heuristicGaps).toBeDefined();
+    expect(Array.isArray(report.heuristicGaps?.gaps)).toBeTruthy();
+    expect(report.heuristicGaps?.summary).toBeDefined();
+
+    // Verify gaps are sorted if present
+    if (report.heuristicGaps?.gaps.length) {
+      const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+      let isSortedBySeverity = true;
+      for (let i = 1; i < report.heuristicGaps.gaps.length; i++) {
+        const prev = report.heuristicGaps.gaps[i - 1];
+        const curr = report.heuristicGaps.gaps[i];
+        const prevOrder = severityOrder[prev.severity];
+        const currOrder = severityOrder[curr.severity];
+        if (prevOrder > currOrder) {
+          isSortedBySeverity = false;
+          break;
+        }
+      }
+      expect(isSortedBySeverity).toBeTruthy();
+    }
+
+    console.log(`\nMerged report written to: ${GAP_REPORT_PATH}`);
   });
 });

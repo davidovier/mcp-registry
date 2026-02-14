@@ -26,7 +26,7 @@
     "security:test": "pnpm security:deps && pnpm test:e2e:security:ci",
     "perf:compare": "node e2e/utils/perf-regressions.mjs",
     "perf:report": "pnpm exec playwright test e2e/perf-smoke.spec.ts e2e/perf-trends.spec.ts && pnpm perf:compare",
-    "product:backlog": "npx ts-node scripts/generate-product-backlog.ts",
+    "product:backlog": "npx tsx scripts/generate-product-backlog.ts",
     "prepare": "husky",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
