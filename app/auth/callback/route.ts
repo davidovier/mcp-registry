@@ -1,6 +1,27 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+function sanitizeNextPath(nextParam: string | null): string {
+  if (!nextParam || !nextParam.startsWith("/") || nextParam.startsWith("//")) {
+    return "/";
+  }
+
+  try {
+    const decoded = decodeURIComponent(nextParam);
+    if (
+      !decoded.startsWith("/") ||
+      decoded.startsWith("//") ||
+      decoded.includes("\n") ||
+      decoded.includes("\r")
+    ) {
+      return "/";
+    }
+    return decoded;
+  } catch {
+    return "/";
+  }
+}
+
 /**
  * Auth callback handler for OAuth providers and email magic links.
  * This route exchanges the auth code for a session.
@@ -12,26 +33,25 @@ import { type NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
-
-  const forwardedHost = request.headers.get("x-forwarded-host");
+  const nextPath = sanitizeNextPath(searchParams.get("next"));
   const isLocalEnv = process.env.NODE_ENV === "development";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
-  let redirectBase: string;
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    redirectBase = process.env.NEXT_PUBLIC_SITE_URL;
-  } else if (isLocalEnv) {
-    redirectBase = new URL(request.url).origin;
-  } else if (forwardedHost) {
-    const forwardedProto = request.headers.get("x-forwarded-proto") ?? "https";
-    redirectBase = `${forwardedProto}://${forwardedHost}`;
-  } else {
-    redirectBase = new URL(request.url).origin;
+  // Production must use a fixed, explicit origin to avoid host-header abuse.
+  if (!siteUrl && !isLocalEnv) {
+    console.error(
+      "Auth callback misconfigured: NEXT_PUBLIC_SITE_URL is missing"
+    );
+    return NextResponse.json({ error: "Auth not configured" }, { status: 500 });
   }
+
+  const redirectBase = siteUrl ?? new URL(request.url).origin;
 
   if (code) {
     // Create the redirect response FIRST, then set cookies ON it.
-    const redirectResponse = NextResponse.redirect(`${redirectBase}${next}`);
+    const redirectResponse = NextResponse.redirect(
+      new URL(nextPath, redirectBase)
+    );
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -60,5 +80,7 @@ export async function GET(request: NextRequest) {
     console.error("Auth callback error:", error.message);
   }
 
-  return NextResponse.redirect(`${redirectBase}/signin?error=auth_failed`);
+  return NextResponse.redirect(
+    new URL("/signin?error=auth_failed", redirectBase)
+  );
 }

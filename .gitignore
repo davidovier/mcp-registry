@@ -16,6 +16,9 @@ playwright/.auth
 e2e/screenshots
 e2e/design-audit-results.json
 
+# Product inventory report IS committed (not gitignored)
+# e2e/reports/product-inventory.json
+
 # Environment variables (NEVER commit these)
 .env
 .env.local

@@ -121,27 +121,30 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Available Scripts
 
-| Command                  | Description                              |
-| ------------------------ | ---------------------------------------- |
-| `pnpm dev`               | Start development server                 |
-| `pnpm build`             | Build for production                     |
-| `pnpm start`             | Start production server                  |
-| `pnpm lint`              | Run ESLint                               |
-| `pnpm lint:fix`          | Run ESLint with auto-fix                 |
-| `pnpm format`            | Format code with Prettier                |
-| `pnpm format:check`      | Check code formatting                    |
-| `pnpm typecheck`         | Run TypeScript type checking             |
-| `pnpm test`              | Run unit tests (Vitest)                  |
-| `pnpm test:watch`        | Run tests in watch mode                  |
-| `pnpm test:coverage`     | Run tests with coverage                  |
-| `pnpm test:e2e`          | Run E2E tests (Playwright)               |
-| `pnpm test:e2e:ui`       | Run E2E tests with UI                    |
-| `pnpm supabase:start`    | Start local Supabase (Docker)            |
-| `pnpm supabase:stop`     | Stop local Supabase                      |
-| `pnpm supabase:status`   | Check local Supabase status              |
-| `pnpm supabase:db:reset` | Reset local DB (apply migrations + seed) |
-| `pnpm supabase:db:push`  | Push migrations to remote                |
-| `pnpm supabase:types`    | Generate TypeScript types                |
+| Command                  | Description                               |
+| ------------------------ | ----------------------------------------- |
+| `pnpm dev`               | Start development server                  |
+| `pnpm build`             | Build for production                      |
+| `pnpm start`             | Start production server                   |
+| `pnpm lint`              | Run ESLint                                |
+| `pnpm lint:fix`          | Run ESLint with auto-fix                  |
+| `pnpm format`            | Format code with Prettier                 |
+| `pnpm format:check`      | Check code formatting                     |
+| `pnpm typecheck`         | Run TypeScript type checking              |
+| `pnpm test`              | Run unit tests (Vitest)                   |
+| `pnpm test:watch`        | Run tests in watch mode                   |
+| `pnpm test:coverage`     | Run tests with coverage                   |
+| `pnpm test:e2e`          | Run E2E tests (Playwright)                |
+| `pnpm test:e2e:ui`       | Run E2E tests with UI                     |
+| `pnpm test:e2e:security` | Run security-focused E2E smoke tests      |
+| `pnpm security:deps`     | Audit production dependencies for CVEs    |
+| `pnpm security:test`     | Run dependency audit + security E2E tests |
+| `pnpm supabase:start`    | Start local Supabase (Docker)             |
+| `pnpm supabase:stop`     | Stop local Supabase                       |
+| `pnpm supabase:status`   | Check local Supabase status               |
+| `pnpm supabase:db:reset` | Reset local DB (apply migrations + seed)  |
+| `pnpm supabase:db:push`  | Push migrations to remote                 |
+| `pnpm supabase:types`    | Generate TypeScript types                 |
 
 ## Project Structure
 
@@ -399,6 +402,77 @@ pnpm test:e2e:ui
 
 # Install browsers (first time)
 pnpm exec playwright install
+```
+
+### Product Tests (Test-Forward Development)
+
+The project uses a test-forward development approach with two types of product tests:
+
+#### Product Spec Tests (MUST-PASS)
+
+`e2e/product-spec.spec.ts` - Defines the product contract. These tests verify:
+
+- **Page structure**: Every public page has `<main>` landmark with exactly one `<h1>`
+- **Navigation**: Header contains Browse, Docs, API, Changelog, About links
+- **Footer**: Contains links to About, Docs, API, Verification, Changelog, Contributing, Privacy, Terms
+- **Console errors**: No JavaScript errors on any page
+- **Link integrity**: All internal links resolve correctly (caps at 60 links)
+- **Key journeys**: Discovery flow, search with suggestions, verification transparency
+
+```bash
+# Run product spec tests only
+pnpm exec playwright test product-spec
+
+# Run with verbose output
+pnpm exec playwright test product-spec --reporter=list
+```
+
+#### Product Inventory (Non-Gating)
+
+`e2e/product-inventory.spec.ts` - Generates a comprehensive inventory report without blocking CI.
+
+Collects for each public page:
+
+- URL, HTTP status, page title, h1 text
+- Internal/external link counts
+- UI feature flags: breadcrumbs, empty states, code blocks, tables, forms
+- A11y quick checks: landmarks, skip links, header nav
+
+Output: `e2e/reports/product-inventory.json`
+
+```bash
+# Run inventory collection
+pnpm exec playwright test product-inventory
+
+# View the generated report
+cat e2e/reports/product-inventory.json | jq '.summary'
+```
+
+The inventory report structure:
+
+```json
+{
+  "generatedAt": "2026-02-14T...",
+  "pageCount": 12,
+  "totalInternalLinks": 45,
+  "pages": [
+    {
+      "url": "/servers",
+      "name": "Browse Servers",
+      "status": 200,
+      "h1Text": "MCP Server Registry",
+      "internalLinkCount": 15,
+      "hasBreadcrumbs": false,
+      "hasCodeBlock": false,
+      "a11y": { "hasMainLandmark": true, "hasH1": true, ... }
+    }
+  ],
+  "summary": {
+    "pagesWithErrors": 0,
+    "pagesWithoutH1": 0,
+    "pagesWithCodeBlocks": 3
+  }
+}
 ```
 
 ### Validate Everything Locally

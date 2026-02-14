@@ -20,6 +20,13 @@ import type { McpAuth, McpTransport } from "@/lib/supabase/types";
 
 import { ServerListClient } from "./server-list-client";
 
+const PUBLIC_SERVER_COLUMNS =
+  "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,verified_at,created_at,updated_at";
+
+function quotePostgrestLiteral(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
 interface SearchParams {
   q?: string;
   transport?: McpTransport;
@@ -249,7 +256,7 @@ async function handleSearchQuery(
     // Query additional servers using text search fallback
     const { data: fallbackData } = await supabase
       .from("mcp_servers")
-      .select("*")
+      .select(PUBLIC_SERVER_COLUMNS)
       .textSearch("name", q.split(/\s+/).join(" | "), { type: "websearch" })
       .limit(needed + 5);
 
@@ -293,7 +300,7 @@ async function handleSearchQuery(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sanitizedServers = servers.map((s: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rank, ...rest } = s;
+    const { rank, owner_id, ...rest } = s;
     return rest;
   });
 
@@ -330,7 +337,7 @@ async function handleStandardQuery(
 
   let query = supabase
     .from("mcp_servers")
-    .select("*", { count: cursor ? undefined : "exact" })
+    .select(PUBLIC_SERVER_COLUMNS, { count: cursor ? undefined : "exact" })
     .limit(limit + 1);
 
   // Apply sort-specific ordering
@@ -414,22 +421,23 @@ function applyCursorFilter(query: any, cursor: CursorData, sort: SortMode) {
       if (!("v" in cursor)) return query;
       return query.or(
         `verified.lt.${cursor.v},` +
-          `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
-          `and(verified.eq.${cursor.v},created_at.eq.${cursor.c},id.lt.${cursor.i})`
+          `and(verified.eq.${cursor.v},created_at.lt.${quotePostgrestLiteral(cursor.c)}),` +
+          `and(verified.eq.${cursor.v},created_at.eq.${quotePostgrestLiteral(cursor.c)},id.lt.${cursor.i})`
       );
     }
     case "newest": {
       if (cursor.s !== "newest") return query;
       return query.or(
-        `created_at.lt.${cursor.c},` +
-          `and(created_at.eq.${cursor.c},id.lt.${cursor.i})`
+        `created_at.lt.${quotePostgrestLiteral(cursor.c)},` +
+          `and(created_at.eq.${quotePostgrestLiteral(cursor.c)},id.lt.${cursor.i})`
       );
     }
     case "name": {
       if (cursor.s !== "name") return query;
       if (!("n" in cursor)) return query;
       return query.or(
-        `name.gt.${cursor.n},` + `and(name.eq.${cursor.n},id.gt.${cursor.i})`
+        `name.gt.${quotePostgrestLiteral(cursor.n)},` +
+          `and(name.eq.${quotePostgrestLiteral(cursor.n)},id.gt.${cursor.i})`
       );
     }
   }

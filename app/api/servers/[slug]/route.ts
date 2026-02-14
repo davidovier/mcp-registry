@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 
+const PUBLIC_SERVER_COLUMNS =
+  "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,verified_at,created_at,updated_at";
+
 // Route segment config - ISR with 5 minute revalidation
 // Note: Vercel edge caches responses (x-vercel-cache: HIT) even though
 // Cache-Control header is normalized by Next.js App Router
@@ -37,7 +40,7 @@ export async function GET(
     // Fetch server by slug
     const { data, error } = await supabase
       .from("mcp_servers")
-      .select("*")
+      .select(PUBLIC_SERVER_COLUMNS)
       .eq("slug", slug)
       .single();
 

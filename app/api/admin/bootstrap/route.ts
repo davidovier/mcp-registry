@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "node:crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 
 import { createServiceClient } from "@/lib/supabase/service";
@@ -6,6 +8,29 @@ import { createServiceClient } from "@/lib/supabase/service";
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+
+function getClientIp(request: NextRequest): string {
+  const trustedIp =
+    request.headers.get("x-real-ip") || request.headers.get("cf-connecting-ip");
+
+  if (trustedIp) {
+    return trustedIp;
+  }
+
+  // Fallback for local/dev environments.
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+  );
+}
+
+function safeEqual(a: string, b: string): boolean {
+  const aBuf = Buffer.from(a, "utf8");
+  const bBuf = Buffer.from(b, "utf8");
+  if (aBuf.length !== bBuf.length) {
+    return false;
+  }
+  return timingSafeEqual(aBuf, bBuf);
+}
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
@@ -38,8 +63,7 @@ function isRateLimited(ip: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    const ip = getClientIp(request);
     if (isRateLimited(ip)) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
@@ -54,7 +78,7 @@ export async function POST(request: NextRequest) {
     }
 
     const providedToken = request.headers.get("x-bootstrap-token");
-    if (!providedToken || providedToken !== bootstrapToken) {
+    if (!providedToken || !safeEqual(providedToken, bootstrapToken)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -66,7 +90,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    if (!body.email || body.email !== bootstrapEmail) {
+    if (
+      !body.email ||
+      !safeEqual(body.email.toLowerCase(), bootstrapEmail.toLowerCase())
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

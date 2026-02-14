@@ -242,6 +242,9 @@ function validateNameCursor(
   if (typeof n !== "string" || typeof i !== "string") {
     return null;
   }
+  if (n.length > 200 || /[\r\n]/.test(n)) {
+    return null;
+  }
   if (!isValidUUID(i)) {
     return null;
   }
@@ -293,6 +296,9 @@ function validateRankedNameCursor(
   }
   const { r, n, i } = obj;
   if (typeof r !== "number" || typeof n !== "string" || typeof i !== "string") {
+    return null;
+  }
+  if (n.length > 200 || /[\r\n]/.test(n)) {
     return null;
   }
   if (!isValidUUID(i)) {
