@@ -465,41 +465,36 @@ test.describe("Key Journey Tests", () => {
         "/servers/this-server-definitely-does-not-exist-xyz"
       );
 
-      // Verify we got a 404 response - this is the key contract
+      // PRIMARY CONTRACT: Verify we got a 404 response
       expect(response?.status()).toBe(404);
 
-      // Wait for JavaScript to hydrate - check for body content
+      // Wait for JavaScript to hydrate
       await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(2000);
 
-      // Give Next.js RSC hydration time to complete
-      await page.waitForTimeout(3000);
-
-      // Check what's in the DOM
-      const bodyContent = await page.evaluate(() => document.body.innerHTML);
-      console.log("Body HTML length:", bodyContent.length);
-
-      // Check for any visible text in the body
-      const bodyText = await page.evaluate(() => document.body.innerText);
-      console.log("Body text:", bodyText.substring(0, 500));
-
-      // The key contract is that 404 status was returned
-      // Content rendering is secondary - in dev mode, Next.js 15 may show different UIs
-      // Accept if either:
-      // 1. The h1 is visible with appropriate text
-      // 2. The page shows some error-related content
-      // 3. The 404 status was correctly returned (which we already verified)
-
+      // SECONDARY CONTRACT: Page should have some structure
+      // In dev mode, Next.js 15 may render differently, so we check multiple indicators
+      const hasMainLandmark = await page.locator("main").count();
       const h1Elements = await page.locator("h1").count();
+
+      // Check body content is present (RSC payload was received)
+      const bodyLength = await page.evaluate(
+        () => document.body.innerHTML.length
+      );
+      expect(bodyLength).toBeGreaterThan(1000); // Should have substantial content
 
       if (h1Elements > 0) {
         const h1Text = await page.locator("h1").first().textContent();
+        // Accept various 404/error messages
         expect(h1Text?.toLowerCase()).toMatch(
           /not found|server not found|404|something went wrong|this page could not be found/i
         );
+      } else if (hasMainLandmark > 0) {
+        // Page has structure but h1 might not be visible due to hydration
+        console.log("Main landmark found, h1 may be hydrating");
       } else {
-        // If no h1 is visible, the 404 status code is sufficient for the contract
-        // This can happen in dev mode where Next.js shows minimal error templates
-        console.log("No h1 found, but 404 status was returned correctly");
+        // Minimal fallback - 404 status is the definitive contract
+        console.log("Minimal page structure, but 404 status was correct");
       }
 
       // JSON-LD should NOT be present for non-existent server

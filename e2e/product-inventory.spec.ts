@@ -242,6 +242,10 @@ test.describe("Product Inventory", () => {
 
       try {
         const inventory = await collectPageInventory(page, route);
+
+        // Sort internal links for deterministic output
+        inventory.internalLinks.sort();
+
         pages.push(inventory);
 
         // Collect all unique internal links
