@@ -40,7 +40,7 @@ BEGIN
     s.slug,
     similarity(lower(s.name), normalized_query) AS similarity
   FROM mcp_servers s
-  WHERE similarity(lower(s.name), normalized_query) >= 0.25
+  WHERE similarity(lower(s.name), normalized_query) >= 0.15
   ORDER BY
     similarity(lower(s.name), normalized_query) DESC,
     s.verified DESC,

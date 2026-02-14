@@ -38,7 +38,9 @@ const listResponseExample = `{
     }
   ],
   "nextCursor": "opaque-string-or-null",
-  "total": 123
+  "total": 123,
+  "searchMode": "fts",
+  "suggestion": { "name": "GitHub MCP Server", "slug": "github" }
 }`;
 
 const detailResponseExample = `{
@@ -367,6 +369,55 @@ export default function ApiDocsPage() {
                       sort=name
                     </code>
                     : By relevance first, then alphabetically
+                  </span>
+                </li>
+              </ul>
+
+              <h3 className="mt-6 text-heading-sm text-content-primary">
+                Search Intelligence
+              </h3>
+              <p className="mt-2 text-body-md text-content-secondary">
+                The API includes smart search features to help users find what
+                they&apos;re looking for:
+              </p>
+              <ul className="mt-3 space-y-2 text-body-md text-content-secondary">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-content-tertiary" />
+                  <span>
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      searchMode
+                    </code>
+                    : Indicates how results were retrieved:{" "}
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      fts
+                    </code>{" "}
+                    (full-text search),{" "}
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      fallback_trgm
+                    </code>{" "}
+                    (trigram similarity fallback), or{" "}
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      none
+                    </code>{" "}
+                    (no search query)
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-content-tertiary" />
+                  <span>
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      suggestion
+                    </code>
+                    : When search returns few or no results, may include a
+                    &quot;did you mean&quot; suggestion with{" "}
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      name
+                    </code>{" "}
+                    and{" "}
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      slug
+                    </code>{" "}
+                    fields
                   </span>
                 </li>
               </ul>
