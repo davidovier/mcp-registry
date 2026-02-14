@@ -12,6 +12,7 @@ const footerLinks = {
     { name: "Changelog", href: "/changelog" },
     { name: "About", href: "/about" },
     { name: "Verification", href: "/verification" },
+    { name: "Contributing", href: "/contributing" },
     { name: "MCP Specification", href: "https://modelcontextprotocol.io" },
     { name: "GitHub", href: "https://github.com" },
   ],
