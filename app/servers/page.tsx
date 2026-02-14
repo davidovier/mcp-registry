@@ -266,6 +266,22 @@ async function handleSearchQuery(
     }
   }
 
+  // If no results, searchMode should be "none" (no ranking to show)
+  if (servers.length === 0) {
+    searchMode = "none";
+  }
+
+  // Only include suggestion if it differs from top result (avoid redundancy)
+  if (suggestion && servers.length > 0) {
+    const topResult = servers[0] as { slug?: string; name?: string };
+    if (
+      topResult.slug === suggestion.slug ||
+      topResult.name === suggestion.name
+    ) {
+      suggestion = null;
+    }
+  }
+
   // Create next cursor (ranked) - only if not in fallback mode
   let nextCursor: string | null = null;
   if (hasMore && servers.length > 0 && searchMode === "fts") {

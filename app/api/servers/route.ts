@@ -268,9 +268,20 @@ async function handleSearchQuery(
     }
   }
 
-  // If still no results, just mark as FTS with no results
+  // If no results, searchMode should be "none" (no ranking to show)
   if (servers.length === 0) {
-    searchMode = "fts";
+    searchMode = "none";
+  }
+
+  // Only include suggestion if it differs from top result (avoid redundancy)
+  if (suggestion && servers.length > 0) {
+    const topResult = servers[0] as { slug?: string; name?: string };
+    if (
+      topResult.slug === suggestion.slug ||
+      topResult.name === suggestion.name
+    ) {
+      suggestion = null;
+    }
   }
 
   // Create next cursor (ranked)
