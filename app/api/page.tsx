@@ -173,7 +173,8 @@ export default function ApiDocsPage() {
                       string
                     </Table.Cell>
                     <Table.Cell className="text-content-secondary">
-                      Searches name and description (case-insensitive)
+                      Full-text search query. Searches name, description, and
+                      tags with ranking.
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row hoverable={false}>
@@ -306,6 +307,8 @@ export default function ApiDocsPage() {
               </p>
               <pre className="overflow-x-auto rounded-lg bg-surface-sunken p-4 text-mono-sm text-content-primary">
                 <code>{`/api/servers?q=github
+/api/servers?q=github&sort=newest
+/api/servers?q=filesystem&tag=tools
 /api/servers?transport=stdio
 /api/servers?auth=oauth&verified=true
 /api/servers?tag=database&tag=postgres
@@ -313,6 +316,67 @@ export default function ApiDocsPage() {
 /api/servers?sort=name&limit=20`}</code>
               </pre>
             </div>
+          </section>
+
+          {/* Search Behavior */}
+          <section>
+            <h2 className="mb-4 text-heading-lg text-content-primary">
+              Search Behavior
+            </h2>
+            <Card padding="lg">
+              <p className="text-body-md text-content-secondary">
+                When the{" "}
+                <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                  q
+                </code>{" "}
+                parameter is provided, results are ranked by relevance using
+                Postgres Full-Text Search. The search matches against server
+                name, description, and tags.
+              </p>
+
+              <h3 className="mt-6 text-heading-sm text-content-primary">
+                Ranking with Sort Modes
+              </h3>
+              <p className="mt-2 text-body-md text-content-secondary">
+                When searching, ranking interacts with the selected sort mode:
+              </p>
+              <ul className="mt-3 space-y-2 text-body-md text-content-secondary">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-content-tertiary" />
+                  <span>
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      sort=verified
+                    </code>{" "}
+                    (default): Verified servers first, then by relevance, then
+                    by newest
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-content-tertiary" />
+                  <span>
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      sort=newest
+                    </code>
+                    : By relevance first, then by newest
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-content-tertiary" />
+                  <span>
+                    <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                      sort=name
+                    </code>
+                    : By relevance first, then alphabetically
+                  </span>
+                </li>
+              </ul>
+
+              <Alert variant="info" className="mt-6">
+                <strong>Note:</strong> When using search, the{" "}
+                <code className="font-mono text-mono-sm">total</code> field is
+                not included in the response to keep queries fast.
+              </Alert>
+            </Card>
           </section>
 
           {/* Pagination */}

@@ -6,6 +6,8 @@ import {
   normalizeLimit,
   normalizeSort,
   createCursorFromRow,
+  createRankedCursorFromRow,
+  isRankedCursor,
   PAGINATION,
   DEFAULT_SORT,
 } from "@/lib/pagination";
@@ -268,6 +270,178 @@ describe("createCursorFromRow", () => {
 
     expect(decoded).toEqual({
       s: "name",
+      n: "Test Server",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    });
+  });
+});
+
+describe("Ranked cursor encoding/decoding (FTS search)", () => {
+  describe("ranked verified cursor", () => {
+    const rankedVerifiedCursor = {
+      s: "verified" as const,
+      q: true as const,
+      v: true,
+      r: 0.5,
+      c: "2026-02-06T12:00:00.000Z",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    };
+
+    it("should encode and decode a ranked verified cursor", () => {
+      const encoded = encodeCursor(rankedVerifiedCursor);
+      const decoded = decodeCursor(encoded, "verified", true);
+
+      expect(decoded).toEqual(rankedVerifiedCursor);
+    });
+
+    it("should identify as ranked cursor", () => {
+      const encoded = encodeCursor(rankedVerifiedCursor);
+      const decoded = decodeCursor(encoded, "verified", true);
+
+      expect(decoded).not.toBeNull();
+      expect(isRankedCursor(decoded!)).toBe(true);
+    });
+
+    it("should reject ranked cursor when not expecting search", () => {
+      const encoded = encodeCursor(rankedVerifiedCursor);
+      expect(decodeCursor(encoded, "verified", false)).toBeNull();
+    });
+  });
+
+  describe("ranked newest cursor", () => {
+    const rankedNewestCursor = {
+      s: "newest" as const,
+      q: true as const,
+      r: 0.75,
+      c: "2026-02-06T12:00:00.000Z",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    };
+
+    it("should encode and decode a ranked newest cursor", () => {
+      const encoded = encodeCursor(rankedNewestCursor);
+      const decoded = decodeCursor(encoded, "newest", true);
+
+      expect(decoded).toEqual(rankedNewestCursor);
+    });
+
+    it("should identify as ranked cursor", () => {
+      const encoded = encodeCursor(rankedNewestCursor);
+      const decoded = decodeCursor(encoded, "newest", true);
+
+      expect(decoded).not.toBeNull();
+      expect(isRankedCursor(decoded!)).toBe(true);
+    });
+  });
+
+  describe("ranked name cursor", () => {
+    const rankedNameCursor = {
+      s: "name" as const,
+      q: true as const,
+      r: 0.25,
+      n: "Test Server",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    };
+
+    it("should encode and decode a ranked name cursor", () => {
+      const encoded = encodeCursor(rankedNameCursor);
+      const decoded = decodeCursor(encoded, "name", true);
+
+      expect(decoded).toEqual(rankedNameCursor);
+    });
+
+    it("should identify as ranked cursor", () => {
+      const encoded = encodeCursor(rankedNameCursor);
+      const decoded = decodeCursor(encoded, "name", true);
+
+      expect(decoded).not.toBeNull();
+      expect(isRankedCursor(decoded!)).toBe(true);
+    });
+  });
+
+  describe("search mode validation", () => {
+    const nonRankedCursor = {
+      s: "verified" as const,
+      v: true,
+      c: "2026-02-06T12:00:00.000Z",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    };
+
+    it("should reject non-ranked cursor when expecting search", () => {
+      const encoded = encodeCursor(nonRankedCursor);
+      expect(decodeCursor(encoded, "verified", true)).toBeNull();
+    });
+
+    it("should accept non-ranked cursor when not expecting search", () => {
+      const encoded = encodeCursor(nonRankedCursor);
+      expect(decodeCursor(encoded, "verified", false)).toEqual(nonRankedCursor);
+    });
+
+    it("should identify non-ranked cursor correctly", () => {
+      const encoded = encodeCursor(nonRankedCursor);
+      const decoded = decodeCursor(encoded, "verified", false);
+
+      expect(decoded).not.toBeNull();
+      expect(isRankedCursor(decoded!)).toBe(false);
+    });
+
+    it("should reject legacy cursor when expecting search", () => {
+      const legacyCursor = Buffer.from(
+        JSON.stringify({
+          v: true,
+          c: "2026-02-06T12:00:00.000Z",
+          i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        })
+      ).toString("base64url");
+
+      expect(decodeCursor(legacyCursor, "verified", true)).toBeNull();
+    });
+  });
+});
+
+describe("createRankedCursorFromRow", () => {
+  const row = {
+    verified: true,
+    created_at: "2026-02-06T12:00:00.000Z",
+    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    name: "Test Server",
+    rank: 0.85,
+  };
+
+  it("should create ranked verified cursor by default", () => {
+    const cursor = createRankedCursorFromRow(row);
+    const decoded = decodeCursor(cursor, "verified", true);
+
+    expect(decoded).toEqual({
+      s: "verified",
+      q: true,
+      v: true,
+      r: 0.85,
+      c: "2026-02-06T12:00:00.000Z",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    });
+  });
+
+  it("should create ranked newest cursor", () => {
+    const cursor = createRankedCursorFromRow(row, "newest");
+    const decoded = decodeCursor(cursor, "newest", true);
+
+    expect(decoded).toEqual({
+      s: "newest",
+      q: true,
+      r: 0.85,
+      c: "2026-02-06T12:00:00.000Z",
+      i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    });
+  });
+
+  it("should create ranked name cursor", () => {
+    const cursor = createRankedCursorFromRow(row, "name");
+    const decoded = decodeCursor(cursor, "name", true);
+
+    expect(decoded).toEqual({
+      s: "name",
+      q: true,
+      r: 0.85,
       n: "Test Server",
       i: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     });

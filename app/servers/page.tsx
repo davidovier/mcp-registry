@@ -6,7 +6,10 @@ import { SearchHero } from "@/components/servers/SearchHero";
 import { Skeleton } from "@/components/ui/Skeleton";
 import {
   createCursorFromRow,
+  createRankedCursorFromRow,
+  CursorData,
   decodeCursor,
+  isRankedCursor,
   normalizeSort,
   PAGINATION,
   SortMode,
@@ -88,7 +91,162 @@ async function ServerList({
   const supabase = await createClient();
   const limit = PAGINATION.DEFAULT_LIMIT;
   const sort = normalizeSort(sortParam);
-  const cursor = cursorParam ? decodeCursor(cursorParam, sort) : null;
+  const searchQuery = q?.trim() || null;
+  const hasSearchQuery = !!searchQuery;
+  const cursor = cursorParam
+    ? decodeCursor(cursorParam, sort, hasSearchQuery)
+    : null;
+
+  // Use FTS when search query is present
+  if (searchQuery) {
+    return handleSearchQuery(supabase, {
+      q: searchQuery,
+      transport,
+      auth,
+      verified,
+      limit,
+      sort,
+      cursor,
+    });
+  }
+
+  // Standard query without search
+  return handleStandardQuery(supabase, {
+    q,
+    transport,
+    auth,
+    verified,
+    limit,
+    sort,
+    cursor,
+  });
+}
+
+/**
+ * Handle search query using FTS RPC function
+ */
+async function handleSearchQuery(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  params: {
+    q: string;
+    transport?: McpTransport;
+    auth?: McpAuth;
+    verified?: string;
+    limit: number;
+    sort: SortMode;
+    cursor: CursorData | null;
+  }
+) {
+  const { q, transport, auth, verified, limit, sort, cursor } = params;
+
+  // Prepare cursor fields for the RPC call
+  let cursorVerified: boolean | null = null;
+  let cursorRank: number | null = null;
+  let cursorCreatedAt: string | null = null;
+  let cursorName: string | null = null;
+  let cursorId: string | null = null;
+
+  if (cursor && isRankedCursor(cursor)) {
+    cursorId = cursor.i;
+    cursorRank = cursor.r;
+
+    switch (cursor.s) {
+      case "verified":
+        cursorVerified = cursor.v;
+        cursorCreatedAt = cursor.c;
+        break;
+      case "newest":
+        cursorCreatedAt = cursor.c;
+        break;
+      case "name":
+        cursorName = cursor.n;
+        break;
+    }
+  }
+
+  // Validate transport and auth values
+  const validTransport =
+    transport && ["stdio", "http", "both"].includes(transport)
+      ? transport
+      : null;
+  const validAuth =
+    auth && ["none", "oauth", "api_key", "other"].includes(auth) ? auth : null;
+  const verifiedFilter = verified === "true" ? true : null;
+
+  // Call the search_servers RPC function
+  const { data, error } = await supabase.rpc("search_servers", {
+    search_query: q,
+    sort_mode: sort,
+    transport_filter: validTransport,
+    auth_filter: validAuth,
+    verified_filter: verifiedFilter,
+    tag_filters: null,
+    result_limit: limit + 1,
+    cursor_verified: cursorVerified,
+    cursor_rank: cursorRank,
+    cursor_created_at: cursorCreatedAt,
+    cursor_name: cursorName,
+    cursor_id: cursorId,
+  });
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-body-md text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+        <p className="font-medium">Failed to load servers</p>
+        <p className="mt-1 text-body-sm">
+          Please try refreshing the page or clearing your filters.
+        </p>
+      </div>
+    );
+  }
+
+  const hasMore = data && data.length > limit;
+  const servers = hasMore ? data.slice(0, limit) : data || [];
+
+  // Create next cursor (ranked)
+  let nextCursor: string | null = null;
+  if (hasMore && servers.length > 0) {
+    const lastRow = servers[servers.length - 1];
+    nextCursor = createRankedCursorFromRow(lastRow, sort);
+  }
+
+  // Remove rank from servers (internal field)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sanitizedServers = servers.map((s: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rank, ...rest } = s;
+    return rest;
+  });
+
+  return (
+    <ServerListClient
+      initialServers={sanitizedServers}
+      initialNextCursor={nextCursor}
+      initialTotal={undefined} // No total for search queries
+      filters={{ q, transport, auth, verified }}
+      sort={sort}
+    />
+  );
+}
+
+/**
+ * Handle standard (non-search) query using PostgREST
+ */
+async function handleStandardQuery(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  params: {
+    q?: string;
+    transport?: McpTransport;
+    auth?: McpAuth;
+    verified?: string;
+    limit: number;
+    sort: SortMode;
+    cursor: CursorData | null;
+  }
+) {
+  const { q, transport, auth, verified, limit, sort, cursor } = params;
 
   let query = supabase
     .from("mcp_servers")
@@ -101,10 +259,6 @@ async function ServerList({
   // Apply cursor (keyset pagination)
   if (cursor) {
     query = applyCursorFilter(query, cursor, sort);
-  }
-
-  if (q) {
-    query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
   }
 
   if (transport) {
@@ -172,10 +326,11 @@ function applySortOrder(query: any, sort: SortMode) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function applyCursorFilter(query: any, cursor: any, sort: SortMode) {
+function applyCursorFilter(query: any, cursor: CursorData, sort: SortMode) {
   switch (sort) {
     case "verified": {
       if (cursor.s !== "verified") return query;
+      if (!("v" in cursor)) return query;
       return query.or(
         `verified.lt.${cursor.v},` +
           `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
@@ -191,6 +346,7 @@ function applyCursorFilter(query: any, cursor: any, sort: SortMode) {
     }
     case "name": {
       if (cursor.s !== "name") return query;
+      if (!("n" in cursor)) return query;
       return query.or(
         `name.gt.${cursor.n},` + `and(name.eq.${cursor.n},id.gt.${cursor.i})`
       );

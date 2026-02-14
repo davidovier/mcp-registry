@@ -379,6 +379,109 @@ test.describe("Sort functionality", () => {
   });
 });
 
+test.describe("Full-text search functionality", () => {
+  test("should search and show results or empty state", async ({ page }) => {
+    await page.goto("/servers?q=github");
+    await page.waitForLoadState("networkidle");
+
+    // URL should contain the search query
+    await expect(page).toHaveURL(/q=github/);
+
+    // Either results or empty/error state should be shown
+    const mainContent = page.locator("main");
+    await expect(mainContent).toBeVisible();
+  });
+
+  test("should combine search with sort mode", async ({ page }) => {
+    await page.goto("/servers?q=test&sort=newest");
+    await page.waitForLoadState("networkidle");
+
+    // URL should contain both params
+    await expect(page).toHaveURL(/q=test/);
+    await expect(page).toHaveURL(/sort=newest/);
+  });
+
+  test("should combine search with filters", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto("/servers?q=server");
+    await page.waitForLoadState("networkidle");
+
+    // Apply verified filter
+    const verifiedCheckbox = page.locator("aside").getByText("Verified only");
+    const isCheckboxVisible = await verifiedCheckbox
+      .isVisible()
+      .catch(() => false);
+
+    if (isCheckboxVisible) {
+      await verifiedCheckbox.click();
+
+      // URL should contain both params
+      await expect(page).toHaveURL(/q=server/);
+      await expect(page).toHaveURL(/verified=true/);
+    }
+  });
+
+  test("should change sort while searching", async ({ page }) => {
+    await page.goto("/servers?q=file");
+    await page.waitForLoadState("networkidle");
+
+    // Try to get the sort select
+    const sortSelect = page.getByRole("combobox", { name: /sort servers/i });
+    const isSortVisible = await sortSelect.isVisible().catch(() => false);
+
+    if (isSortVisible) {
+      await sortSelect.selectOption("name");
+
+      // URL should contain both params, cursor should be cleared
+      await expect(page).toHaveURL(/q=file/);
+      await expect(page).toHaveURL(/sort=name/);
+      await expect(page).not.toHaveURL(/cursor=/);
+    }
+  });
+
+  test("should handle search input and submit", async ({ page }) => {
+    await page.goto("/servers");
+
+    const searchInput = page.getByRole("searchbox", {
+      name: /search servers/i,
+    });
+    await searchInput.fill("database");
+    await searchInput.press("Enter");
+
+    await expect(page).toHaveURL(/q=database/);
+  });
+
+  test("should clear search when input is cleared", async ({ page }) => {
+    await page.goto("/servers?q=test");
+    await page.waitForLoadState("networkidle");
+
+    const searchInput = page.getByRole("searchbox", {
+      name: /search servers/i,
+    });
+    await searchInput.clear();
+    await searchInput.press("Enter");
+
+    // q param should be removed
+    await expect(page).not.toHaveURL(/q=/);
+  });
+
+  test("should preserve search when paginating", async ({ page }) => {
+    await page.goto("/servers?q=server");
+    await page.waitForLoadState("networkidle");
+
+    const loadMoreButton = page.getByRole("button", { name: /load more/i });
+    const hasLoadMore = await loadMoreButton.isVisible().catch(() => false);
+
+    if (hasLoadMore) {
+      await loadMoreButton.click();
+
+      // Both params should be present
+      await expect(page).toHaveURL(/q=server/);
+      await expect(page).toHaveURL(/cursor=/);
+    }
+  });
+});
+
 test.describe("Sign in page (public)", () => {
   test("should display sign in form", async ({ page }) => {
     await page.goto("/signin");
