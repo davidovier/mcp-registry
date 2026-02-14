@@ -7,7 +7,9 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import {
   createCursorFromRow,
   decodeCursor,
+  normalizeSort,
   PAGINATION,
+  SortMode,
 } from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
 import type { McpAuth, McpTransport } from "@/lib/supabase/types";
@@ -20,6 +22,7 @@ interface SearchParams {
   auth?: McpAuth;
   verified?: string;
   cursor?: string;
+  sort?: string;
 }
 
 interface Props {
@@ -57,6 +60,7 @@ export default async function ServersPage({ searchParams }: Props) {
                 auth={params.auth}
                 verified={params.verified}
                 cursor={params.cursor}
+                sort={params.sort}
               />
             </Suspense>
           </div>
@@ -72,32 +76,31 @@ async function ServerList({
   auth,
   verified,
   cursor: cursorParam,
+  sort: sortParam,
 }: {
   q?: string;
   transport?: McpTransport;
   auth?: McpAuth;
   verified?: string;
   cursor?: string;
+  sort?: string;
 }) {
   const supabase = await createClient();
   const limit = PAGINATION.DEFAULT_LIMIT;
-  const cursor = cursorParam ? decodeCursor(cursorParam) : null;
+  const sort = normalizeSort(sortParam);
+  const cursor = cursorParam ? decodeCursor(cursorParam, sort) : null;
 
   let query = supabase
     .from("mcp_servers")
     .select("*", { count: cursor ? undefined : "exact" })
-    .order("verified", { ascending: false })
-    .order("created_at", { ascending: false })
-    .order("id", { ascending: false })
     .limit(limit + 1);
+
+  // Apply sort-specific ordering
+  query = applySortOrder(query, sort);
 
   // Apply cursor (keyset pagination)
   if (cursor) {
-    query = query.or(
-      `verified.lt.${cursor.v},` +
-        `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
-        `and(verified.eq.${cursor.v},created_at.eq.${cursor.c},id.lt.${cursor.i})`
-    );
+    query = applyCursorFilter(query, cursor, sort);
   }
 
   if (q) {
@@ -135,7 +138,7 @@ async function ServerList({
   let nextCursor: string | null = null;
   if (hasMore && servers.length > 0) {
     const lastRow = servers[servers.length - 1];
-    nextCursor = createCursorFromRow(lastRow);
+    nextCursor = createCursorFromRow(lastRow, sort);
   }
 
   return (
@@ -144,8 +147,55 @@ async function ServerList({
       initialNextCursor={nextCursor}
       initialTotal={count ?? undefined}
       filters={{ q, transport, auth, verified }}
+      sort={sort}
     />
   );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applySortOrder(query: any, sort: SortMode) {
+  switch (sort) {
+    case "verified":
+      return query
+        .order("verified", { ascending: false })
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false });
+    case "newest":
+      return query
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false });
+    case "name":
+      return query
+        .order("name", { ascending: true })
+        .order("id", { ascending: true });
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyCursorFilter(query: any, cursor: any, sort: SortMode) {
+  switch (sort) {
+    case "verified": {
+      if (cursor.s !== "verified") return query;
+      return query.or(
+        `verified.lt.${cursor.v},` +
+          `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
+          `and(verified.eq.${cursor.v},created_at.eq.${cursor.c},id.lt.${cursor.i})`
+      );
+    }
+    case "newest": {
+      if (cursor.s !== "newest") return query;
+      return query.or(
+        `created_at.lt.${cursor.c},` +
+          `and(created_at.eq.${cursor.c},id.lt.${cursor.i})`
+      );
+    }
+    case "name": {
+      if (cursor.s !== "name") return query;
+      return query.or(
+        `name.gt.${cursor.n},` + `and(name.eq.${cursor.n},id.gt.${cursor.i})`
+      );
+    }
+  }
 }
 
 function ServerGridSkeleton() {
@@ -153,6 +203,7 @@ function ServerGridSkeleton() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Skeleton className="h-5 w-24" />
+        <Skeleton className="h-10 w-40" />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {[...Array(6)].map((_, i) => (

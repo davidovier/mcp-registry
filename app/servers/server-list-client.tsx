@@ -8,6 +8,8 @@ import { FilterChip } from "@/components/servers/FilterChip";
 import { ServerCard } from "@/components/servers/ServerCard";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Select } from "@/components/ui/Select";
+import { SORT_OPTIONS, SortMode } from "@/lib/pagination";
 import type { McpServer } from "@/lib/supabase/types";
 
 interface ServerListClientProps {
@@ -20,6 +22,7 @@ interface ServerListClientProps {
     auth?: string;
     verified?: string;
   };
+  sort: SortMode;
 }
 
 export function ServerListClient({
@@ -27,6 +30,7 @@ export function ServerListClient({
   initialNextCursor,
   initialTotal,
   filters,
+  sort,
 }: ServerListClientProps) {
   const [servers, setServers] = useState(initialServers);
   const [nextCursor, setNextCursor] = useState(initialNextCursor);
@@ -57,6 +61,26 @@ export function ServerListClient({
     router.push("/servers");
   }, [router]);
 
+  const handleSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newSort = e.target.value as SortMode;
+      const params = new URLSearchParams(searchParams.toString());
+
+      // Update sort param (remove if default)
+      if (newSort === "verified") {
+        params.delete("sort");
+      } else {
+        params.set("sort", newSort);
+      }
+
+      // Always reset cursor when sort changes
+      params.delete("cursor");
+
+      router.push(`/servers?${params.toString()}`);
+    },
+    [router, searchParams]
+  );
+
   const loadMore = () => {
     if (!nextCursor || isPending) return;
 
@@ -69,6 +93,8 @@ export function ServerListClient({
         if (filters.transport) params.set("transport", filters.transport);
         if (filters.auth) params.set("auth", filters.auth);
         if (filters.verified === "true") params.set("verified", "true");
+        // Include sort in pagination request
+        if (sort !== "verified") params.set("sort", sort);
 
         const response = await fetch(`/api/servers?${params.toString()}`);
 
@@ -99,7 +125,12 @@ export function ServerListClient({
   if (servers.length === 0) {
     return (
       <div>
-        <ActiveFiltersBar filters={activeFilters} onRemove={removeFilter} />
+        <HeaderBar
+          filters={activeFilters}
+          sort={sort}
+          onSortChange={handleSortChange}
+          onRemoveFilter={removeFilter}
+        />
         <EmptyState
           icon={
             <svg
@@ -139,11 +170,13 @@ export function ServerListClient({
 
   return (
     <div>
-      <ActiveFiltersBar
+      <HeaderBar
         filters={activeFilters}
         totalCount={initialTotal}
         shownCount={servers.length}
-        onRemove={removeFilter}
+        sort={sort}
+        onSortChange={handleSortChange}
+        onRemoveFilter={removeFilter}
       />
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -174,20 +207,21 @@ export function ServerListClient({
   );
 }
 
-function ActiveFiltersBar({
+function HeaderBar({
   filters,
   totalCount,
   shownCount,
-  onRemove,
+  sort,
+  onSortChange,
+  onRemoveFilter,
 }: {
   filters: { key: string; label: string }[];
   totalCount?: number;
   shownCount?: number;
-  onRemove: (key: string) => void;
+  sort: SortMode;
+  onSortChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onRemoveFilter: (key: string) => void;
 }) {
-  const hasCount = totalCount !== undefined || shownCount !== undefined;
-  if (filters.length === 0 && !hasCount) return null;
-
   let countLabel: string | null = null;
   if (totalCount !== undefined) {
     if (shownCount !== undefined && shownCount < totalCount) {
@@ -200,17 +234,39 @@ function ActiveFiltersBar({
   }
 
   return (
-    <div className="mb-6 flex flex-wrap items-center gap-2">
-      {countLabel && (
-        <span className="text-body-sm text-content-tertiary">{countLabel}</span>
+    <div className="mb-6 space-y-3">
+      {/* Results count and sort control */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {countLabel && (
+          <span className="text-body-sm text-content-tertiary">
+            {countLabel}
+          </span>
+        )}
+        {!countLabel && <div />}
+
+        <div className="w-full sm:w-auto">
+          <Select
+            options={SORT_OPTIONS}
+            value={sort}
+            onChange={onSortChange}
+            aria-label="Sort servers"
+            className="text-body-sm"
+          />
+        </div>
+      </div>
+
+      {/* Active filter chips */}
+      {filters.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          {filters.map((filter) => (
+            <FilterChip
+              key={filter.key}
+              label={filter.label}
+              onRemove={() => onRemoveFilter(filter.key)}
+            />
+          ))}
+        </div>
       )}
-      {filters.map((filter) => (
-        <FilterChip
-          key={filter.key}
-          label={filter.label}
-          onRemove={() => onRemove(filter.key)}
-        />
-      ))}
     </div>
   );
 }

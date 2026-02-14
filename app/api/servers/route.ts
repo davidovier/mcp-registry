@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   createCursorFromRow,
+  CursorData,
   decodeCursor,
   normalizeLimit,
+  normalizeSort,
+  SortMode,
 } from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,6 +26,7 @@ export const revalidate = 300;
  *   - auth: Filter by auth type (none, oauth, api_key, other)
  *   - verified: Filter by verified status (true/false)
  *   - tag: Filter by tag (can be specified multiple times)
+ *   - sort: Sort mode (verified, newest, name) - default: verified
  *   - limit: Number of results (default 20, max 50)
  *   - cursor: Pagination cursor from previous response
  *
@@ -44,6 +48,7 @@ export async function GET(request: NextRequest) {
     const verifiedParam = searchParams.get("verified");
     const tags = searchParams.getAll("tag").filter(Boolean);
     const limit = normalizeLimit(searchParams.get("limit"));
+    const sort = normalizeSort(searchParams.get("sort"));
     const cursorParam = searchParams.get("cursor");
 
     // Parse verified filter
@@ -51,30 +56,24 @@ export async function GET(request: NextRequest) {
     if (verifiedParam === "true") verified = true;
     if (verifiedParam === "false") verified = false;
 
-    // Decode cursor
-    const cursor = cursorParam ? decodeCursor(cursorParam) : null;
+    // Decode cursor with sort mode validation
+    const cursor = cursorParam ? decodeCursor(cursorParam, sort) : null;
 
     // Create Supabase client
     const supabase = await createClient();
 
-    // Build query
+    // Build query with sort-specific ordering
     let query = supabase
       .from("mcp_servers")
       .select("*", { count: cursor ? undefined : "exact" })
-      .order("verified", { ascending: false })
-      .order("created_at", { ascending: false })
-      .order("id", { ascending: false })
       .limit(limit + 1); // Fetch one extra to determine if there's a next page
+
+    // Apply sort-specific ordering
+    query = applySortOrder(query, sort);
 
     // Apply cursor (keyset pagination)
     if (cursor) {
-      // For descending order, we want rows that come AFTER the cursor
-      // verified DESC, created_at DESC, id DESC
-      query = query.or(
-        `verified.lt.${cursor.v},` +
-          `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
-          `and(verified.eq.${cursor.v},created_at.eq.${cursor.c},id.lt.${cursor.i})`
-      );
+      query = applyCursorFilter(query, cursor, sort);
     }
 
     // Apply filters
@@ -119,7 +118,7 @@ export async function GET(request: NextRequest) {
     let nextCursor: string | null = null;
     if (hasMore && servers.length > 0) {
       const lastRow = servers[servers.length - 1];
-      nextCursor = createCursorFromRow(lastRow);
+      nextCursor = createCursorFromRow(lastRow, sort);
     }
 
     // Build response
@@ -148,5 +147,64 @@ export async function GET(request: NextRequest) {
       { error: "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Apply sort-specific ORDER BY clauses
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applySortOrder(query: any, sort: SortMode) {
+  switch (sort) {
+    case "verified":
+      // verified DESC, created_at DESC, id DESC
+      return query
+        .order("verified", { ascending: false })
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false });
+    case "newest":
+      // created_at DESC, id DESC
+      return query
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false });
+    case "name":
+      // name ASC, id ASC
+      return query
+        .order("name", { ascending: true })
+        .order("id", { ascending: true });
+  }
+}
+
+/**
+ * Apply cursor filter for keyset pagination based on sort mode
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyCursorFilter(query: any, cursor: CursorData, sort: SortMode) {
+  switch (sort) {
+    case "verified": {
+      // For verified DESC, created_at DESC, id DESC
+      // We want rows that come AFTER the cursor (smaller values for DESC)
+      if (cursor.s !== "verified") return query;
+      return query.or(
+        `verified.lt.${cursor.v},` +
+          `and(verified.eq.${cursor.v},created_at.lt.${cursor.c}),` +
+          `and(verified.eq.${cursor.v},created_at.eq.${cursor.c},id.lt.${cursor.i})`
+      );
+    }
+    case "newest": {
+      // For created_at DESC, id DESC
+      if (cursor.s !== "newest") return query;
+      return query.or(
+        `created_at.lt.${cursor.c},` +
+          `and(created_at.eq.${cursor.c},id.lt.${cursor.i})`
+      );
+    }
+    case "name": {
+      // For name ASC, id ASC (ascending, so we want GREATER values)
+      if (cursor.s !== "name") return query;
+      return query.or(
+        `name.gt.${cursor.n},` + `and(name.eq.${cursor.n},id.gt.${cursor.i})`
+      );
+    }
   }
 }
