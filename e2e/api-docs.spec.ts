@@ -71,7 +71,7 @@ test.describe("API Documentation page", () => {
       page.getByText("GET /api/servers/{slug}").first()
     ).toBeVisible();
     await expect(
-      page.getByText("https://mcp-registry.vercel.app")
+      page.getByText("https://mcp-registry-mu.vercel.app")
     ).toBeVisible();
   });
 
