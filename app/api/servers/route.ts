@@ -12,6 +12,24 @@ import {
 } from "@/lib/pagination";
 import { createClient } from "@/lib/supabase/server";
 
+// Search mode indicates how results were retrieved
+export type SearchMode = "fts" | "fallback_trgm" | "none";
+
+// Suggestion for "did you mean" feature
+export interface Suggestion {
+  name: string;
+  slug: string;
+}
+
+// API response type with new fields
+export interface ServersApiResponse {
+  data: unknown[];
+  nextCursor: string | null;
+  total?: number;
+  suggestion?: Suggestion | null;
+  searchMode?: SearchMode;
+}
+
 // Route segment config - ISR with 5 minute revalidation
 // Note: Vercel edge caches responses (x-vercel-cache: HIT) even though
 // Cache-Control header is normalized by Next.js App Router
@@ -107,7 +125,34 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * Handle search query using FTS RPC function
+ * Fetch suggestions using trigram similarity
+ */
+async function fetchSuggestion(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  query: string
+): Promise<Suggestion | null> {
+  try {
+    const { data, error } = await supabase.rpc("suggest_servers", {
+      p_query: query,
+      p_limit: 1,
+    });
+
+    if (error || !data || data.length === 0) {
+      return null;
+    }
+
+    return {
+      name: data[0].name,
+      slug: data[0].slug,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Handle search query using FTS RPC function with fallback support
  */
 async function handleSearchQuery(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -184,11 +229,55 @@ async function handleSearchQuery(
 
   // Determine if there's a next page
   const hasMore = data && data.length > limit;
-  const servers = hasMore ? data.slice(0, limit) : data || [];
+  let servers = hasMore ? data.slice(0, limit) : data || [];
+  let searchMode: SearchMode = "fts";
+  let suggestion: Suggestion | null = null;
+
+  // Fallback logic: only on first page (no cursor) when results are sparse
+  const shouldFetchSuggestion = !cursor && servers.length < 3;
+  const shouldUseFallback = !cursor && servers.length > 0 && servers.length < 3;
+
+  // Fetch suggestion if results are sparse or empty
+  if (shouldFetchSuggestion) {
+    suggestion = await fetchSuggestion(supabase, q);
+  }
+
+  // If we have 1-2 results and no cursor, try to augment with trigram fallback
+  if (shouldUseFallback) {
+    const existingIds = new Set(servers.map((s: { id: string }) => s.id));
+    const needed = limit - servers.length;
+
+    // Query additional servers using trigram similarity
+    const { data: fallbackData } = await supabase
+      .from("mcp_servers")
+      .select("*")
+      .textSearch("name", q.split(/\s+/).join(" | "), { type: "websearch" })
+      .limit(needed + 5); // fetch extra to filter out duplicates
+
+    if (fallbackData && fallbackData.length > 0) {
+      // Filter out servers we already have and add rank field
+      const newServers = fallbackData
+        .filter((s: { id: string }) => !existingIds.has(s.id))
+        .slice(0, needed)
+        .map((s: Record<string, unknown>) => ({ ...s, rank: 0 })); // rank 0 for fallback results
+
+      if (newServers.length > 0) {
+        servers = [...servers, ...newServers];
+        searchMode = "fallback_trgm";
+      }
+    }
+  }
+
+  // If still no results, just mark as FTS with no results
+  if (servers.length === 0) {
+    searchMode = "fts";
+  }
 
   // Create next cursor (ranked)
   let nextCursor: string | null = null;
-  if (hasMore && servers.length > 0) {
+  // Only create cursor if we have more results AND we're not in fallback mode
+  // (fallback is first-page only, so no cursor needed)
+  if (hasMore && servers.length > 0 && searchMode === "fts") {
     const lastRow = servers[servers.length - 1];
     nextCursor = createRankedCursorFromRow(lastRow, sort);
   }
@@ -201,14 +290,17 @@ async function handleSearchQuery(
     return rest;
   });
 
-  // Build response (no total for search queries - too expensive)
-  const response: {
-    data: typeof sanitizedServers;
-    nextCursor: string | null;
-  } = {
+  // Build response with new fields
+  const response: ServersApiResponse = {
     data: sanitizedServers,
     nextCursor,
+    searchMode,
   };
+
+  // Only include suggestion if we have one
+  if (suggestion) {
+    response.suggestion = suggestion;
+  }
 
   return NextResponse.json(response, {
     headers: {
@@ -288,14 +380,11 @@ async function handleStandardQuery(
     nextCursor = createCursorFromRow(lastRow, sort);
   }
 
-  // Build response
-  const response: {
-    data: typeof servers;
-    nextCursor: string | null;
-    total?: number;
-  } = {
+  // Build response with searchMode
+  const response: ServersApiResponse = {
     data: servers,
     nextCursor,
+    searchMode: "none",
   };
 
   // Include total count on first page only

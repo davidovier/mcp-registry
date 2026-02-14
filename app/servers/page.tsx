@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import type { SearchMode, Suggestion } from "@/app/api/servers/route";
 import { FiltersSidebar } from "@/components/servers/FiltersSidebar";
 import { MobileFilters } from "@/components/servers/MobileFilters";
 import { SearchHero } from "@/components/servers/SearchHero";
@@ -123,7 +124,34 @@ async function ServerList({
 }
 
 /**
- * Handle search query using FTS RPC function
+ * Fetch suggestions using trigram similarity
+ */
+async function fetchSuggestion(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  query: string
+): Promise<Suggestion | null> {
+  try {
+    const { data, error } = await supabase.rpc("suggest_servers", {
+      p_query: query,
+      p_limit: 1,
+    });
+
+    if (error || !data || data.length === 0) {
+      return null;
+    }
+
+    return {
+      name: data[0].name,
+      slug: data[0].slug,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Handle search query using FTS RPC function with suggestions
  */
 async function handleSearchQuery(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,11 +230,45 @@ async function handleSearchQuery(
   }
 
   const hasMore = data && data.length > limit;
-  const servers = hasMore ? data.slice(0, limit) : data || [];
+  let servers = hasMore ? data.slice(0, limit) : data || [];
+  let searchMode: SearchMode = "fts";
+  let suggestion: Suggestion | null = null;
 
-  // Create next cursor (ranked)
+  // Fetch suggestion if results are sparse or empty (only on first page)
+  const shouldFetchSuggestion = !cursor && servers.length < 3;
+
+  if (shouldFetchSuggestion) {
+    suggestion = await fetchSuggestion(supabase, q);
+  }
+
+  // If we have 1-2 results and no cursor, try to augment with fallback
+  if (!cursor && servers.length > 0 && servers.length < 3) {
+    const existingIds = new Set(servers.map((s: { id: string }) => s.id));
+    const needed = limit - servers.length;
+
+    // Query additional servers using text search fallback
+    const { data: fallbackData } = await supabase
+      .from("mcp_servers")
+      .select("*")
+      .textSearch("name", q.split(/\s+/).join(" | "), { type: "websearch" })
+      .limit(needed + 5);
+
+    if (fallbackData && fallbackData.length > 0) {
+      const newServers = fallbackData
+        .filter((s: { id: string }) => !existingIds.has(s.id))
+        .slice(0, needed)
+        .map((s: Record<string, unknown>) => ({ ...s, rank: 0 }));
+
+      if (newServers.length > 0) {
+        servers = [...servers, ...newServers];
+        searchMode = "fallback_trgm";
+      }
+    }
+  }
+
+  // Create next cursor (ranked) - only if not in fallback mode
   let nextCursor: string | null = null;
-  if (hasMore && servers.length > 0) {
+  if (hasMore && servers.length > 0 && searchMode === "fts") {
     const lastRow = servers[servers.length - 1];
     nextCursor = createRankedCursorFromRow(lastRow, sort);
   }
@@ -223,7 +285,9 @@ async function handleSearchQuery(
     <ServerListClient
       initialServers={sanitizedServers}
       initialNextCursor={nextCursor}
-      initialTotal={undefined} // No total for search queries
+      initialTotal={undefined}
+      initialSuggestion={suggestion}
+      initialSearchMode={searchMode}
       filters={{ q, transport, auth, verified }}
       sort={sort}
     />
@@ -300,6 +364,7 @@ async function handleStandardQuery(
       initialServers={servers}
       initialNextCursor={nextCursor}
       initialTotal={count ?? undefined}
+      initialSearchMode="none"
       filters={{ q, transport, auth, verified }}
       sort={sort}
     />

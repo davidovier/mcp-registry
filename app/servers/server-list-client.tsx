@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 
+import type { SearchMode, Suggestion } from "@/app/api/servers/route";
 import { FilterChip } from "@/components/servers/FilterChip";
 import { ServerCard } from "@/components/servers/ServerCard";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Select } from "@/components/ui/Select";
@@ -16,6 +18,8 @@ interface ServerListClientProps {
   initialServers: McpServer[];
   initialNextCursor: string | null;
   initialTotal?: number;
+  initialSuggestion?: Suggestion | null;
+  initialSearchMode?: SearchMode;
   filters: {
     q?: string;
     transport?: string;
@@ -29,6 +33,8 @@ export function ServerListClient({
   initialServers,
   initialNextCursor,
   initialTotal,
+  initialSuggestion,
+  initialSearchMode,
   filters,
   sort,
 }: ServerListClientProps) {
@@ -36,6 +42,9 @@ export function ServerListClient({
   const [nextCursor, setNextCursor] = useState(initialNextCursor);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [searchMode, setSearchMode] = useState<SearchMode | undefined>(
+    initialSearchMode
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -60,6 +69,16 @@ export function ServerListClient({
   const clearAllFilters = useCallback(() => {
     router.push("/servers");
   }, [router]);
+
+  const handleSuggestionClick = useCallback(
+    (suggestion: Suggestion) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("q", suggestion.name);
+      params.delete("cursor");
+      router.push(`/servers?${params.toString()}`);
+    },
+    [router, searchParams]
+  );
 
   const handleSortChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -106,6 +125,7 @@ export function ServerListClient({
 
         setServers((prev) => [...prev, ...data.data]);
         setNextCursor(data.nextCursor);
+        setSearchMode(data.searchMode);
         setError(null);
 
         // Update URL with new cursor for shareability
@@ -123,14 +143,38 @@ export function ServerListClient({
   };
 
   if (servers.length === 0) {
+    const hasQuery = !!filters.q;
+    const description = hasQuery
+      ? `No servers match "${filters.q}". Try clearing filters or searching by a different term.`
+      : "Try adjusting your filters or search terms to find what you're looking for.";
+
     return (
       <div>
         <HeaderBar
           filters={activeFilters}
           sort={sort}
+          searchMode={searchMode}
+          hasQuery={hasQuery}
           onSortChange={handleSortChange}
           onRemoveFilter={removeFilter}
         />
+
+        {/* Suggestion banner */}
+        {hasQuery && initialSuggestion && (
+          <div className="mb-4">
+            <Alert variant="info">
+              No results for &ldquo;{filters.q}&rdquo;. Did you mean{" "}
+              <button
+                onClick={() => handleSuggestionClick(initialSuggestion)}
+                className="font-medium text-brand-600 underline hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+              >
+                {initialSuggestion.name}
+              </button>
+              ?
+            </Alert>
+          </div>
+        )}
+
         <EmptyState
           icon={
             <svg
@@ -148,7 +192,7 @@ export function ServerListClient({
             </svg>
           }
           title="No servers found"
-          description="Try adjusting your filters or search terms to find what you're looking for."
+          description={description}
           action={
             activeFilters.length > 0
               ? { label: "Clear filters", onClick: clearAllFilters }
@@ -156,17 +200,29 @@ export function ServerListClient({
           }
           className="rounded-xl border border-border"
         />
-        <div className="mt-4 text-center">
+
+        {/* Additional actions */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/submit"
             className="text-body-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
           >
             Submit a server
           </Link>
+          {activeFilters.length > 0 && (
+            <Link
+              href="/servers"
+              className="text-body-sm font-medium text-content-secondary hover:text-content-primary"
+            >
+              Browse all servers
+            </Link>
+          )}
         </div>
       </div>
     );
   }
+
+  const hasQuery = !!filters.q;
 
   return (
     <div>
@@ -175,9 +231,27 @@ export function ServerListClient({
         totalCount={initialTotal}
         shownCount={servers.length}
         sort={sort}
+        searchMode={searchMode}
+        hasQuery={hasQuery}
         onSortChange={handleSortChange}
         onRemoveFilter={removeFilter}
       />
+
+      {/* Suggestion banner for sparse results */}
+      {hasQuery && initialSuggestion && servers.length < 3 && (
+        <div className="mb-4">
+          <Alert variant="info">
+            Few results for &ldquo;{filters.q}&rdquo;. Did you mean{" "}
+            <button
+              onClick={() => handleSuggestionClick(initialSuggestion)}
+              className="font-medium text-brand-600 underline hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+            >
+              {initialSuggestion.name}
+            </button>
+            ?
+          </Alert>
+        </div>
+      )}
 
       <div className="grid gap-5 sm:grid-cols-2">
         {servers.map((server) => (
@@ -212,6 +286,8 @@ function HeaderBar({
   totalCount,
   shownCount,
   sort,
+  searchMode,
+  hasQuery,
   onSortChange,
   onRemoveFilter,
 }: {
@@ -219,6 +295,8 @@ function HeaderBar({
   totalCount?: number;
   shownCount?: number;
   sort: SortMode;
+  searchMode?: SearchMode;
+  hasQuery?: boolean;
   onSortChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onRemoveFilter: (key: string) => void;
 }) {
@@ -233,16 +311,33 @@ function HeaderBar({
     countLabel = `Showing ${shownCount} ${shownCount === 1 ? "server" : "servers"}`;
   }
 
+  // Search transparency indicator
+  let searchIndicator: string | null = null;
+  if (hasQuery && searchMode) {
+    if (searchMode === "fts") {
+      searchIndicator = "Ranked by relevance";
+    } else if (searchMode === "fallback_trgm") {
+      searchIndicator = "Showing closest matches";
+    }
+  }
+
   return (
     <div className="mb-6 space-y-3">
       {/* Results count and sort control */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {countLabel && (
-          <span className="text-body-sm text-content-tertiary">
-            {countLabel}
-          </span>
-        )}
-        {!countLabel && <div />}
+        <div className="flex flex-col gap-1">
+          {countLabel && (
+            <span className="text-body-sm text-content-tertiary">
+              {countLabel}
+            </span>
+          )}
+          {searchIndicator && (
+            <span className="text-caption text-content-tertiary">
+              {searchIndicator}
+            </span>
+          )}
+        </div>
+        {!countLabel && !searchIndicator && <div />}
 
         <div className="w-full sm:w-auto">
           <Select
