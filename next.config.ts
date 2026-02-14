@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || "MCP Registry",
   },
   async headers() {
+    // Vercel preview deployments need additional CSP permissions
+    const isVercelPreview = process.env.VERCEL_ENV === "preview";
+
     const csp = [
       "default-src 'self'",
       "base-uri 'self'",
@@ -25,8 +28,16 @@ const nextConfig: NextConfig = {
       "img-src 'self' data: https:",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline'",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+      // Allow Vercel's live preview scripts in preview deployments
+      isVercelPreview
+        ? "script-src 'self' 'unsafe-inline' https://vercel.live"
+        : "script-src 'self' 'unsafe-inline'",
+      // Allow Supabase and Vercel live connections
+      isVercelPreview
+        ? "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live wss://ws-us3.pusher.com"
+        : "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+      // Allow Vercel live preview iframe
+      isVercelPreview ? "frame-src https://vercel.live" : "frame-src 'none'",
     ].join("; ");
 
     return [
