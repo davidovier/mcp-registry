@@ -86,7 +86,9 @@ test.describe("Changelog page", () => {
     ).toBeVisible();
 
     // Check for RSS feed link
-    await expect(page.getByRole("link", { name: /RSS Feed/i })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Releases RSS/i })
+    ).toBeVisible();
   });
 
   test("should display Support & Feedback section", async ({ page }) => {
@@ -262,8 +264,8 @@ test.describe("Changelog page", () => {
     await expect(githubRepoLink).toHaveAttribute("target", "_blank");
     await expect(githubRepoLink).toHaveAttribute("rel", "noopener noreferrer");
 
-    // Check RSS Feed link
-    const rssLink = page.getByRole("link", { name: /RSS Feed/i });
+    // Check Releases RSS link
+    const rssLink = page.getByRole("link", { name: /Releases RSS/i });
     await expect(rssLink).toBeVisible();
     await expect(rssLink).toHaveAttribute("target", "_blank");
     await expect(rssLink).toHaveAttribute("rel", "noopener noreferrer");
