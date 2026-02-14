@@ -30,11 +30,40 @@ export interface ServersApiResponse {
   searchMode?: SearchMode;
 }
 
+// Columns to select from mcp_servers - excludes sensitive fields like owner_id
 const PUBLIC_SERVER_COLUMNS =
   "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,verified_at,created_at,updated_at";
 
+// Fallback columns if verified_at doesn't exist (schema drift tolerance)
+const PUBLIC_SERVER_COLUMNS_FALLBACK =
+  "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,created_at,updated_at";
+
 function quotePostgrestLiteral(value: string): string {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
+/**
+ * Check if error is an undefined column error (Postgres error code 42703)
+ */
+function isUndefinedColumnError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const err = error as { code?: string; message?: string };
+  return (
+    err.code === "42703" || /column .* does not exist/i.test(err.message ?? "")
+  );
+}
+
+/**
+ * Check if we're running against a placeholder/unconfigured Supabase
+ */
+function isPlaceholderSupabase(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  return (
+    !url ||
+    url.includes("placeholder") ||
+    url.includes("your-project") ||
+    url === "https://example.supabase.co"
+  );
 }
 
 // Route segment config - ISR with 5 minute revalidation
@@ -71,6 +100,23 @@ export const revalidate = 300;
  *   }
  */
 export async function GET(request: NextRequest) {
+  // Early exit for placeholder/unconfigured Supabase
+  if (isPlaceholderSupabase()) {
+    return NextResponse.json(
+      {
+        data: [],
+        nextCursor: null,
+        total: 0,
+        searchMode: "none" as SearchMode,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+        },
+      }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
 
@@ -254,13 +300,23 @@ async function handleSearchQuery(
     const existingIds = new Set(servers.map((s: { id: string }) => s.id));
     const needed = limit - servers.length;
 
-    // Query additional servers using trigram similarity
-    const { data: fallbackData } = await supabase
+    // Query additional servers using trigram similarity (with schema drift tolerance)
+    let fallbackResult = await supabase
       .from("mcp_servers")
       .select(PUBLIC_SERVER_COLUMNS)
       .textSearch("name", q.split(/\s+/).join(" | "), { type: "websearch" })
       .limit(needed + 5); // fetch extra to filter out duplicates
 
+    // Retry without verified_at if column doesn't exist
+    if (fallbackResult.error && isUndefinedColumnError(fallbackResult.error)) {
+      fallbackResult = await supabase
+        .from("mcp_servers")
+        .select(PUBLIC_SERVER_COLUMNS_FALLBACK)
+        .textSearch("name", q.split(/\s+/).join(" | "), { type: "websearch" })
+        .limit(needed + 5);
+    }
+
+    const fallbackData = fallbackResult.data;
     if (fallbackData && fallbackData.length > 0) {
       // Filter out servers we already have and add rank field
       const newServers = fallbackData
@@ -345,39 +401,53 @@ async function handleStandardQuery(
 ) {
   const { transport, auth, verified, tags, limit, sort, cursor } = params;
 
-  // Build query with sort-specific ordering
-  let query = supabase
-    .from("mcp_servers")
-    .select(PUBLIC_SERVER_COLUMNS, { count: cursor ? undefined : "exact" })
-    .limit(limit + 1);
+  // Helper to build and execute query with given columns
+  async function executeQuery(columns: string) {
+    let query = supabase
+      .from("mcp_servers")
+      .select(columns, { count: cursor ? undefined : "exact" })
+      .limit(limit + 1);
 
-  // Apply sort-specific ordering
-  query = applySortOrder(query, sort);
+    // Apply sort-specific ordering
+    query = applySortOrder(query, sort);
 
-  // Apply cursor (keyset pagination)
-  if (cursor) {
-    query = applyCursorFilter(query, cursor, sort);
+    // Apply cursor (keyset pagination)
+    if (cursor) {
+      query = applyCursorFilter(query, cursor, sort);
+    }
+
+    // Apply filters
+    if (transport && ["stdio", "http", "both"].includes(transport)) {
+      query = query.eq("transport", transport);
+    }
+
+    if (auth && ["none", "oauth", "api_key", "other"].includes(auth)) {
+      query = query.eq("auth", auth);
+    }
+
+    if (verified !== null) {
+      query = query.eq("verified", verified);
+    }
+
+    if (tags.length > 0) {
+      query = query.contains("tags", tags);
+    }
+
+    return query;
   }
 
-  // Apply filters
-  if (transport && ["stdio", "http", "both"].includes(transport)) {
-    query = query.eq("transport", transport);
+  // Execute query with retry on undefined column errors (schema drift tolerance)
+  let result = await executeQuery(PUBLIC_SERVER_COLUMNS);
+
+  if (result.error && isUndefinedColumnError(result.error)) {
+    console.warn(
+      "Schema drift detected: retrying without verified_at column",
+      result.error.message
+    );
+    result = await executeQuery(PUBLIC_SERVER_COLUMNS_FALLBACK);
   }
 
-  if (auth && ["none", "oauth", "api_key", "other"].includes(auth)) {
-    query = query.eq("auth", auth);
-  }
-
-  if (verified !== null) {
-    query = query.eq("verified", verified);
-  }
-
-  if (tags.length > 0) {
-    query = query.contains("tags", tags);
-  }
-
-  // Execute query
-  const { data, error, count } = await query;
+  const { data, error, count } = result;
 
   if (error) {
     console.error("API error:", error);
