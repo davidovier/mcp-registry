@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T14:36:44.107Z",
+  "generatedAt": "2026-02-14T21:40:58.758Z",
   "baseUrl": "http://localhost:3000",
   "pageCount": 12,
   "totalInternalLinks": 12,
@@ -23,6 +23,11 @@
       "name": "Homepage",
       "status": 200,
       "title": "MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "MCP Registry",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -46,6 +51,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -60,6 +89,11 @@
       "name": "Browse Servers",
       "status": 200,
       "title": "Browse MCP Servers | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "MCP Server Registry",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -83,6 +117,30 @@
       "hasTable": false,
       "hasForm": true,
       "hasSearchInput": true,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -97,6 +155,11 @@
       "name": "Documentation",
       "status": 200,
       "title": "Documentation | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Documentation",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -120,6 +183,30 @@
       "hasTable": true,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -134,6 +221,11 @@
       "name": "API Docs",
       "status": 200,
       "title": "API | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "API",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -157,6 +249,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -171,6 +287,11 @@
       "name": "Verification",
       "status": 200,
       "title": "Verification Criteria | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Verification",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -194,6 +315,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -208,6 +353,11 @@
       "name": "Changelog",
       "status": 200,
       "title": "Changelog — MCP Registry | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Changelog",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -224,13 +374,37 @@
         "/terms",
         "/verification"
       ],
-      "externalLinkCount": 3,
+      "externalLinkCount": 5,
       "hasBreadcrumbs": true,
       "hasEmptyState": false,
       "hasCodeBlock": false,
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -245,6 +419,11 @@
       "name": "Contributing",
       "status": 200,
       "title": "Contributing | MCP Registry | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Contributing to the MCP Registry",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -268,6 +447,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -282,6 +485,11 @@
       "name": "About",
       "status": 200,
       "title": "About | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "About",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -305,6 +513,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -319,6 +551,11 @@
       "name": "Privacy Policy",
       "status": 200,
       "title": "Privacy Policy | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Privacy Policy",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -342,6 +579,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -356,6 +617,11 @@
       "name": "Terms of Service",
       "status": 200,
       "title": "Terms of Service | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Terms of Service",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -379,6 +645,30 @@
       "hasTable": false,
       "hasForm": false,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -393,6 +683,11 @@
       "name": "Sign In",
       "status": 200,
       "title": "Sign In | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Sign In",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -416,6 +711,30 @@
       "hasTable": false,
       "hasForm": true,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,
@@ -430,6 +749,11 @@
       "name": "Submit Server",
       "status": 200,
       "title": "Sign In | MCP Registry",
+      "metadata": {
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "hasOgDescription": true
+      },
       "h1Text": "Sign In",
       "internalLinkCount": 12,
       "internalLinks": [
@@ -453,6 +777,30 @@
       "hasTable": false,
       "hasForm": true,
       "hasSearchInput": false,
+      "headerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Docs",
+        "MCPRegistry",
+        "Sign In"
+      ],
+      "footerLinks": [
+        "API",
+        "About",
+        "Browse",
+        "Changelog",
+        "Contributing",
+        "Documentation",
+        "GitHub",
+        "MCP Specification",
+        "MCPRegistry",
+        "Privacy",
+        "Submit",
+        "Terms",
+        "Verification"
+      ],
       "a11y": {
         "hasMainLandmark": true,
         "hasH1": true,

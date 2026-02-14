@@ -412,9 +412,11 @@ The project uses a test-forward development approach with two types of product t
 
 `e2e/product-spec.spec.ts` - Defines the product contract. These tests verify:
 
-- **Page structure**: Every public page has `<main>` landmark with exactly one `<h1>`
+- **Page structure**: Every public page has `<main>` landmark with exactly one `<h1>` and a skip link
 - **Navigation**: Header contains Browse, Docs, API, Changelog, About links
 - **Footer**: Contains links to About, Docs, API, Verification, Changelog, Contributing, Privacy, Terms
+- **Footer link health**: Footer links resolve and do not return 4xx/5xx
+- **Metadata essentials**: Page title and meta description are present
 - **Console errors**: No JavaScript errors on any page
 - **Link integrity**: All internal links resolve correctly (caps at 60 links)
 - **Key journeys**: Discovery flow, search with suggestions, verification transparency
@@ -429,7 +431,7 @@ pnpm exec playwright test product-spec --reporter=list
 
 #### Product Inventory (Non-Gating)
 
-`e2e/product-inventory.spec.ts` - Generates a comprehensive inventory report without blocking CI.
+`e2e/product-inventory.spec.ts` - Generates product inventory + gap reports without blocking CI.
 
 Collects for each public page:
 
@@ -437,15 +439,21 @@ Collects for each public page:
 - Internal/external link counts
 - UI feature flags: breadcrumbs, empty states, code blocks, tables, forms
 - A11y quick checks: landmarks, skip links, header nav
+- Metadata presence checks (description and Open Graph basics)
+- Link validation + derived product gap summary
 
-Output: `e2e/reports/product-inventory.json`
+Output:
+
+- `e2e/reports/product-inventory.json`
+- `e2e/reports/product-gaps.json`
 
 ```bash
-# Run inventory collection
-pnpm exec playwright test product-inventory
+# Run inventory + gap report generation
+pnpm test:e2e:inventory
 
-# View the generated report
+# View the generated reports
 cat e2e/reports/product-inventory.json | jq '.summary'
+cat e2e/reports/product-gaps.json | jq '.notes'
 ```
 
 The inventory report structure:

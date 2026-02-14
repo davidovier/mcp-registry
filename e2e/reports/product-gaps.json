@@ -1,0 +1,174 @@
+{
+  "timestamp": "2026-02-14T21:40:58.758Z",
+  "routesAudited": [
+    "/",
+    "/about",
+    "/api",
+    "/changelog",
+    "/contributing",
+    "/docs",
+    "/privacy",
+    "/servers",
+    "/signin",
+    "/submit",
+    "/terms",
+    "/verification"
+  ],
+  "brokenLinks": [],
+  "missingRoutes": [],
+  "navCoverage": {
+    "headerLinks": [
+      "API",
+      "About",
+      "Browse",
+      "Changelog",
+      "Docs",
+      "MCPRegistry",
+      "Sign In"
+    ],
+    "footerLinks": [
+      "API",
+      "About",
+      "Browse",
+      "Changelog",
+      "Contributing",
+      "Documentation",
+      "GitHub",
+      "MCP Specification",
+      "MCPRegistry",
+      "Privacy",
+      "Submit",
+      "Terms",
+      "Verification"
+    ],
+    "missingInHeader": [],
+    "missingInFooter": []
+  },
+  "metadataIssues": [],
+  "a11yIssuesSummary": {
+    "/": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/about": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/api": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/changelog": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/contributing": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/docs": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/privacy": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/servers": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/signin": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/submit": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/terms": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    },
+    "/verification": {
+      "issueCount": 0,
+      "missingMainLandmark": 0,
+      "missingH1": 0,
+      "missingSkipLink": 0,
+      "missingHeaderNav": 0,
+      "missingFooter": 0,
+      "consoleErrors": 0
+    }
+  },
+  "performanceFlags": {
+    "source": "/Users/davidvos/Vibe projects/MCP/mcp-registry/e2e/reports/perf-report.json",
+    "thresholds": {
+      "ttfbMs": 300,
+      "domContentLoadedMs": 1200,
+      "resourceCount": 30,
+      "totalTransferKB": 2500,
+      "severeTtfbMs": 1000,
+      "severeDomContentLoadedMs": 3000,
+      "severeResourceCount": 80,
+      "severeTotalTransferKB": 4000
+    },
+    "flags": [],
+    "note": "Performance flags are informative and do not block CI unless severe."
+  },
+  "notes": ["No major product gaps detected in current audit."]
+}

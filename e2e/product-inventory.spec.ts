@@ -9,7 +9,9 @@ import { test, Page } from "@playwright/test";
  * These tests crawl public pages and generate a comprehensive inventory report.
  * The report captures page metadata, structure, and links for analysis.
  *
- * Output: e2e/reports/product-inventory.json
+ * Output:
+ * - e2e/reports/product-inventory.json
+ * - e2e/reports/product-gaps.json
  *
  * This is non-gating - failures here are logged but don't block CI.
  * The primary purpose is to generate actionable data about the product.
@@ -33,6 +35,37 @@ const PUBLIC_ROUTES = [
 
 // Report output path
 const REPORT_PATH = path.join(__dirname, "reports", "product-inventory.json");
+const GAP_REPORT_PATH = path.join(__dirname, "reports", "product-gaps.json");
+const PERF_REPORT_PATH = path.join(__dirname, "reports", "perf-report.json");
+
+const EXPECTED_HEADER_NAV_LINKS = [
+  "Browse",
+  "Docs",
+  "API",
+  "Changelog",
+  "About",
+];
+const EXPECTED_FOOTER_LINKS = [
+  "About",
+  "Documentation",
+  "API",
+  "Verification",
+  "Changelog",
+  "Contributing",
+  "Privacy",
+  "Terms",
+];
+
+const PERFORMANCE_THRESHOLDS = {
+  ttfbMs: 300,
+  domContentLoadedMs: 1200,
+  resourceCount: 30,
+  totalTransferKB: 2500,
+  severeTtfbMs: 1000,
+  severeDomContentLoadedMs: 3000,
+  severeResourceCount: 80,
+  severeTotalTransferKB: 4000,
+};
 
 // Ensure reports directory exists
 function ensureReportsDir() {
@@ -48,6 +81,11 @@ interface PageInventory {
   name: string;
   status: number;
   title: string | null;
+  metadata: {
+    hasDescription: boolean;
+    hasOgTitle: boolean;
+    hasOgDescription: boolean;
+  };
   h1Text: string | null;
   internalLinkCount: number;
   internalLinks: string[];
@@ -58,6 +96,8 @@ interface PageInventory {
   hasTable: boolean;
   hasForm: boolean;
   hasSearchInput: boolean;
+  headerLinks: string[];
+  footerLinks: string[];
   a11y: {
     hasMainLandmark: boolean;
     hasH1: boolean;
@@ -86,6 +126,352 @@ interface InventoryReport {
     pagesWithForms: number;
     pagesWithBreadcrumbs: number;
   };
+  linkValidation?: {
+    checkedAt: string;
+    linksChecked: number;
+    results: {
+      ok: number;
+      notFound: number;
+      errors: number;
+    };
+    statusByUrl: Record<string, number>;
+    brokenLinks: { url: string; status: number }[];
+    brokenLinksDetailed: { from: string; to: string; status: number }[];
+  };
+}
+
+interface ProductGapReport {
+  timestamp: string;
+  routesAudited: string[];
+  brokenLinks: { from: string; to: string; status: number }[];
+  missingRoutes: string[];
+  navCoverage: {
+    headerLinks: string[];
+    footerLinks: string[];
+    missingInHeader: string[];
+    missingInFooter: string[];
+  };
+  metadataIssues: { route: string; issue: string }[];
+  a11yIssuesSummary: Record<
+    string,
+    {
+      issueCount: number;
+      missingMainLandmark: number;
+      missingH1: number;
+      missingSkipLink: number;
+      missingHeaderNav: number;
+      missingFooter: number;
+      consoleErrors: number;
+    }
+  >;
+  performanceFlags: {
+    source: string | null;
+    thresholds: typeof PERFORMANCE_THRESHOLDS;
+    flags: {
+      route: string;
+      metric:
+        | "ttfbMs"
+        | "domContentLoadedMs"
+        | "resourceCount"
+        | "totalTransferKB";
+      value: number;
+      threshold: number;
+      severity: "warning" | "severe";
+    }[];
+    note: string;
+  };
+  notes: string[];
+}
+
+function sortedUnique(values: string[]): string[] {
+  return Array.from(new Set(values)).sort();
+}
+
+function sortObjectByKey<T>(input: Record<string, T>): Record<string, T> {
+  return Object.fromEntries(
+    Object.entries(input).sort(([a], [b]) => a.localeCompare(b))
+  );
+}
+
+function normalizeLink(href: string): string {
+  return href.split("?")[0].split("#")[0];
+}
+
+function normalizeLabel(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+async function collectRegionLinkLabels(
+  page: Page,
+  selector: string
+): Promise<string[]> {
+  const labels: string[] = [];
+  const links = page.locator(`${selector} a[href]`);
+  const count = await links.count().catch(() => 0);
+
+  for (let i = 0; i < count; i++) {
+    const label = normalizeLabel((await links.nth(i).textContent()) || "");
+    if (label) labels.push(label);
+  }
+
+  return sortedUnique(labels);
+}
+
+function derivePerformanceFlags(): ProductGapReport["performanceFlags"] {
+  if (!fs.existsSync(PERF_REPORT_PATH)) {
+    return {
+      source: null,
+      thresholds: PERFORMANCE_THRESHOLDS,
+      flags: [],
+      note: "perf-report.json not found",
+    };
+  }
+
+  try {
+    const perfReport = JSON.parse(
+      fs.readFileSync(PERF_REPORT_PATH, "utf-8")
+    ) as {
+      pages?: Record<
+        string,
+        {
+          url?: string;
+          ttfbMs?: number;
+          domContentLoadedMs?: number;
+          resourceCount?: number;
+          totalTransferKB?: number;
+        }
+      >;
+    };
+
+    const flags: ProductGapReport["performanceFlags"]["flags"] = [];
+    const pages = perfReport.pages || {};
+
+    for (const pageData of Object.values(pages)) {
+      const route = pageData.url || "unknown";
+      const metrics: Array<{
+        metric:
+          | "ttfbMs"
+          | "domContentLoadedMs"
+          | "resourceCount"
+          | "totalTransferKB";
+        value?: number;
+        threshold: number;
+        severeThreshold: number;
+      }> = [
+        {
+          metric: "ttfbMs",
+          value: pageData.ttfbMs,
+          threshold: PERFORMANCE_THRESHOLDS.ttfbMs,
+          severeThreshold: PERFORMANCE_THRESHOLDS.severeTtfbMs,
+        },
+        {
+          metric: "domContentLoadedMs",
+          value: pageData.domContentLoadedMs,
+          threshold: PERFORMANCE_THRESHOLDS.domContentLoadedMs,
+          severeThreshold: PERFORMANCE_THRESHOLDS.severeDomContentLoadedMs,
+        },
+        {
+          metric: "resourceCount",
+          value: pageData.resourceCount,
+          threshold: PERFORMANCE_THRESHOLDS.resourceCount,
+          severeThreshold: PERFORMANCE_THRESHOLDS.severeResourceCount,
+        },
+        {
+          metric: "totalTransferKB",
+          value: pageData.totalTransferKB,
+          threshold: PERFORMANCE_THRESHOLDS.totalTransferKB,
+          severeThreshold: PERFORMANCE_THRESHOLDS.severeTotalTransferKB,
+        },
+      ];
+
+      for (const metric of metrics) {
+        if (typeof metric.value !== "number") continue;
+        if (metric.value <= metric.threshold) continue;
+
+        flags.push({
+          route,
+          metric: metric.metric,
+          value: metric.value,
+          threshold: metric.threshold,
+          severity:
+            metric.value > metric.severeThreshold ? "severe" : "warning",
+        });
+      }
+    }
+
+    flags.sort((a, b) =>
+      `${a.route}:${a.metric}`.localeCompare(`${b.route}:${b.metric}`)
+    );
+
+    return {
+      source: PERF_REPORT_PATH,
+      thresholds: PERFORMANCE_THRESHOLDS,
+      flags,
+      note: "Performance flags are informative and do not block CI unless severe.",
+    };
+  } catch {
+    return {
+      source: PERF_REPORT_PATH,
+      thresholds: PERFORMANCE_THRESHOLDS,
+      flags: [],
+      note: "Failed to parse perf-report.json",
+    };
+  }
+}
+
+function deriveGapReport(report: InventoryReport): ProductGapReport {
+  const routesAudited = sortedUnique(report.pages.map((p) => p.url));
+  const auditedRouteSet = new Set(routesAudited);
+  const statusByUrl = report.linkValidation?.statusByUrl || {};
+
+  const missingRoutes = report.uniqueInternalLinks
+    .filter((route) => {
+      const status = statusByUrl[route];
+      if (status === 404 || status === 0) return true;
+      return !auditedRouteSet.has(route);
+    })
+    .sort((a, b) => a.localeCompare(b));
+
+  const headerLinks = sortedUnique(report.pages.flatMap((p) => p.headerLinks));
+  const footerLinks = sortedUnique(report.pages.flatMap((p) => p.footerLinks));
+
+  const missingInHeader = EXPECTED_HEADER_NAV_LINKS.filter(
+    (label) => !headerLinks.includes(label)
+  );
+  const missingInFooter = EXPECTED_FOOTER_LINKS.filter(
+    (label) => !footerLinks.includes(label)
+  );
+
+  const metadataIssues: ProductGapReport["metadataIssues"] = [];
+  for (const page of report.pages) {
+    if (!page.title?.trim())
+      metadataIssues.push({ route: page.url, issue: "missing title" });
+    if (!page.metadata.hasDescription) {
+      metadataIssues.push({
+        route: page.url,
+        issue: "missing meta description",
+      });
+    }
+    if (!page.metadata.hasOgTitle) {
+      metadataIssues.push({ route: page.url, issue: "missing og:title" });
+    }
+    if (!page.metadata.hasOgDescription) {
+      metadataIssues.push({ route: page.url, issue: "missing og:description" });
+    }
+  }
+  metadataIssues.sort((a, b) =>
+    `${a.route}:${a.issue}`.localeCompare(`${b.route}:${b.issue}`)
+  );
+
+  const a11yIssuesSummary = sortObjectByKey(
+    Object.fromEntries(
+      report.pages.map((page) => {
+        const missingMainLandmark = page.a11y.hasMainLandmark ? 0 : 1;
+        const missingH1 = page.a11y.hasH1 ? 0 : 1;
+        const missingSkipLink = page.a11y.hasSkipLink ? 0 : 1;
+        const missingHeaderNav = page.a11y.hasHeaderNav ? 0 : 1;
+        const missingFooter = page.a11y.hasFooter ? 0 : 1;
+        const consoleErrors = page.errors.length;
+        const issueCount =
+          missingMainLandmark +
+          missingH1 +
+          missingSkipLink +
+          missingHeaderNav +
+          missingFooter +
+          consoleErrors;
+
+        return [
+          page.url,
+          {
+            issueCount,
+            missingMainLandmark,
+            missingH1,
+            missingSkipLink,
+            missingHeaderNav,
+            missingFooter,
+            consoleErrors,
+          },
+        ];
+      })
+    )
+  );
+
+  const performanceFlags = derivePerformanceFlags();
+  const brokenLinks = sortedUnique(
+    (report.linkValidation?.brokenLinksDetailed || []).map(
+      (link) => `${link.from}|${link.to}|${link.status}`
+    )
+  )
+    .map((token) => {
+      const [from, to, status] = token.split("|");
+      return { from, to, status: Number(status) };
+    })
+    .sort((a, b) =>
+      `${a.from}:${a.to}:${a.status}`.localeCompare(
+        `${b.from}:${b.to}:${b.status}`
+      )
+    );
+
+  const notes: string[] = [];
+  if (brokenLinks.length > 0)
+    notes.push(`${brokenLinks.length} broken internal links detected`);
+  if (missingRoutes.length > 0)
+    notes.push(`${missingRoutes.length} linked routes appear missing`);
+  if (metadataIssues.length > 0)
+    notes.push(`${metadataIssues.length} metadata issues found`);
+  if (missingInHeader.length > 0)
+    notes.push(`Header nav is missing: ${missingInHeader.join(", ")}`);
+  if (missingInFooter.length > 0)
+    notes.push(`Footer is missing: ${missingInFooter.join(", ")}`);
+
+  const severePerfFlags = performanceFlags.flags.filter(
+    (f) => f.severity === "severe"
+  );
+  if (severePerfFlags.length > 0) {
+    notes.push(`${severePerfFlags.length} severe performance flags found`);
+  } else if (performanceFlags.flags.length > 0) {
+    notes.push(
+      `${performanceFlags.flags.length} warning-level performance flags found`
+    );
+  }
+
+  const routesWithA11yIssues = Object.values(a11yIssuesSummary).filter(
+    (route) => route.issueCount > 0
+  ).length;
+  if (routesWithA11yIssues > 0) {
+    notes.push(`${routesWithA11yIssues} routes have structural a11y issues`);
+  }
+
+  const finalNotes = (
+    notes.length > 0
+      ? notes
+      : ["No major product gaps detected in current audit."]
+  ).slice(0, 5);
+
+  return {
+    timestamp: report.generatedAt,
+    routesAudited,
+    brokenLinks,
+    missingRoutes,
+    navCoverage: {
+      headerLinks,
+      footerLinks,
+      missingInHeader,
+      missingInFooter,
+    },
+    metadataIssues,
+    a11yIssuesSummary,
+    performanceFlags,
+    notes: finalNotes,
+  };
+}
+
+function writeInventoryAndGapReports(report: InventoryReport) {
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
+  fs.writeFileSync(
+    GAP_REPORT_PATH,
+    JSON.stringify(deriveGapReport(report), null, 2)
+  );
 }
 
 // Helper to collect page inventory
@@ -94,19 +480,35 @@ async function collectPageInventory(
   route: { path: string; name: string }
 ): Promise<PageInventory> {
   const errors: string[] = [];
+  const consoleHandler = (msg: { type(): string; text(): string }) => {
+    if (msg.type() === "error") {
+      errors.push(msg.text().slice(0, 200));
+    }
+  };
 
   // Collect console errors
-  page.on("console", (msg) => {
-    if (msg.type() === "error") {
-      errors.push(msg.text().slice(0, 200)); // Truncate long errors
-    }
-  });
+  page.on("console", consoleHandler);
 
   const response = await page.goto(route.path);
   await page.waitForLoadState("domcontentloaded");
 
   const status = response?.status() || 0;
   const title = await page.title().catch(() => null);
+  const description = await page
+    .locator('meta[name="description"]')
+    .first()
+    .getAttribute("content")
+    .catch(() => null);
+  const ogTitle = await page
+    .locator('meta[property="og:title"]')
+    .first()
+    .getAttribute("content")
+    .catch(() => null);
+  const ogDescription = await page
+    .locator('meta[property="og:description"]')
+    .first()
+    .getAttribute("content")
+    .catch(() => null);
 
   // Get h1 text
   let h1Text: string | null = null;
@@ -131,7 +533,7 @@ async function collectPageInventory(
 
       if (href.startsWith("/") && !href.startsWith("/_next")) {
         // Normalize and dedupe
-        const normalized = href.split("?")[0].split("#")[0];
+        const normalized = normalizeLink(href);
         if (!internalLinks.includes(normalized)) {
           internalLinks.push(normalized);
         }
@@ -187,8 +589,11 @@ async function collectPageInventory(
     .catch(() => false);
 
   const hasSkipLink = await page
-    .locator('a[href="#main-content"], a:has-text("Skip to content")')
-    .isVisible()
+    .locator(
+      'a[href="#main-content"], a:has-text("Skip to content"), a:has-text("Skip to main content")'
+    )
+    .count()
+    .then((count) => count > 0)
     .catch(() => false);
 
   const hasHeaderNav = await page
@@ -201,11 +606,21 @@ async function collectPageInventory(
     .isVisible()
     .catch(() => false);
 
+  const headerLinks = await collectRegionLinkLabels(page, "header");
+  const footerLinks = await collectRegionLinkLabels(page, "footer");
+
+  page.off("console", consoleHandler);
+
   return {
     url: route.path,
     name: route.name,
     status,
     title,
+    metadata: {
+      hasDescription: Boolean(description?.trim()),
+      hasOgTitle: Boolean(ogTitle?.trim()),
+      hasOgDescription: Boolean(ogDescription?.trim()),
+    },
     h1Text: h1Text?.trim() || null,
     internalLinkCount: internalLinks.length,
     internalLinks: internalLinks.sort(),
@@ -216,6 +631,8 @@ async function collectPageInventory(
     hasTable,
     hasForm,
     hasSearchInput,
+    headerLinks,
+    footerLinks,
     a11y: {
       hasMainLandmark,
       hasH1,
@@ -223,7 +640,7 @@ async function collectPageInventory(
       hasHeaderNav,
       hasFooter,
     },
-    errors,
+    errors: sortedUnique(errors),
   };
 }
 
@@ -266,6 +683,11 @@ test.describe("Product Inventory", () => {
           name: route.name,
           status: 0,
           title: null,
+          metadata: {
+            hasDescription: false,
+            hasOgTitle: false,
+            hasOgDescription: false,
+          },
           h1Text: null,
           internalLinkCount: 0,
           internalLinks: [],
@@ -276,6 +698,8 @@ test.describe("Product Inventory", () => {
           hasTable: false,
           hasForm: false,
           hasSearchInput: false,
+          headerLinks: [],
+          footerLinks: [],
           a11y: {
             hasMainLandmark: false,
             hasH1: false,
@@ -311,9 +735,10 @@ test.describe("Product Inventory", () => {
       summary,
     };
 
-    // Write report
-    fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
+    // Write reports
+    writeInventoryAndGapReports(report);
     console.log(`\nReport written to: ${REPORT_PATH}`);
+    console.log(`Gap report written to: ${GAP_REPORT_PATH}`);
 
     // Print summary table
     console.log("\n=== Inventory Summary ===\n");
@@ -420,7 +845,27 @@ test.describe("Product Inventory", () => {
     // Update report with link validation results
     if (fs.existsSync(REPORT_PATH)) {
       try {
-        const report = JSON.parse(fs.readFileSync(REPORT_PATH, "utf-8"));
+        const report = JSON.parse(
+          fs.readFileSync(REPORT_PATH, "utf-8")
+        ) as InventoryReport;
+        const statusByUrl: Record<string, number> = {};
+        linkResults.forEach((result) => {
+          statusByUrl[result.url] = result.status;
+        });
+
+        const brokenLinksDetailed = linkResults
+          .filter((r) => r.status !== 200 && r.status !== 404)
+          .flatMap((r) =>
+            report.pages
+              .filter((p) => p.internalLinks.includes(r.url))
+              .map((p) => ({ from: p.url, to: r.url, status: r.status }))
+          )
+          .sort((a, b) =>
+            `${a.from}:${a.to}:${a.status}`.localeCompare(
+              `${b.from}:${b.to}:${b.status}`
+            )
+          );
+
         report.linkValidation = {
           checkedAt: new Date().toISOString(),
           linksChecked,
@@ -429,12 +874,15 @@ test.describe("Product Inventory", () => {
             notFound,
             errors,
           },
+          statusByUrl: sortObjectByKey(statusByUrl),
           brokenLinks: linkResults
             .filter((r) => r.status !== 200 && r.status !== 404)
             .map((r) => ({ url: r.url, status: r.status })),
+          brokenLinksDetailed,
         };
-        fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
+        writeInventoryAndGapReports(report);
         console.log(`\nLink validation added to report`);
+        console.log(`Gap report updated: ${GAP_REPORT_PATH}`);
       } catch {
         // Report update failed
       }

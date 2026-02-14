@@ -89,6 +89,10 @@ async function takeFailureScreenshot(page: Page, testName: string) {
   await page.screenshot({ path: screenshotPath, fullPage: true });
 }
 
+function normalizeInternalHref(href: string): string {
+  return href.split("?")[0].split("#")[0];
+}
+
 // ============================================================================
 // PAGE CONTRACT TESTS
 // ============================================================================
@@ -96,7 +100,9 @@ async function takeFailureScreenshot(page: Page, testName: string) {
 test.describe("Page Contract Tests", () => {
   for (const route of PUBLIC_ROUTES) {
     test.describe(`${route.name} (${route.path})`, () => {
-      test("has main landmark with exactly one h1", async ({ page }) => {
+      test("has main landmark with exactly one h1 and skip link", async ({
+        page,
+      }) => {
         const errors = setupConsoleCollector(page);
 
         await page.goto(route.path);
@@ -114,17 +120,36 @@ test.describe("Page Contract Tests", () => {
           await takeFailureScreenshot(page, `${route.name}-h1-count`);
         }
 
+        const skipLinkExists = await page
+          .locator(
+            'a[href="#main-content"], a:has-text("Skip to content"), a:has-text("Skip to main content")'
+          )
+          .count()
+          .then((count) => count > 0);
+
+        if (!skipLinkExists) {
+          await takeFailureScreenshot(page, `${route.name}-missing-skip-link`);
+        }
+
         expect(h1Count).toBe(1);
+        expect(skipLinkExists, "Missing skip link").toBeTruthy();
         expect(errors.length).toBe(0);
       });
 
-      test("has non-empty page title", async ({ page }) => {
+      test("has metadata essentials (title + description)", async ({
+        page,
+      }) => {
         await page.goto(route.path);
         await page.waitForLoadState("domcontentloaded");
 
         const title = await page.title();
+        const description = await page
+          .locator('meta[name="description"]')
+          .first()
+          .getAttribute("content");
         expect(title).toBeTruthy();
         expect(title.length).toBeGreaterThan(0);
+        expect(description?.trim().length || 0).toBeGreaterThan(0);
       });
 
       test("header nav contains required links", async ({ page }) => {
@@ -191,6 +216,33 @@ test.describe("Page Contract Tests", () => {
       });
     });
   }
+
+  test("footer links resolve to non-404 destinations", async ({
+    page,
+    request,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const footer = page.locator("footer, [role=contentinfo]").first();
+    await expect(footer).toBeVisible();
+
+    for (const linkText of FOOTER_LINKS) {
+      const link = footer
+        .getByRole("link", { name: new RegExp(linkText, "i") })
+        .first();
+      const href = await link.getAttribute("href");
+
+      expect(href, `Footer link '${linkText}' has no href`).toBeTruthy();
+      if (!href || !href.startsWith("/")) continue;
+
+      const response = await request.get(normalizeInternalHref(href));
+      expect(
+        response.status(),
+        `Broken footer link '${linkText}' -> ${href}`
+      ).toBeLessThan(400);
+    }
+  });
 
   // 404 page test
   test.describe("404 Page", () => {
