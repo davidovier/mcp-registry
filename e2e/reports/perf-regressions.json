@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-02-14T22:02:27.497Z",
+  "baselineSource": null,
+  "currentSource": "e2e/reports/perf-trends.json",
+  "budgetsSource": "docs/perf-budgets.json",
+  "nonGating": true,
+  "summary": {
+    "totalRegressions": 2,
+    "budgetExceededCount": 2,
+    "trendRegressionCount": 0
+  },
+  "regressions": [
+    {
+      "route": "/servers",
+      "metric": "ttfbMs",
+      "currentValue": 1133,
+      "baselineValue": null,
+      "percentChange": null,
+      "thresholdPercent": 15,
+      "budget": 1000,
+      "budgetExceeded": true,
+      "thresholdExceeded": false
+    },
+    {
+      "route": "/servers/github",
+      "metric": "ttfbMs",
+      "currentValue": 1560,
+      "baselineValue": null,
+      "percentChange": null,
+      "thresholdPercent": 15,
+      "budget": 1000,
+      "budgetExceeded": true,
+      "thresholdExceeded": false
+    }
+  ]
+}

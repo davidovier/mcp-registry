@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-02-14T22:02:27.067Z",
+  "nonGating": true,
+  "routes": [
+    {
+      "route": "/",
+      "name": "homepage",
+      "status": 200,
+      "ttfbMs": 127,
+      "domContentLoadedMs": 169,
+      "loadEventEndMs": 386,
+      "fcpMs": 204,
+      "jsRequestCount": 5,
+      "cssRequestCount": 1,
+      "totalTransferredBytesApprox": 59676,
+      "totalResourceCount": 8,
+      "note": null
+    },
+    {
+      "route": "/api",
+      "name": "api",
+      "status": 200,
+      "ttfbMs": 545,
+      "domContentLoadedMs": 581,
+      "loadEventEndMs": 706,
+      "fcpMs": 576,
+      "jsRequestCount": 5,
+      "cssRequestCount": 1,
+      "totalTransferredBytesApprox": 59676,
+      "totalResourceCount": 8,
+      "note": null
+    },
+    {
+      "route": "/docs",
+      "name": "docs",
+      "status": 200,
+      "ttfbMs": 179,
+      "domContentLoadedMs": 210,
+      "loadEventEndMs": 336,
+      "fcpMs": 208,
+      "jsRequestCount": 5,
+      "cssRequestCount": 1,
+      "totalTransferredBytesApprox": 59676,
+      "totalResourceCount": 8,
+      "note": null
+    },
+    {
+      "route": "/servers",
+      "name": "servers",
+      "status": 200,
+      "ttfbMs": 1133,
+      "domContentLoadedMs": 1962,
+      "loadEventEndMs": 1962,
+      "fcpMs": 1224,
+      "jsRequestCount": 6,
+      "cssRequestCount": 1,
+      "totalTransferredBytesApprox": 59676,
+      "totalResourceCount": 9,
+      "note": null
+    },
+    {
+      "route": "/servers/github",
+      "name": "servers_github",
+      "status": 200,
+      "ttfbMs": 1560,
+      "domContentLoadedMs": 1605,
+      "loadEventEndMs": 1727,
+      "fcpMs": 1584,
+      "jsRequestCount": 6,
+      "cssRequestCount": 1,
+      "totalTransferredBytesApprox": 59676,
+      "totalResourceCount": 9,
+      "note": null
+    },
+    {
+      "route": "/verification",
+      "name": "verification",
+      "status": 200,
+      "ttfbMs": 395,
+      "domContentLoadedMs": 422,
+      "loadEventEndMs": 546,
+      "fcpMs": 428,
+      "jsRequestCount": 5,
+      "cssRequestCount": 1,
+      "totalTransferredBytesApprox": 59676,
+      "totalResourceCount": 8,
+      "note": null
+    }
+  ],
+  "summary": {
+    "routeCount": 6,
+    "routesWithErrors": 0,
+    "avgTtfbMs": 657,
+    "avgDomContentLoadedMs": 825,
+    "avgFcpMs": 704
+  }
+}

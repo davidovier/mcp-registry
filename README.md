@@ -121,30 +121,32 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Available Scripts
 
-| Command                  | Description                               |
-| ------------------------ | ----------------------------------------- |
-| `pnpm dev`               | Start development server                  |
-| `pnpm build`             | Build for production                      |
-| `pnpm start`             | Start production server                   |
-| `pnpm lint`              | Run ESLint                                |
-| `pnpm lint:fix`          | Run ESLint with auto-fix                  |
-| `pnpm format`            | Format code with Prettier                 |
-| `pnpm format:check`      | Check code formatting                     |
-| `pnpm typecheck`         | Run TypeScript type checking              |
-| `pnpm test`              | Run unit tests (Vitest)                   |
-| `pnpm test:watch`        | Run tests in watch mode                   |
-| `pnpm test:coverage`     | Run tests with coverage                   |
-| `pnpm test:e2e`          | Run E2E tests (Playwright)                |
-| `pnpm test:e2e:ui`       | Run E2E tests with UI                     |
-| `pnpm test:e2e:security` | Run security-focused E2E smoke tests      |
-| `pnpm security:deps`     | Audit production dependencies for CVEs    |
-| `pnpm security:test`     | Run dependency audit + security E2E tests |
-| `pnpm supabase:start`    | Start local Supabase (Docker)             |
-| `pnpm supabase:stop`     | Stop local Supabase                       |
-| `pnpm supabase:status`   | Check local Supabase status               |
-| `pnpm supabase:db:reset` | Reset local DB (apply migrations + seed)  |
-| `pnpm supabase:db:push`  | Push migrations to remote                 |
-| `pnpm supabase:types`    | Generate TypeScript types                 |
+| Command                    | Description                               |
+| -------------------------- | ----------------------------------------- |
+| `pnpm dev`                 | Start development server                  |
+| `pnpm build`               | Build for production                      |
+| `pnpm start`               | Start production server                   |
+| `pnpm lint`                | Run ESLint                                |
+| `pnpm lint:fix`            | Run ESLint with auto-fix                  |
+| `pnpm format`              | Format code with Prettier                 |
+| `pnpm format:check`        | Check code formatting                     |
+| `pnpm typecheck`           | Run TypeScript type checking              |
+| `pnpm test`                | Run unit tests (Vitest)                   |
+| `pnpm test:watch`          | Run tests in watch mode                   |
+| `pnpm test:coverage`       | Run tests with coverage                   |
+| `pnpm test:e2e`            | Run E2E tests (Playwright)                |
+| `pnpm test:e2e:ui`         | Run E2E tests with UI                     |
+| `pnpm test:e2e:security`   | Run security-focused E2E smoke tests      |
+| `pnpm test:e2e:heuristics` | Run product heuristics gap detection      |
+| `pnpm product:backlog`     | Generate markdown backlog from gap report |
+| `pnpm security:deps`       | Audit production dependencies for CVEs    |
+| `pnpm security:test`       | Run dependency audit + security E2E tests |
+| `pnpm supabase:start`      | Start local Supabase (Docker)             |
+| `pnpm supabase:stop`       | Stop local Supabase                       |
+| `pnpm supabase:status`     | Check local Supabase status               |
+| `pnpm supabase:db:reset`   | Reset local DB (apply migrations + seed)  |
+| `pnpm supabase:db:push`    | Push migrations to remote                 |
+| `pnpm supabase:types`      | Generate TypeScript types                 |
 
 ## Project Structure
 
@@ -481,6 +483,107 @@ The inventory report structure:
     "pagesWithCodeBlocks": 3
   }
 }
+```
+
+#### Product Heuristics (Non-Gating)
+
+`e2e/product-heuristics.spec.ts` - Runs UX/content gap detection on all public routes.
+
+Heuristic checks per page:
+
+- **Structure**: Exactly one `<h1>` heading
+- **Primary action**: Clear CTA button or prominent link in main content
+- **Navigation**: Next-step links beyond header/footer (dead-end detection)
+- **Content usefulness**: Code blocks, required sections for docs/api/about/etc.
+- **Trust discoverability**: Links to /verification where appropriate
+- **Friction flags**: "Coming soon" blocks, disabled controls
+- **Performance sanity**: DOM content loaded time threshold
+
+Output:
+
+- `e2e/reports/product-heuristics.json`
+- `e2e/screenshots/product-heuristics/<route>/<theme>/<viewport>.png` (on failures)
+
+Severity rubric:
+
+- **Critical**: Blocks core journey or causes confusion on key pages
+- **High**: Hurts trust/conversion significantly
+- **Medium**: Polish/usability issue
+- **Low**: Minor consistency
+
+```bash
+# Run heuristics + merge into gap report
+pnpm test:e2e:heuristics
+
+# View heuristics summary
+cat e2e/reports/product-heuristics.json | jq '.summary'
+```
+
+#### Product Backlog Generation
+
+After running inventory and heuristics tests, generate a prioritized markdown backlog:
+
+```bash
+# Generate backlog from gap report
+pnpm product:backlog
+```
+
+This creates `docs/product-backlog.md` with:
+
+- Summary of all gaps by severity
+- Critical issues with full details
+- High/Medium/Low priority tables
+- Effort estimates (S/M/L)
+- Suggested fixes
+- Evidence and screenshot paths
+
+Full workflow:
+
+```bash
+# 1. Run inventory tests (generates base gap report)
+pnpm test:e2e:inventory
+
+# 2. Run heuristics tests (merges into gap report)
+pnpm test:e2e:heuristics
+
+# 3. Generate markdown backlog
+pnpm product:backlog
+
+# 4. Review the backlog
+cat docs/product-backlog.md
+```
+
+#### Performance Trends (Non-Gating)
+
+`e2e/perf-trends.spec.ts` captures lightweight performance telemetry on key routes:
+
+- `/`, `/servers`, `/servers/github`, `/docs`, `/api`, `/verification`
+- Navigation timing proxies: `ttfbMs`, `domContentLoadedMs`, `loadEventEndMs`
+- Paint timing: `fcpMs` (when available)
+- Resource profile: JS/CSS request counts, total resource count
+- Transfer estimate: `totalTransferredBytesApprox` from response headers
+
+Outputs:
+
+- `e2e/reports/perf-trends.json`
+- `e2e/reports/perf-regressions.json`
+- Budgets source: `docs/perf-budgets.json`
+
+Regression detection rules:
+
+- Mark regression when a metric is >15% worse than last committed `perf-trends.json`
+- Or when the current metric exceeds route/default budgets
+- Non-gating by default (for product intelligence and sprint planning)
+
+```bash
+# Run perf trend capture only
+pnpm test:e2e:perf-trends
+
+# Compare current trends vs last committed baseline
+pnpm perf:compare
+
+# Generate all perf outputs (smoke + trends + regressions)
+pnpm perf:report
 ```
 
 ### Validate Everything Locally

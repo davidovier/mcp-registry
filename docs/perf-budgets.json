@@ -1,0 +1,42 @@
+{
+  "defaults": {
+    "ttfbMs": 1000,
+    "domContentLoadedMs": 3000,
+    "loadEventEndMs": 5000,
+    "fcpMs": 2000,
+    "jsRequestCount": 35,
+    "cssRequestCount": 15,
+    "totalTransferredBytesApprox": 3000000,
+    "totalResourceCount": 45
+  },
+  "routes": {
+    "/": {
+      "domContentLoadedMs": 2500,
+      "fcpMs": 1500,
+      "totalTransferredBytesApprox": 2500000
+    },
+    "/servers": {
+      "domContentLoadedMs": 3500,
+      "fcpMs": 2500,
+      "totalTransferredBytesApprox": 3500000
+    },
+    "/servers/github": {
+      "domContentLoadedMs": 3500,
+      "fcpMs": 2500,
+      "totalTransferredBytesApprox": 3500000
+    },
+    "/docs": {
+      "domContentLoadedMs": 3000,
+      "fcpMs": 1800
+    },
+    "/api": {
+      "domContentLoadedMs": 3000,
+      "fcpMs": 1800
+    },
+    "/verification": {
+      "domContentLoadedMs": 3000,
+      "fcpMs": 1800
+    }
+  },
+  "regressionThresholdPercent": 15
+}
