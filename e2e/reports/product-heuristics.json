@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T22:05:06.610Z",
+  "generatedAt": "2026-02-14T23:34:54.049Z",
   "baseUrl": "http://localhost:3000",
   "pages": [
     {
@@ -7,7 +7,7 @@
       "name": "Homepage",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:04:56.226Z",
+      "timestamp": "2026-02-14T23:34:46.491Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -21,7 +21,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 170
+        "domContentLoadedMs": 79
       },
       "gaps": []
     },
@@ -30,12 +30,13 @@
       "name": "About",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:02.836Z",
+      "timestamp": "2026-02-14T23:34:51.064Z",
       "checks": {
         "h1Count": 1,
-        "hasPrimaryAction": false,
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 3,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -43,45 +44,22 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 436
+        "domContentLoadedMs": 349
       },
-      "gaps": [
-        {
-          "id": "about-navigation-dead-end",
-          "title": "Dead-end page",
-          "severity": "medium",
-          "category": "navigation",
-          "description": "Page has no internal links to guide users to next steps",
-          "route": "/about",
-          "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/dead-end.png",
-          "suggestedFix": "Add related links or 'next steps' section to guide users",
-          "effortEstimate": "M"
-        },
-        {
-          "id": "about-ux-no-primary-action",
-          "title": "No clear primary action",
-          "severity": "medium",
-          "category": "ux",
-          "description": "Page lacks a clear primary call-to-action button or link",
-          "route": "/about",
-          "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/no-primary-action.png",
-          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-          "effortEstimate": "S"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/api",
       "name": "API Docs",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:04:59.932Z",
+      "timestamp": "2026-02-14T23:34:49.021Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 2,
+        "nextStepLinkCount": 3,
         "codeBlockCount": 6,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -89,7 +67,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 792
+        "domContentLoadedMs": 463
       },
       "gaps": []
     },
@@ -98,12 +76,13 @@
       "name": "Changelog",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:01.296Z",
+      "timestamp": "2026-02-14T23:34:50.039Z",
       "checks": {
         "h1Count": 1,
-        "hasPrimaryAction": false,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 1,
+        "nextStepLinkCount": 3,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -111,28 +90,62 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 442
+        "domContentLoadedMs": 366
       },
-      "gaps": [
-        {
-          "id": "changelog-ux-no-primary-action",
-          "title": "No clear primary action",
-          "severity": "medium",
-          "category": "ux",
-          "description": "Page lacks a clear primary call-to-action button or link",
-          "route": "/changelog",
-          "screenshotPath": "e2e/screenshots/product-heuristics/changelog/light/desktop/no-primary-action.png",
-          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-          "effortEstimate": "S"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/contributing",
       "name": "Contributing",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:01.985Z",
+      "timestamp": "2026-02-14T23:34:50.567Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 5,
+        "codeBlockCount": 0,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "main-content",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 377
+      },
+      "gaps": []
+    },
+    {
+      "route": "/docs",
+      "name": "Documentation",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T23:34:48.411Z",
+      "checks": {
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
+        "codeBlockCount": 2,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 518
+      },
+      "gaps": []
+    },
+    {
+      "route": "/privacy",
+      "name": "Privacy Policy",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-14T23:34:51.557Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -143,98 +156,19 @@
         "hasRequiredSections": true,
         "missingSections": [],
         "linksToVerification": true,
-        "verificationLinkLocation": "main-content",
+        "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 495
+        "domContentLoadedMs": 348
       },
       "gaps": []
-    },
-    {
-      "route": "/docs",
-      "name": "Documentation",
-      "theme": "light",
-      "viewport": "desktop",
-      "timestamp": "2026-02-14T22:04:58.961Z",
-      "checks": {
-        "h1Count": 1,
-        "hasPrimaryAction": false,
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
-        "codeBlockCount": 2,
-        "hasRequiredSections": true,
-        "missingSections": [],
-        "linksToVerification": true,
-        "verificationLinkLocation": "footer",
-        "comingSoonCount": 0,
-        "disabledControlCount": 0,
-        "domContentLoadedMs": 639
-      },
-      "gaps": [
-        {
-          "id": "docs-navigation-dead-end",
-          "title": "Dead-end page",
-          "severity": "medium",
-          "category": "navigation",
-          "description": "Page has no internal links to guide users to next steps",
-          "route": "/docs",
-          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/dead-end.png",
-          "suggestedFix": "Add related links or 'next steps' section to guide users",
-          "effortEstimate": "M"
-        },
-        {
-          "id": "docs-ux-no-primary-action",
-          "title": "No clear primary action",
-          "severity": "medium",
-          "category": "ux",
-          "description": "Page lacks a clear primary call-to-action button or link",
-          "route": "/docs",
-          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/no-primary-action.png",
-          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-          "effortEstimate": "S"
-        }
-      ]
-    },
-    {
-      "route": "/privacy",
-      "name": "Privacy Policy",
-      "theme": "light",
-      "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:03.560Z",
-      "checks": {
-        "h1Count": 1,
-        "hasPrimaryAction": false,
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
-        "codeBlockCount": 0,
-        "hasRequiredSections": true,
-        "missingSections": [],
-        "linksToVerification": true,
-        "verificationLinkLocation": "footer",
-        "comingSoonCount": 0,
-        "disabledControlCount": 0,
-        "domContentLoadedMs": 479
-      },
-      "gaps": [
-        {
-          "id": "privacy-navigation-dead-end",
-          "title": "Dead-end page",
-          "severity": "medium",
-          "category": "navigation",
-          "description": "Page has no internal links to guide users to next steps",
-          "route": "/privacy",
-          "screenshotPath": "e2e/screenshots/product-heuristics/privacy/light/desktop/dead-end.png",
-          "suggestedFix": "Add related links or 'next steps' section to guide users",
-          "effortEstimate": "M"
-        }
-      ]
     },
     {
       "route": "/servers",
       "name": "Browse Servers",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:04:57.807Z",
+      "timestamp": "2026-02-14T23:34:47.747Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": false,
@@ -247,7 +181,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1414
+        "domContentLoadedMs": 1081
       },
       "gaps": [
         {
@@ -290,7 +224,7 @@
       "name": "Sign In",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:05.492Z",
+      "timestamp": "2026-02-14T23:34:53.185Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -304,7 +238,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 1,
-        "domContentLoadedMs": 1045
+        "domContentLoadedMs": 973
       },
       "gaps": [
         {
@@ -325,7 +259,7 @@
       "name": "Submit Server",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:06.602Z",
+      "timestamp": "2026-02-14T23:34:54.042Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -339,7 +273,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 1,
-        "domContentLoadedMs": 872
+        "domContentLoadedMs": 651
       },
       "gaps": [
         {
@@ -371,12 +305,13 @@
       "name": "Terms of Service",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:04.245Z",
+      "timestamp": "2026-02-14T23:34:52.065Z",
       "checks": {
         "h1Count": 1,
-        "hasPrimaryAction": false,
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -384,34 +319,22 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 410
+        "domContentLoadedMs": 361
       },
-      "gaps": [
-        {
-          "id": "terms-navigation-dead-end",
-          "title": "Dead-end page",
-          "severity": "medium",
-          "category": "navigation",
-          "description": "Page has no internal links to guide users to next steps",
-          "route": "/terms",
-          "screenshotPath": "e2e/screenshots/product-heuristics/terms/light/desktop/dead-end.png",
-          "suggestedFix": "Add related links or 'next steps' section to guide users",
-          "effortEstimate": "M"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/verification",
       "name": "Verification",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T22:05:00.541Z",
+      "timestamp": "2026-02-14T23:34:49.525Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 1,
+        "nextStepLinkCount": 3,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -419,18 +342,18 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 424
+        "domContentLoadedMs": 356
       },
       "gaps": []
     }
   ],
   "summary": {
     "totalPages": 12,
-    "totalGaps": 13,
+    "totalGaps": 6,
     "gapsBySeverity": {
       "critical": 0,
       "high": 0,
-      "medium": 10,
+      "medium": 3,
       "low": 3
     },
     "topOffenders": [
@@ -439,19 +362,11 @@
         "gapCount": 3
       },
       {
-        "route": "/docs",
-        "gapCount": 2
-      },
-      {
-        "route": "/about",
-        "gapCount": 2
-      },
-      {
         "route": "/submit",
         "gapCount": 2
       },
       {
-        "route": "/changelog",
+        "route": "/signin",
         "gapCount": 1
       }
     ]

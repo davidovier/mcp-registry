@@ -1,14 +1,54 @@
 # Product Backlog
 
-> Auto-generated from product gap analysis on 2/14/2026
+> Source report timestamp: 2026-02-14T23:32:49.180Z
 
 ## Summary
 
-- **Total Items:** 13
+- **Total Items:** 6
 - **Critical:** 0
 - **High:** 0
-- **Medium:** 10
+- **Medium:** 3
 - **Low:** 3
+
+### By Category
+
+- **friction:** 3
+- **navigation:** 2
+- **ux:** 1
+
+### Top Offender Routes
+
+- `/servers`: 3 items
+- `/submit`: 2 items
+- `/signin`: 1 items
+
+### Related Inputs
+
+- Reports: `e2e/reports/product-gaps.json`
+- Heuristics test: `e2e/product-heuristics.spec.ts`
+- Generator: `scripts/generate-product-backlog.ts`
+- Perf regressions: `e2e/reports/perf-regressions.json`
+
+## Top 5 Next Actions
+
+| Priority | Item                              | Route      | Effort | Suggested Fix                                                          |
+| -------- | --------------------------------- | ---------- | ------ | ---------------------------------------------------------------------- |
+| 1        | No clear primary action           | `/servers` | S      | Add a prominent primary action button or CTA link in main content      |
+| 2        | Dead-end page                     | `/servers` | M      | Add related links or 'next steps' section to guide users               |
+| 3        | Dead-end page                     | `/submit`  | M      | Add related links or 'next steps' section to guide users               |
+| 4        | Disabled controls in main content | `/signin`  | S      | Review if disabled controls are necessary or should be removed/enabled |
+| 5        | Disabled controls in main content | `/submit`  | S      | Review if disabled controls are necessary or should be removed/enabled |
+
+## Execution Tracker
+
+| ID                                  | Status | Owner | Sprint | Target Date |
+| ----------------------------------- | ------ | ----- | ------ | ----------- |
+| `servers-friction-coming-soon`      | Todo   | TBD   | TBD    | TBD         |
+| `servers-navigation-dead-end`       | Todo   | TBD   | TBD    | TBD         |
+| `servers-ux-no-primary-action`      | Todo   | TBD   | TBD    | TBD         |
+| `signin-friction-disabled-controls` | Todo   | TBD   | TBD    | TBD         |
+| `submit-friction-disabled-controls` | Todo   | TBD   | TBD    | TBD         |
+| `submit-navigation-dead-end`        | Todo   | TBD   | TBD    | TBD         |
 
 ### Routes Audited
 
@@ -27,18 +67,11 @@
 
 ## Medium Priority
 
-| Title                   | Route        | Category   | Effort | Suggested Fix                                                |
-| ----------------------- | ------------ | ---------- | ------ | ------------------------------------------------------------ |
-| Dead-end page           | `/about`     | navigation | M      | Add related links or 'next steps' section to guide users     |
-| No clear primary action | `/about`     | ux         | S      | Add a prominent primary action button or CTA link in main co |
-| No clear primary action | `/changelog` | ux         | S      | Add a prominent primary action button or CTA link in main co |
-| Dead-end page           | `/docs`      | navigation | M      | Add related links or 'next steps' section to guide users     |
-| No clear primary action | `/docs`      | ux         | S      | Add a prominent primary action button or CTA link in main co |
-| Dead-end page           | `/privacy`   | navigation | M      | Add related links or 'next steps' section to guide users     |
-| Dead-end page           | `/servers`   | navigation | M      | Add related links or 'next steps' section to guide users     |
-| No clear primary action | `/servers`   | ux         | S      | Add a prominent primary action button or CTA link in main co |
-| Dead-end page           | `/submit`    | navigation | M      | Add related links or 'next steps' section to guide users     |
-| Dead-end page           | `/terms`     | navigation | M      | Add related links or 'next steps' section to guide users     |
+| Title                   | Route      | Category   | Effort | Suggested Fix                                                     |
+| ----------------------- | ---------- | ---------- | ------ | ----------------------------------------------------------------- |
+| Dead-end page           | `/servers` | navigation | M      | Add related links or 'next steps' section to guide users          |
+| No clear primary action | `/servers` | ux         | S      | Add a prominent primary action button or CTA link in main content |
+| Dead-end page           | `/submit`  | navigation | M      | Add related links or 'next steps' section to guide users          |
 
 ## Low Priority
 
@@ -48,76 +81,38 @@
 | Disabled controls in main content  | `/signin`  | friction | S      |
 | Disabled controls in main content  | `/submit`  | friction | S      |
 
+## Grouped by Route
+
+| Route      | Item Count | Categories               |
+| ---------- | ---------- | ------------------------ |
+| `/servers` | 3          | friction, navigation, ux |
+| `/signin`  | 1          | friction                 |
+| `/submit`  | 2          | friction, navigation     |
+
+## Grouped by Category
+
+| Category   | Item Count | Example Routes             |
+| ---------- | ---------- | -------------------------- |
+| friction   | 3          | /servers, /signin, /submit |
+| navigation | 2          | /servers, /submit          |
+| ux         | 1          | /servers                   |
+
 ## All Items Detail
 
 <details>
 <summary>Click to expand full item details</summary>
 
-### Dead-end page
+### Contains 'Coming Soon' placeholder
 
-- **ID:** `about-navigation-dead-end`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
+- **ID:** `servers-friction-coming-soon`
+- **Severity:** LOW
+- **Impact:** Minor consistency or optimization opportunity
 - **Effort:** Medium (2-8 hours)
-- **Route:** `/about`
-- **Category:** navigation
-- **Screenshot:** `e2e/screenshots/product-heuristics/about/light/desktop/dead-end.png`
-- **Suggested Fix:** Add related links or 'next steps' section to guide users
-
-### No clear primary action
-
-- **ID:** `about-ux-no-primary-action`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Small (< 2 hours)
-- **Route:** `/about`
-- **Category:** ux
-- **Screenshot:** `e2e/screenshots/product-heuristics/about/light/desktop/no-primary-action.png`
-- **Suggested Fix:** Add a prominent primary action button or CTA link in main content
-
-### No clear primary action
-
-- **ID:** `changelog-ux-no-primary-action`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Small (< 2 hours)
-- **Route:** `/changelog`
-- **Category:** ux
-- **Screenshot:** `e2e/screenshots/product-heuristics/changelog/light/desktop/no-primary-action.png`
-- **Suggested Fix:** Add a prominent primary action button or CTA link in main content
-
-### Dead-end page
-
-- **ID:** `docs-navigation-dead-end`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/docs`
-- **Category:** navigation
-- **Screenshot:** `e2e/screenshots/product-heuristics/docs/light/desktop/dead-end.png`
-- **Suggested Fix:** Add related links or 'next steps' section to guide users
-
-### No clear primary action
-
-- **ID:** `docs-ux-no-primary-action`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Small (< 2 hours)
-- **Route:** `/docs`
-- **Category:** ux
-- **Screenshot:** `e2e/screenshots/product-heuristics/docs/light/desktop/no-primary-action.png`
-- **Suggested Fix:** Add a prominent primary action button or CTA link in main content
-
-### Dead-end page
-
-- **ID:** `privacy-navigation-dead-end`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/privacy`
-- **Category:** navigation
-- **Screenshot:** `e2e/screenshots/product-heuristics/privacy/light/desktop/dead-end.png`
-- **Suggested Fix:** Add related links or 'next steps' section to guide users
+- **Route:** `/servers`
+- **Category:** friction
+- **Source:** heuristics
+- **Evidence:** 1 coming soon blocks
+- **Suggested Fix:** Replace placeholder content with actual functionality or remove
 
 ### Dead-end page
 
@@ -127,6 +122,7 @@
 - **Effort:** Medium (2-8 hours)
 - **Route:** `/servers`
 - **Category:** navigation
+- **Source:** heuristics
 - **Screenshot:** `e2e/screenshots/product-heuristics/servers/light/desktop/dead-end.png`
 - **Suggested Fix:** Add related links or 'next steps' section to guide users
 
@@ -138,41 +134,9 @@
 - **Effort:** Small (< 2 hours)
 - **Route:** `/servers`
 - **Category:** ux
+- **Source:** heuristics
 - **Screenshot:** `e2e/screenshots/product-heuristics/servers/light/desktop/no-primary-action.png`
 - **Suggested Fix:** Add a prominent primary action button or CTA link in main content
-
-### Dead-end page
-
-- **ID:** `submit-navigation-dead-end`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/submit`
-- **Category:** navigation
-- **Screenshot:** `e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png`
-- **Suggested Fix:** Add related links or 'next steps' section to guide users
-
-### Dead-end page
-
-- **ID:** `terms-navigation-dead-end`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/terms`
-- **Category:** navigation
-- **Screenshot:** `e2e/screenshots/product-heuristics/terms/light/desktop/dead-end.png`
-- **Suggested Fix:** Add related links or 'next steps' section to guide users
-
-### Contains 'Coming Soon' placeholder
-
-- **ID:** `servers-friction-coming-soon`
-- **Severity:** LOW
-- **Impact:** Minor consistency or optimization opportunity
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/servers`
-- **Category:** friction
-- **Evidence:** 1 coming soon blocks
-- **Suggested Fix:** Replace placeholder content with actual functionality or remove
 
 ### Disabled controls in main content
 
@@ -182,6 +146,7 @@
 - **Effort:** Small (< 2 hours)
 - **Route:** `/signin`
 - **Category:** friction
+- **Source:** heuristics
 - **Evidence:** 1 disabled controls
 - **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
 
@@ -193,15 +158,39 @@
 - **Effort:** Small (< 2 hours)
 - **Route:** `/submit`
 - **Category:** friction
+- **Source:** heuristics
 - **Evidence:** 1 disabled controls
 - **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
 
+### Dead-end page
+
+- **ID:** `submit-navigation-dead-end`
+- **Severity:** MEDIUM
+- **Impact:** Polish/usability issue affecting user experience
+- **Effort:** Medium (2-8 hours)
+- **Route:** `/submit`
+- **Category:** navigation
+- **Source:** heuristics
+- **Screenshot:** `e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png`
+- **Suggested Fix:** Add related links or 'next steps' section to guide users
+
 </details>
+
+## Performance Regression Snapshot
+
+- **Total Regressions:** 2
+- **Budget Exceeded:** 2
+- **Trend Regressions (> threshold):** 0
+
+| Route             | Metric | Current | Budget |
+| ----------------- | ------ | ------- | ------ |
+| `/servers`        | ttfbMs | 1133    | 1000   |
+| `/servers/github` | ttfbMs | 1560    | 1000   |
 
 ## Analysis Notes
 
-- No major product gaps detected in current audit.
+- Backlog contains actionable optimization items even when no critical contract gaps are present.
 
 ---
 
-_Generated by `scripts/generate-product-backlog.ts` at 2026-02-14T22:35:05.675Z_
+_Generated by `scripts/generate-product-backlog.ts` from deterministic report inputs._

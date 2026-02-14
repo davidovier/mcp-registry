@@ -528,6 +528,8 @@ After running inventory and heuristics tests, generate a prioritized markdown ba
 pnpm product:backlog
 ```
 
+`product:backlog` runs with the local dev dependency `tsx` (no `npx` fetch), so it is offline-safe after `pnpm install`.
+
 This creates `docs/product-backlog.md` with:
 
 - Summary of all gaps by severity

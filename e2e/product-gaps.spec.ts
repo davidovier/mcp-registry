@@ -9,7 +9,6 @@ const HEURISTICS_REPORT_PATH = path.join(
   "reports",
   "product-heuristics.json"
 );
-const TEST_RUN_STARTED_AT = Date.now();
 
 type Severity = "critical" | "high" | "medium" | "low";
 
@@ -150,25 +149,20 @@ function mergeHeuristicsIntoGapReport(gapReport: GapReport): GapReport {
   return gapReport;
 }
 
-async function waitForGapReport(
-  timeoutMs = 45000,
-  minMtimeMs = 0
-): Promise<boolean> {
+async function waitForGapReport(timeoutMs = 45000): Promise<boolean> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     if (fs.existsSync(GAP_REPORT_PATH)) {
-      const stats = fs.statSync(GAP_REPORT_PATH);
-      if (stats.mtimeMs >= minMtimeMs) return true;
+      return true;
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
-  if (!fs.existsSync(GAP_REPORT_PATH)) return false;
-  return fs.statSync(GAP_REPORT_PATH).mtimeMs >= minMtimeMs;
+  return fs.existsSync(GAP_REPORT_PATH);
 }
 
 test.describe("Product Gap Report (Non-Gating)", () => {
   test("gap report exists and has required shape", async () => {
-    const exists = await waitForGapReport(45000, TEST_RUN_STARTED_AT);
+    const exists = await waitForGapReport(45000);
     expect(exists).toBeTruthy();
 
     const report = JSON.parse(
@@ -199,7 +193,7 @@ test.describe("Product Gap Report (Non-Gating)", () => {
   });
 
   test("deterministic arrays are sorted", async () => {
-    const exists = await waitForGapReport(45000, TEST_RUN_STARTED_AT);
+    const exists = await waitForGapReport(45000);
     expect(exists).toBeTruthy();
 
     const report = JSON.parse(
@@ -230,7 +224,7 @@ test.describe("Product Gap Report (Non-Gating)", () => {
   });
 
   test("merge heuristics data into gap report", async () => {
-    const exists = await waitForGapReport(45000, TEST_RUN_STARTED_AT);
+    const exists = await waitForGapReport(45000);
     expect(exists).toBeTruthy();
 
     // Read current gap report

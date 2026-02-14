@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-14T22:05:53.453Z",
+  "timestamp": "2026-02-14T23:32:49.180Z",
   "routesAudited": [
     "/",
     "/about",
@@ -173,74 +173,8 @@
   "notes": ["No major product gaps detected in current audit."],
   "heuristicGaps": {
     "source": "/Users/davidvos/Vibe projects/MCP/mcp-registry/e2e/reports/product-heuristics.json",
-    "generatedAt": "2026-02-14T22:05:06.610Z",
+    "generatedAt": "2026-02-14T23:33:46.088Z",
     "gaps": [
-      {
-        "id": "about-navigation-dead-end",
-        "title": "Dead-end page",
-        "severity": "medium",
-        "category": "navigation",
-        "description": "Page has no internal links to guide users to next steps",
-        "route": "/about",
-        "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/dead-end.png",
-        "suggestedFix": "Add related links or 'next steps' section to guide users",
-        "effortEstimate": "M"
-      },
-      {
-        "id": "about-ux-no-primary-action",
-        "title": "No clear primary action",
-        "severity": "medium",
-        "category": "ux",
-        "description": "Page lacks a clear primary call-to-action button or link",
-        "route": "/about",
-        "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/no-primary-action.png",
-        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-        "effortEstimate": "S"
-      },
-      {
-        "id": "changelog-ux-no-primary-action",
-        "title": "No clear primary action",
-        "severity": "medium",
-        "category": "ux",
-        "description": "Page lacks a clear primary call-to-action button or link",
-        "route": "/changelog",
-        "screenshotPath": "e2e/screenshots/product-heuristics/changelog/light/desktop/no-primary-action.png",
-        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-        "effortEstimate": "S"
-      },
-      {
-        "id": "docs-navigation-dead-end",
-        "title": "Dead-end page",
-        "severity": "medium",
-        "category": "navigation",
-        "description": "Page has no internal links to guide users to next steps",
-        "route": "/docs",
-        "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/dead-end.png",
-        "suggestedFix": "Add related links or 'next steps' section to guide users",
-        "effortEstimate": "M"
-      },
-      {
-        "id": "docs-ux-no-primary-action",
-        "title": "No clear primary action",
-        "severity": "medium",
-        "category": "ux",
-        "description": "Page lacks a clear primary call-to-action button or link",
-        "route": "/docs",
-        "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/no-primary-action.png",
-        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-        "effortEstimate": "S"
-      },
-      {
-        "id": "privacy-navigation-dead-end",
-        "title": "Dead-end page",
-        "severity": "medium",
-        "category": "navigation",
-        "description": "Page has no internal links to guide users to next steps",
-        "route": "/privacy",
-        "screenshotPath": "e2e/screenshots/product-heuristics/privacy/light/desktop/dead-end.png",
-        "suggestedFix": "Add related links or 'next steps' section to guide users",
-        "effortEstimate": "M"
-      },
       {
         "id": "servers-navigation-dead-end",
         "title": "Dead-end page",
@@ -271,17 +205,6 @@
         "description": "Page has no internal links to guide users to next steps",
         "route": "/submit",
         "screenshotPath": "e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png",
-        "suggestedFix": "Add related links or 'next steps' section to guide users",
-        "effortEstimate": "M"
-      },
-      {
-        "id": "terms-navigation-dead-end",
-        "title": "Dead-end page",
-        "severity": "medium",
-        "category": "navigation",
-        "description": "Page has no internal links to guide users to next steps",
-        "route": "/terms",
-        "screenshotPath": "e2e/screenshots/product-heuristics/terms/light/desktop/dead-end.png",
         "suggestedFix": "Add related links or 'next steps' section to guide users",
         "effortEstimate": "M"
       },
@@ -321,11 +244,11 @@
     ],
     "summary": {
       "totalPages": 12,
-      "totalGaps": 13,
+      "totalGaps": 6,
       "gapsBySeverity": {
         "critical": 0,
         "high": 0,
-        "medium": 10,
+        "medium": 3,
         "low": 3
       },
       "topOffenders": [
@@ -334,19 +257,11 @@
           "gapCount": 3
         },
         {
-          "route": "/docs",
-          "gapCount": 2
-        },
-        {
-          "route": "/about",
-          "gapCount": 2
-        },
-        {
           "route": "/submit",
           "gapCount": 2
         },
         {
-          "route": "/changelog",
+          "route": "/signin",
           "gapCount": 1
         }
       ]
