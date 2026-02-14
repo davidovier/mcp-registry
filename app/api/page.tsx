@@ -91,7 +91,7 @@ export default function ApiDocsPage() {
             </h2>
             <Card padding="lg">
               <pre className="overflow-x-auto rounded-lg bg-surface-sunken p-4 text-mono-md text-content-primary">
-                <code>https://mcp-registry.vercel.app</code>
+                <code>https://mcp-registry-mu.vercel.app</code>
               </pre>
               <Alert variant="info" className="mt-4">
                 You can use the API directly from scripts, dashboards,
@@ -254,6 +254,28 @@ export default function ApiDocsPage() {
                   </Table.Row>
                   <Table.Row hoverable={false}>
                     <Table.Cell className="font-mono text-mono-sm">
+                      sort
+                    </Table.Cell>
+                    <Table.Cell className="text-content-secondary">
+                      enum
+                    </Table.Cell>
+                    <Table.Cell className="text-content-secondary">
+                      One of:{" "}
+                      <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                        verified
+                      </code>{" "}
+                      (default) |{" "}
+                      <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                        newest
+                      </code>{" "}
+                      |{" "}
+                      <code className="font-mono text-mono-sm text-brand-700 dark:text-brand-400">
+                        name
+                      </code>
+                    </Table.Cell>
+                  </Table.Row>
+                  <Table.Row hoverable={false}>
+                    <Table.Cell className="font-mono text-mono-sm">
                       limit
                     </Table.Cell>
                     <Table.Cell className="text-content-secondary">
@@ -287,7 +309,8 @@ export default function ApiDocsPage() {
 /api/servers?transport=stdio
 /api/servers?auth=oauth&verified=true
 /api/servers?tag=database&tag=postgres
-/api/servers?limit=20&cursor=...`}</code>
+/api/servers?sort=newest
+/api/servers?sort=name&limit=20`}</code>
               </pre>
             </div>
           </section>
