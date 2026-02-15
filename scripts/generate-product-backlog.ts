@@ -83,6 +83,7 @@ interface GapReport {
     source: string | null;
     generatedAt: string | null;
     gaps: HeuristicGap[];
+    conversion?: HeuristicGap[];
     summary: {
       totalGaps: number;
       gapsBySeverity: Record<Severity, number>;

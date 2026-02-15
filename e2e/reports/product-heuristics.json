@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T09:08:17.069Z",
+  "generatedAt": "2026-02-15T10:12:41.246Z",
   "baseUrl": "http://localhost:3000",
   "pages": [
     {
@@ -7,11 +7,12 @@
       "name": "Homepage",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:08.655Z",
+      "timestamp": "2026-02-15T10:12:31.255Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
-        "primaryActionType": "cta-link",
+        "primaryActionType": "primary-button",
         "hasNextStepNavigation": true,
         "nextStepLinkCount": 2,
         "codeBlockCount": 0,
@@ -21,7 +22,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 72
+        "domContentLoadedMs": 636
       },
       "gaps": []
     },
@@ -30,8 +31,9 @@
       "name": "About",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:13.795Z",
+      "timestamp": "2026-02-15T10:12:39.035Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -44,17 +46,31 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 410
+        "domContentLoadedMs": 1443
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "about-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/about",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/api",
       "name": "API Docs",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:11.282Z",
+      "timestamp": "2026-02-15T10:12:34.832Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -67,17 +83,31 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 666
+        "domContentLoadedMs": 142
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "api-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/api",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/api/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/changelog",
       "name": "Changelog",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:12.531Z",
+      "timestamp": "2026-02-15T10:12:36.327Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -90,17 +120,31 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 458
+        "domContentLoadedMs": 154
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "changelog-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/changelog",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/changelog/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/contributing",
       "name": "Contributing",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:13.206Z",
+      "timestamp": "2026-02-15T10:12:37.309Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -113,17 +157,31 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 499
+        "domContentLoadedMs": 658
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "contributing-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/contributing",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/contributing/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/docs",
       "name": "Documentation",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:10.437Z",
+      "timestamp": "2026-02-15T10:12:33.852Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -136,17 +194,31 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 665
+        "domContentLoadedMs": 113
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "docs-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/docs",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/privacy",
       "name": "Privacy Policy",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:14.366Z",
+      "timestamp": "2026-02-15T10:12:41.013Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -159,7 +231,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 394
+        "domContentLoadedMs": 1807
       },
       "gaps": []
     },
@@ -168,13 +240,14 @@
       "name": "Browse Servers",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:09.596Z",
+      "timestamp": "2026-02-15T10:12:31.973Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
-        "primaryActionType": "cta-link",
+        "primaryActionType": "primary-button",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 2,
+        "nextStepLinkCount": 3,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -182,7 +255,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 856
+        "domContentLoadedMs": 123
       },
       "gaps": [
         {
@@ -199,37 +272,107 @@
       ]
     },
     {
-      "route": "/signin",
-      "name": "Sign In",
+      "route": "/servers?q=github",
+      "name": "Browse Servers (Search Results)",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:16.048Z",
+      "timestamp": "2026-02-15T10:12:32.272Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
-        "primaryActionType": "cta-link",
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
+        "primaryActionType": "primary-button",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 3,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
         "linksToVerification": true,
         "verificationLinkLocation": "footer",
-        "comingSoonCount": 0,
-        "disabledControlCount": 1,
-        "domContentLoadedMs": 885
+        "comingSoonCount": 1,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 274
       },
       "gaps": [
         {
-          "id": "signin-friction-disabled-controls",
+          "id": "servers-q-github-friction-coming-soon",
+          "title": "Contains 'Coming Soon' placeholder",
+          "severity": "low",
+          "category": "friction",
+          "description": "Page contains 1 'Coming Soon' blocks",
+          "route": "/servers?q=github",
+          "evidence": "1 coming soon blocks",
+          "suggestedFix": "Replace placeholder content with actual functionality or remove",
+          "effortEstimate": "M"
+        }
+      ]
+    },
+    {
+      "route": "/servers/github",
+      "name": "Server Detail",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-15T10:12:32.992Z",
+      "checks": {
+        "status": 200,
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "primary-button",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 6,
+        "codeBlockCount": 1,
+        "hasRequiredSections": true,
+        "missingSections": [],
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
+        "comingSoonCount": 0,
+        "disabledControlCount": 2,
+        "domContentLoadedMs": 576
+      },
+      "gaps": [
+        {
+          "id": "servers-github-friction-disabled-controls",
           "title": "Disabled controls in main content",
           "severity": "low",
           "category": "friction",
-          "description": "Page has 1 disabled interactive controls",
-          "route": "/signin",
-          "evidence": "1 disabled controls",
+          "description": "Page has 2 disabled interactive controls",
+          "route": "/servers/github",
+          "evidence": "2 disabled controls",
           "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
           "effortEstimate": "S"
+        }
+      ]
+    },
+    {
+      "route": "/signin",
+      "name": "Sign In",
+      "theme": "light",
+      "viewport": "desktop",
+      "timestamp": "2026-02-15T10:12:41.201Z",
+      "checks": {
+        "status": 0,
+        "h1Count": 0,
+        "hasPrimaryAction": false,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
+        "codeBlockCount": 0,
+        "hasRequiredSections": false,
+        "missingSections": [],
+        "linksToVerification": false,
+        "comingSoonCount": 0,
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 0
+      },
+      "gaps": [
+        {
+          "id": "signin-ux-page-error",
+          "title": "Page failed to load",
+          "severity": "critical",
+          "category": "ux",
+          "description": "Error loading page: Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/signin\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/signin\", waiting until \"load\"\u001b[22m\n",
+          "route": "/signin",
+          "suggestedFix": "Investigate and fix the page loading error",
+          "effortEstimate": "M"
         }
       ]
     },
@@ -238,44 +381,31 @@
       "name": "Submit Server",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:17.061Z",
+      "timestamp": "2026-02-15T10:12:41.236Z",
       "checks": {
-        "h1Count": 1,
-        "hasPrimaryAction": true,
-        "primaryActionType": "cta-link",
+        "status": 0,
+        "h1Count": 0,
+        "hasPrimaryAction": false,
         "hasNextStepNavigation": false,
         "nextStepLinkCount": 0,
         "codeBlockCount": 0,
-        "hasRequiredSections": true,
+        "hasRequiredSections": false,
         "missingSections": [],
-        "linksToVerification": true,
-        "verificationLinkLocation": "footer",
+        "linksToVerification": false,
         "comingSoonCount": 0,
-        "disabledControlCount": 1,
-        "domContentLoadedMs": 779
+        "disabledControlCount": 0,
+        "domContentLoadedMs": 0
       },
       "gaps": [
         {
-          "id": "submit-navigation-dead-end",
-          "title": "Dead-end page",
-          "severity": "medium",
-          "category": "navigation",
-          "description": "Page has no internal links to guide users to next steps",
+          "id": "submit-ux-page-error",
+          "title": "Page failed to load",
+          "severity": "critical",
+          "category": "ux",
+          "description": "Error loading page: Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/submit\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/submit\", waiting until \"load\"\u001b[22m\n",
           "route": "/submit",
-          "screenshotPath": "e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png",
-          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "suggestedFix": "Investigate and fix the page loading error",
           "effortEstimate": "M"
-        },
-        {
-          "id": "submit-friction-disabled-controls",
-          "title": "Disabled controls in main content",
-          "severity": "low",
-          "category": "friction",
-          "description": "Page has 1 disabled interactive controls",
-          "route": "/submit",
-          "evidence": "1 disabled controls",
-          "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
-          "effortEstimate": "S"
         }
       ]
     },
@@ -284,8 +414,9 @@
       "name": "Terms of Service",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:14.980Z",
+      "timestamp": "2026-02-15T10:12:41.198Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -298,7 +429,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 434
+        "domContentLoadedMs": 75
       },
       "gaps": []
     },
@@ -307,8 +438,9 @@
       "name": "Verification",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T09:08:11.890Z",
+      "timestamp": "2026-02-15T10:12:35.576Z",
       "checks": {
+        "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
@@ -321,31 +453,52 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 432
+        "domContentLoadedMs": 134
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "verification-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/verification",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/verification/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     }
   ],
   "summary": {
-    "totalPages": 12,
-    "totalGaps": 4,
+    "totalPages": 14,
+    "totalGaps": 11,
     "gapsBySeverity": {
-      "critical": 0,
-      "high": 0,
-      "medium": 1,
+      "critical": 2,
+      "high": 6,
+      "medium": 0,
       "low": 3
     },
     "topOffenders": [
       {
-        "route": "/submit",
-        "gapCount": 2
-      },
-      {
-        "route": "/servers",
+        "route": "/about",
         "gapCount": 1
       },
       {
-        "route": "/signin",
+        "route": "/api",
+        "gapCount": 1
+      },
+      {
+        "route": "/changelog",
+        "gapCount": 1
+      },
+      {
+        "route": "/contributing",
+        "gapCount": 1
+      },
+      {
+        "route": "/docs",
         "gapCount": 1
       }
     ]
