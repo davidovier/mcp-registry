@@ -20,6 +20,8 @@ import { test, Page } from "@playwright/test";
 const PUBLIC_ROUTES = [
   { path: "/", name: "Homepage" },
   { path: "/servers", name: "Browse Servers" },
+  { path: "/servers?q=github", name: "Browse Servers (Search Results)" },
+  { path: "/servers/github", name: "Server Detail" },
   { path: "/docs", name: "Documentation" },
   { path: "/api", name: "API Docs" },
   { path: "/verification", name: "Verification" },
@@ -69,6 +71,12 @@ const SCREENSHOT_DIR = path.join(
 
 // Severity levels
 type Severity = "critical" | "high" | "medium" | "low";
+const severityOrder: Record<Severity, number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
+};
 
 // Gap structure
 interface HeuristicGap {
@@ -81,7 +89,8 @@ interface HeuristicGap {
     | "trust"
     | "friction"
     | "performance"
-    | "navigation";
+    | "navigation"
+    | "conversion";
   description: string;
   route: string;
   evidence?: string;
@@ -98,6 +107,7 @@ interface PageHeuristicResult {
   viewport: string;
   timestamp: string;
   checks: {
+    status: number;
     h1Count: number;
     hasPrimaryAction: boolean;
     primaryActionType?: string;
@@ -115,6 +125,19 @@ interface PageHeuristicResult {
   };
   gaps: HeuristicGap[];
 }
+
+type ActionSnapshot = {
+  text: string;
+  href: string | null;
+  className: string;
+  top: number;
+  isExternal: boolean;
+  hasTargetBlank: boolean;
+  hasSvgIcon: boolean;
+  isPrimaryHint: boolean;
+  isSecondaryHint: boolean;
+  isButtonLike: boolean;
+};
 
 // Full report structure
 interface HeuristicReport {
@@ -217,6 +240,88 @@ async function checkPrimaryAction(page: Page): Promise<{
   }
 
   return { hasPrimaryAction: false };
+}
+
+async function collectVisibleActions(page: Page): Promise<ActionSnapshot[]> {
+  return page.evaluate(() => {
+    const nodes = Array.from(
+      document.querySelectorAll("main a[href], main button")
+    ) as Array<HTMLAnchorElement | HTMLButtonElement>;
+
+    return nodes
+      .filter((node) => {
+        const rect = node.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return false;
+        const style = window.getComputedStyle(node);
+        return style.visibility !== "hidden" && style.display !== "none";
+      })
+      .map((node) => {
+        const rect = node.getBoundingClientRect();
+        const className = node.className || "";
+        const href =
+          node instanceof HTMLAnchorElement
+            ? (node.getAttribute("href") ?? "")
+            : null;
+        const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+        const target =
+          node instanceof HTMLAnchorElement
+            ? node.getAttribute("target") || ""
+            : "";
+
+        const isExternal = Boolean(
+          href &&
+            (href.startsWith("http://") || href.startsWith("https://")) &&
+            !href.includes(window.location.host)
+        );
+        const hasSvgIcon = node.querySelector("svg") !== null;
+        const lowerClass = className.toLowerCase();
+        const isPrimaryHint =
+          node.getAttribute("data-variant") === "primary" ||
+          node.hasAttribute("data-primary-action") ||
+          (node instanceof HTMLButtonElement && node.type === "submit") ||
+          lowerClass.includes("bg-brand") ||
+          (lowerClass.includes("text-white") && lowerClass.includes("bg-"));
+        const isSecondaryHint =
+          node.getAttribute("data-variant") === "secondary" ||
+          (lowerClass.includes("border") && lowerClass.includes("bg-surface"));
+        const isButtonLike =
+          node.tagName === "BUTTON" ||
+          lowerClass.includes("rounded") ||
+          lowerClass.includes("px-") ||
+          lowerClass.includes("py-");
+
+        return {
+          text,
+          href,
+          className,
+          top: Math.round(rect.top),
+          isExternal,
+          hasTargetBlank: target === "_blank",
+          hasSvgIcon,
+          isPrimaryHint,
+          isSecondaryHint,
+          isButtonLike,
+        };
+      })
+      .filter((action) => action.text.length > 0);
+  });
+}
+
+function isLongFormRoute(route: string): boolean {
+  return ["/docs", "/api", "/verification", "/about", "/contributing"].some(
+    (value) => route.startsWith(value)
+  );
+}
+
+function routeRequiresSocialProof(route: string): boolean {
+  return (
+    route === "/" ||
+    route === "/servers" ||
+    route === "/servers?q=github" ||
+    route === "/submit" ||
+    route === "/verification" ||
+    route.startsWith("/servers/")
+  );
 }
 
 async function checkNextStepNavigation(page: Page): Promise<{
@@ -365,6 +470,49 @@ async function measurePerformance(page: Page): Promise<{
   }
 }
 
+async function getMainTextLength(page: Page): Promise<number> {
+  try {
+    const text = (await page.locator("main").textContent()) || "";
+    return text.replace(/\s+/g, " ").trim().length;
+  } catch {
+    return 0;
+  }
+}
+
+async function detectSocialProof(page: Page): Promise<boolean> {
+  const text = (
+    (await page
+      .locator("main")
+      .textContent()
+      .catch(() => "")) || ""
+  )
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+  return /verified|trusted|reviewed|users viewed|most viewed|confidence|proof|community/.test(
+    text
+  );
+}
+
+async function hasTrustNearPrimaryCta(page: Page): Promise<boolean> {
+  return page
+    .evaluate(() => {
+      const primary = document.querySelector(
+        'main button[data-variant="primary"], main [data-primary-action], main button[type="submit"], main a.bg-brand-700, main a.dark\\:bg-brand-500'
+      );
+      if (!primary) return false;
+
+      const container =
+        primary.closest("aside, section, article, div") ||
+        primary.parentElement ||
+        primary;
+      const nearbyText = (container.textContent || "").toLowerCase();
+      return /verified|reviewed|trust|users viewed|most viewed|updated/.test(
+        nearbyText
+      );
+    })
+    .catch(() => false);
+}
+
 async function runHeuristicChecks(
   page: Page,
   route: { path: string; name: string },
@@ -373,8 +521,23 @@ async function runHeuristicChecks(
 ): Promise<PageHeuristicResult> {
   const gaps: HeuristicGap[] = [];
 
-  await page.goto(route.path);
+  const response = await page.goto(route.path);
   await page.waitForLoadState("domcontentloaded");
+  const status = response?.status() ?? 0;
+  const viewportSize = page.viewportSize() || { width: 1280, height: 720 };
+  const visibleActions = await collectVisibleActions(page);
+  const primaryActions = visibleActions.filter(
+    (action) => action.isPrimaryHint
+  );
+  const primaryActionsAboveFold = primaryActions.filter(
+    (action) => action.top >= 0 && action.top < viewportSize.height
+  );
+  const secondaryActionsAboveFold = visibleActions.filter(
+    (action) =>
+      action.isSecondaryHint &&
+      action.top >= 0 &&
+      action.top < viewportSize.height
+  );
 
   // H1 count check
   const h1Count = await page.locator("main h1").count();
@@ -432,6 +595,120 @@ async function runHeuristicChecks(
     });
   }
 
+  // Conversion: no primary CTA above the fold
+  if (
+    !["/privacy", "/terms", "/signin"].includes(route.path) &&
+    status < 400 &&
+    primaryActionsAboveFold.length === 0
+  ) {
+    const screenshotPath = await takeScreenshot(
+      page,
+      route.path,
+      theme,
+      viewport,
+      "conversion-no-above-fold-cta"
+    );
+    gaps.push({
+      id: generateGapId(route.path, "conversion", "no-primary-above-fold"),
+      title: "No primary CTA above the fold",
+      severity: route.path === "/" ? "critical" : "high",
+      category: "conversion",
+      description:
+        "No primary call-to-action is visible in the first viewport height",
+      route: route.path,
+      evidence: `Primary CTA above fold count: ${primaryActionsAboveFold.length}`,
+      screenshotPath,
+      suggestedFix:
+        "Move a single primary action higher so users can act without scrolling",
+      effortEstimate: "S",
+    });
+  }
+
+  // Conversion: CTA color hierarchy mismatch
+  if (
+    status < 400 &&
+    primaryActions.length > 0 &&
+    secondaryActionsAboveFold.some((action) =>
+      action.className.toLowerCase().includes("bg-brand")
+    ) &&
+    !primaryActions.some((action) =>
+      action.className.toLowerCase().includes("bg-brand")
+    )
+  ) {
+    gaps.push({
+      id: generateGapId(route.path, "conversion", "cta-hierarchy-mismatch"),
+      title: "CTA hierarchy mismatch",
+      severity: "high",
+      category: "conversion",
+      description:
+        "Secondary actions appear visually stronger than the intended primary CTA",
+      route: route.path,
+      suggestedFix:
+        "Keep brand/emphasis styling on only one primary action and tone down secondary actions",
+      effortEstimate: "S",
+    });
+  }
+
+  // Conversion: too many equal-weight CTAs
+  const aboveFoldButtonLike = visibleActions.filter(
+    (action) =>
+      action.top >= 0 && action.top < viewportSize.height && action.isButtonLike
+  );
+  const strongCtasAboveFold = aboveFoldButtonLike.filter(
+    (action) =>
+      action.isPrimaryHint ||
+      action.className.toLowerCase().includes("bg-brand") ||
+      action.className.toLowerCase().includes("text-white")
+  );
+  if (status < 400 && strongCtasAboveFold.length > 3) {
+    gaps.push({
+      id: generateGapId(route.path, "conversion", "too-many-equal-buttons"),
+      title: "Too many equal-weight actions",
+      severity: "medium",
+      category: "conversion",
+      description:
+        "Multiple visually strong actions compete for attention in the first viewport",
+      route: route.path,
+      evidence: `Strong actions above fold: ${strongCtasAboveFold.length}`,
+      suggestedFix:
+        "Keep one primary CTA and demote others to secondary/tertiary styling",
+      effortEstimate: "S",
+    });
+  }
+
+  // Conversion: external CTA link not emphasized
+  const weakExternalCtas = visibleActions.filter((action) => {
+    const lower = action.className.toLowerCase();
+    return (
+      status < 400 &&
+      action.isExternal &&
+      action.hasTargetBlank &&
+      action.isButtonLike &&
+      !action.hasSvgIcon &&
+      !lower.includes("underline") &&
+      !lower.includes("brand")
+    );
+  });
+  if (weakExternalCtas.length > 0) {
+    gaps.push({
+      id: generateGapId(
+        route.path,
+        "conversion",
+        "external-link-not-emphasized"
+      ),
+      title: "External action not visually emphasized",
+      severity: "low",
+      category: "conversion",
+      description:
+        "External call-to-action links are visually subtle and may be overlooked",
+      route: route.path,
+      evidence: `Weak external actions: ${weakExternalCtas.length}`,
+      suggestedFix:
+        "Add icon/underline or stronger visual treatment for external destination actions",
+      effortEstimate: "S",
+    });
+  }
+
   // Next-step navigation check
   const { hasNextStepNavigation, nextStepLinkCount } =
     await checkNextStepNavigation(page);
@@ -452,6 +729,90 @@ async function runHeuristicChecks(
       route: route.path,
       screenshotPath,
       suggestedFix: "Add related links or 'next steps' section to guide users",
+      effortEstimate: "M",
+    });
+  }
+
+  // Conversion: social proof missing on conversion-sensitive routes
+  const hasSocialProof = await detectSocialProof(page);
+  if (status < 400 && routeRequiresSocialProof(route.path) && !hasSocialProof) {
+    gaps.push({
+      id: generateGapId(route.path, "conversion", "missing-social-proof"),
+      title: "No social proof near decision points",
+      severity: "medium",
+      category: "conversion",
+      description:
+        "Page does not present trust or adoption signals to reinforce action",
+      route: route.path,
+      suggestedFix:
+        "Add lightweight social proof such as verification freshness, view count, or usage indicators",
+      effortEstimate: "S",
+    });
+  }
+
+  // Conversion: search results should highlight match terms
+  if (status < 400 && route.path.startsWith("/servers?q=")) {
+    const hasSearchResults = await page
+      .locator('main a[href^="/servers/"]')
+      .first()
+      .isVisible()
+      .catch(() => false);
+    const hasHighlight = await page
+      .locator("main mark, main [data-highlight], main .search-highlight")
+      .count()
+      .then((count) => count > 0)
+      .catch(() => false);
+
+    if (hasSearchResults && !hasHighlight) {
+      const screenshotPath = await takeScreenshot(
+        page,
+        route.path,
+        theme,
+        viewport,
+        "conversion-search-no-highlight"
+      );
+      gaps.push({
+        id: generateGapId(
+          route.path,
+          "conversion",
+          "search-match-not-highlighted"
+        ),
+        title: "Search results do not highlight matches",
+        severity: "medium",
+        category: "conversion",
+        description:
+          "Result cards do not visually emphasize why each result matched the query",
+        route: route.path,
+        screenshotPath,
+        suggestedFix:
+          "Highlight matched query terms in result titles or descriptions",
+        effortEstimate: "M",
+      });
+    }
+  }
+
+  // Conversion: long pages should include sectional CTAs
+  const mainTextLength = await getMainTextLength(page);
+  const ctasBelowFold = visibleActions.filter(
+    (action) => action.isPrimaryHint && action.top >= viewportSize.height
+  );
+  if (
+    status < 400 &&
+    isLongFormRoute(route.path) &&
+    mainTextLength > 2600 &&
+    ctasBelowFold.length === 0
+  ) {
+    gaps.push({
+      id: generateGapId(route.path, "conversion", "missing-sectional-ctas"),
+      title: "Long page lacks sectional CTAs",
+      severity: "medium",
+      category: "conversion",
+      description:
+        "Long-form page has no action prompts after the first viewport",
+      route: route.path,
+      evidence: `Main text length: ${mainTextLength} characters`,
+      suggestedFix:
+        "Add context-aware CTA blocks between major sections to reduce drop-off",
       effortEstimate: "M",
     });
   }
@@ -513,6 +874,25 @@ async function runHeuristicChecks(
         "Add a link to /verification to explain what verified means",
       effortEstimate: "S",
     });
+  }
+
+  // Conversion: detail pages need trust reinforcement near CTA
+  if (status < 400 && route.path.startsWith("/servers/")) {
+    const trustNearCta = await hasTrustNearPrimaryCta(page);
+    if (!trustNearCta) {
+      gaps.push({
+        id: generateGapId(route.path, "conversion", "no-trust-near-cta"),
+        title: "Detail page lacks trust reinforcement near CTA",
+        severity: "high",
+        category: "conversion",
+        description:
+          "Primary action area does not include trust context near the CTA",
+        route: route.path,
+        suggestedFix:
+          "Show trust context near CTA (verification freshness, views, or review-time copy)",
+        effortEstimate: "S",
+      });
+    }
   }
 
   // Friction flags
@@ -593,6 +973,7 @@ async function runHeuristicChecks(
     viewport,
     timestamp: new Date().toISOString(),
     checks: {
+      status,
       h1Count,
       hasPrimaryAction,
       primaryActionType,
@@ -637,7 +1018,7 @@ function buildReport(
 
   const topOffenders = Array.from(gapsByRoute.entries())
     .map(([route, gapCount]) => ({ route, gapCount }))
-    .sort((a, b) => b.gapCount - a.gapCount)
+    .sort((a, b) => b.gapCount - a.gapCount || a.route.localeCompare(b.route))
     .slice(0, 5);
 
   // Sort pages by route for determinism
@@ -646,7 +1027,6 @@ function buildReport(
   // Sort gaps within each page by severity then id
   for (const page of pages) {
     page.gaps.sort((a, b) => {
-      const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
       const severityDiff =
         severityOrder[a.severity] - severityOrder[b.severity];
       if (severityDiff !== 0) return severityDiff;
@@ -706,6 +1086,7 @@ test.describe("Product Heuristics (Non-Gating)", () => {
           viewport,
           timestamp: new Date().toISOString(),
           checks: {
+            status: 0,
             h1Count: 0,
             hasPrimaryAction: false,
             hasNextStepNavigation: false,

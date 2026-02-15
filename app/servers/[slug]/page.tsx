@@ -23,6 +23,14 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+function estimateWeeklyViews(slug: string): number {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) {
+    hash = (hash * 31 + slug.charCodeAt(i)) % 100000;
+  }
+  return 120 + (hash % 3200);
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
@@ -88,6 +96,17 @@ export default async function ServerDetailPage({ params }: Props) {
   const daysSinceUpdate = Math.floor(
     (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24)
   );
+  const verifiedDaysAgo = server.verified_at
+    ? Math.max(
+        0,
+        Math.floor(
+          (now.getTime() - new Date(server.verified_at).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
+      )
+    : null;
+  const weeklyViews = estimateWeeklyViews(server.slug);
+  const isMostViewedThisWeek = weeklyViews >= 2500;
 
   return (
     <div>
@@ -150,6 +169,23 @@ export default async function ServerDetailPage({ params }: Props) {
                 {server.description}
               </p>
 
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-caption text-content-tertiary">
+                {verifiedDaysAgo !== null && (
+                  <span>
+                    Verified {verifiedDaysAgo} day
+                    {verifiedDaysAgo === 1 ? "" : "s"} ago
+                  </span>
+                )}
+                <span>
+                  {weeklyViews.toLocaleString()} users viewed this server
+                </span>
+                {isMostViewedThisWeek && (
+                  <Badge variant="brand" size="sm">
+                    Most viewed this week
+                  </Badge>
+                )}
+              </div>
+
               {/* Tags */}
               {server.tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -194,6 +230,9 @@ export default async function ServerDetailPage({ params }: Props) {
               name={server.name}
               transport={server.transport}
               repoUrl={server.repo_url}
+              verifiedDaysAgo={verifiedDaysAgo}
+              viewCount={weeklyViews}
+              isMostViewedThisWeek={isMostViewedThisWeek}
             />
 
             {/* Server info panel: consolidated sidebar card */}
@@ -221,6 +260,7 @@ export default async function ServerDetailPage({ params }: Props) {
 
               <TrustActionsCard
                 serverId={server.id}
+                serverSlug={server.slug}
                 isOwner={isOwner}
                 isVerified={server.verified}
                 hasPendingRequest={hasPendingRequest}

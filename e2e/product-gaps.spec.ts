@@ -70,6 +70,7 @@ interface GapReport {
     source: string | null;
     generatedAt: string | null;
     gaps: HeuristicGap[];
+    conversion: HeuristicGap[];
     summary: {
       totalGaps: number;
       gapsBySeverity: Record<Severity, number>;
@@ -104,6 +105,7 @@ function mergeHeuristicsIntoGapReport(gapReport: GapReport): GapReport {
       source: null,
       generatedAt: null,
       gaps: [],
+      conversion: [],
       summary: {
         totalGaps: 0,
         gapsBySeverity: { critical: 0, high: 0, medium: 0, low: 0 },
@@ -126,10 +128,23 @@ function mergeHeuristicsIntoGapReport(gapReport: GapReport): GapReport {
       return a.id.localeCompare(b.id);
     });
 
+  const conversionGaps = allGaps
+    .filter((gap) => gap.category === "conversion")
+    .sort((a, b) => {
+      const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+      const severityDiff =
+        severityOrder[a.severity] - severityOrder[b.severity];
+      if (severityDiff !== 0) return severityDiff;
+      const routeDiff = a.route.localeCompare(b.route);
+      if (routeDiff !== 0) return routeDiff;
+      return a.id.localeCompare(b.id);
+    });
+
   gapReport.heuristicGaps = {
     source: HEURISTICS_REPORT_PATH,
     generatedAt: heuristics.generatedAt,
     gaps: allGaps,
+    conversion: conversionGaps,
     summary: heuristics.summary,
   };
 
@@ -137,14 +152,24 @@ function mergeHeuristicsIntoGapReport(gapReport: GapReport): GapReport {
   const criticalHigh =
     heuristics.summary.gapsBySeverity.critical +
     heuristics.summary.gapsBySeverity.high;
+  gapReport.notes = gapReport.notes.filter(
+    (note) => !/critical\/high heuristic gaps detected/i.test(note)
+  );
   if (criticalHigh > 0) {
     gapReport.notes.push(
       `${criticalHigh} critical/high heuristic gaps detected`
     );
   }
+  if (heuristics.summary.totalGaps > 0) {
+    gapReport.notes = gapReport.notes.filter(
+      (note) => note !== "No major product gaps detected in current audit."
+    );
+  }
 
-  // Keep notes sorted and limited
-  gapReport.notes = gapReport.notes.slice(0, 8);
+  // Keep notes deterministic, unique, and capped
+  gapReport.notes = Array.from(new Set(gapReport.notes))
+    .sort((a, b) => a.localeCompare(b))
+    .slice(0, 8);
 
   return gapReport;
 }
@@ -188,6 +213,9 @@ test.describe("Product Gap Report (Non-Gating)", () => {
     // heuristicGaps may or may not be present yet (added after merge test)
     if (report.heuristicGaps) {
       expect(Array.isArray(report.heuristicGaps.gaps)).toBeTruthy();
+      if (report.heuristicGaps.conversion) {
+        expect(Array.isArray(report.heuristicGaps.conversion)).toBeTruthy();
+      }
       expect(typeof report.heuristicGaps.summary).toBe("object");
     }
   });
@@ -263,6 +291,7 @@ test.describe("Product Gap Report (Non-Gating)", () => {
     // Verify structure
     expect(report.heuristicGaps).toBeDefined();
     expect(Array.isArray(report.heuristicGaps?.gaps)).toBeTruthy();
+    expect(Array.isArray(report.heuristicGaps?.conversion)).toBeTruthy();
     expect(report.heuristicGaps?.summary).toBeDefined();
 
     // Verify gaps are sorted if present
@@ -280,6 +309,13 @@ test.describe("Product Gap Report (Non-Gating)", () => {
         }
       }
       expect(isSortedBySeverity).toBeTruthy();
+    }
+
+    if (report.heuristicGaps?.conversion.length) {
+      const tokenized = report.heuristicGaps.conversion.map(
+        (gap) => `${gap.severity}:${gap.route}:${gap.id}`
+      );
+      expect(isSorted(tokenized)).toBeTruthy();
     }
 
     console.log(`\nMerged report written to: ${GAP_REPORT_PATH}`);

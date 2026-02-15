@@ -14,6 +14,7 @@ export default function HomePage() {
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             href="/servers"
+            data-primary-action="homepage-browse-registry"
             className="inline-flex items-center rounded-lg bg-brand-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
           >
             Browse Registry

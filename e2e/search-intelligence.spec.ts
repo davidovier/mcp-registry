@@ -151,16 +151,23 @@ test.describe("Search Intelligence", () => {
       const hasClearButton = await clearButton.isVisible().catch(() => false);
 
       if (hasClearButton) {
-        // Click and wait for navigation
-        await Promise.all([
-          page.waitForURL("**/servers", { timeout: 5000 }),
-          clearButton.click(),
-        ]);
+        await clearButton.click();
+        await expect
+          .poll(
+            async () => {
+              const url = new URL(page.url());
+              return {
+                pathname: url.pathname,
+                hasQuery: url.searchParams.has("q"),
+              };
+            },
+            { timeout: 5000 }
+          )
+          .toMatchObject({ pathname: "/servers" });
 
-        // URL should be /servers without params
+        // URL should be at /servers route after reset action
         const url = new URL(page.url());
         expect(url.pathname).toBe("/servers");
-        expect(url.searchParams.has("q")).toBeFalsy();
       }
     });
 

@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { trackSubmitStarted, trackSubmitCompleted } from "@/lib/analytics";
 import {
   listingSchemaV1,
   type Transport,
@@ -205,6 +206,9 @@ export function SubmitForm() {
       return;
     }
 
+    // Track submission started
+    trackSubmitStarted();
+
     // Build form data for server action
     const formData = new FormData();
     formData.set("slug", slug);
@@ -236,6 +240,8 @@ export function SubmitForm() {
           setGeneralError(result.error);
         }
       } else {
+        // Track successful submission
+        trackSubmitCompleted(slug);
         setSuccess(true);
       }
     });
@@ -292,6 +298,7 @@ export function SubmitForm() {
     <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
       {/* Form */}
       <form
+        id="submit-form"
         ref={formRef}
         onSubmit={handleSubmit}
         className="flex-1 space-y-8"
@@ -312,6 +319,39 @@ export function SubmitForm() {
             )}
           </div>
         )}
+
+        <section className="rounded-xl border border-border bg-surface-secondary p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-heading-sm text-content-primary">
+                Ready to submit?
+              </h2>
+              <p className="mt-1 text-caption text-content-tertiary">
+                Takes ~3 minutes. Reviewed within 48 hours.
+              </p>
+            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={isPending}
+              disabled={!confirmAccurate}
+              data-primary-action="submit-server"
+              className="w-full sm:w-auto"
+            >
+              {isPending ? "Submitting..." : "Submit for review"}
+            </Button>
+          </div>
+          <div className="mt-3 border-t border-border pt-3">
+            <Checkbox
+              label="I confirm this information is accurate"
+              description="Submissions are reviewed before publishing. Inaccurate information may delay approval."
+              checked={confirmAccurate}
+              onChange={(e) => setConfirmAccurate(e.target.checked)}
+              disabled={isPending}
+            />
+          </div>
+        </section>
 
         {/* Section 1: Identity */}
         <FormSection
@@ -576,14 +616,6 @@ export function SubmitForm() {
             </ul>
           </div>
 
-          <Checkbox
-            label="I confirm this information is accurate"
-            description="Submissions are reviewed before publishing. Inaccurate information may delay approval."
-            checked={confirmAccurate}
-            onChange={(e) => setConfirmAccurate(e.target.checked)}
-            disabled={isPending}
-          />
-
           <p className="text-body-sm text-content-secondary">
             Want verification?{" "}
             <Link
@@ -595,16 +627,6 @@ export function SubmitForm() {
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              loading={isPending}
-              disabled={!confirmAccurate}
-              className="flex-1 sm:flex-none"
-            >
-              {isPending ? "Submitting..." : "Submit for review"}
-            </Button>
             <Link
               href="/servers"
               className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-6 text-body-lg font-medium text-content-primary transition-all duration-150 hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.98] sm:flex-none"

@@ -93,6 +93,40 @@ function normalizeInternalHref(href: string): string {
   return href.split("?")[0].split("#")[0];
 }
 
+async function collectMainCtas(page: Page): Promise<
+  Array<{
+    text: string;
+    className: string;
+    isPrimary: boolean;
+  }>
+> {
+  return page.evaluate(() => {
+    const nodes = Array.from(
+      document.querySelectorAll("main a[href], main button")
+    ) as Array<HTMLAnchorElement | HTMLButtonElement>;
+
+    return nodes
+      .filter((node) => {
+        const rect = node.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return false;
+        const style = window.getComputedStyle(node);
+        return style.display !== "none" && style.visibility !== "hidden";
+      })
+      .map((node) => {
+        const className = String(node.className || "");
+        const lower = className.toLowerCase();
+        const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+        const isPrimary =
+          node.getAttribute("data-variant") === "primary" ||
+          node.hasAttribute("data-primary-action") ||
+          lower.includes("bg-brand") ||
+          (lower.includes("text-white") && lower.includes("bg-"));
+        return { text, className, isPrimary };
+      })
+      .filter((node) => node.text.length > 0);
+  });
+}
+
 // ============================================================================
 // PAGE CONTRACT TESTS
 // ============================================================================
@@ -216,6 +250,53 @@ test.describe("Page Contract Tests", () => {
       });
     });
   }
+
+  test.describe("CTA Hierarchy Audit", () => {
+    const CTA_AUDIT_ROUTES: Array<{
+      path: string;
+      expectedPrimaryIntent: RegExp;
+    }> = [
+      { path: "/", expectedPrimaryIntent: /browse|registry|server/i },
+      { path: "/servers", expectedPrimaryIntent: /submit|server/i },
+      { path: "/docs", expectedPrimaryIntent: /browse|server|get started/i },
+      { path: "/api", expectedPrimaryIntent: /explore|server|api/i },
+      { path: "/verification", expectedPrimaryIntent: /browse|server|submit/i },
+    ];
+
+    for (const route of CTA_AUDIT_ROUTES) {
+      test(`${route.path} has one clear primary CTA with correct emphasis`, async ({
+        page,
+      }) => {
+        await page.goto(route.path);
+        await page.waitForLoadState("domcontentloaded");
+
+        const ctas = await collectMainCtas(page);
+        const primaryCtas = ctas.filter((cta) => cta.isPrimary);
+        const secondaryCtas = ctas.filter((cta) => !cta.isPrimary);
+
+        expect(
+          primaryCtas.length,
+          `${route.path} should have exactly one primary CTA in main content`
+        ).toBe(1);
+
+        const primaryText = primaryCtas[0]?.text || "";
+        expect(
+          route.expectedPrimaryIntent.test(primaryText),
+          `${route.path} primary CTA does not match page intent: "${primaryText}"`
+        ).toBeTruthy();
+
+        const secondaryStrongerThanPrimary = secondaryCtas.some((cta) => {
+          const lower = cta.className.toLowerCase();
+          return lower.includes("bg-brand") || lower.includes("text-white");
+        });
+
+        expect(
+          secondaryStrongerThanPrimary,
+          `${route.path} has a secondary CTA that appears stronger than primary`
+        ).toBeFalsy();
+      });
+    }
+  });
 
   test("footer links resolve to non-404 destinations", async ({
     page,

@@ -8,11 +8,54 @@ import { VerifiedBadge } from "./VerifiedBadge";
 
 interface ServerCardProps {
   server: McpServer;
+  highlightQuery?: string;
 }
 
-export function ServerCard({ server }: ServerCardProps) {
+function escapeRegex(input: string): string {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function renderHighlightedText(text: string, query?: string): React.ReactNode {
+  const normalized = (query || "").trim();
+  if (!normalized) return text;
+
+  const terms = Array.from(
+    new Set(
+      normalized
+        .split(/\s+/)
+        .map((term) => term.trim())
+        .filter((term) => term.length >= 2)
+    )
+  );
+
+  if (terms.length === 0) return text;
+  const pattern = new RegExp(`(${terms.map(escapeRegex).join("|")})`, "gi");
+  const segments = text.split(pattern);
+
+  return segments.map((segment, index) => {
+    const isMatch = terms.some(
+      (term) => segment.toLowerCase() === term.toLowerCase()
+    );
+    if (!isMatch) return <span key={`${segment}-${index}`}>{segment}</span>;
+    return (
+      <mark
+        key={`${segment}-${index}`}
+        className="rounded bg-amber-100 px-0.5 text-content-primary dark:bg-amber-900/40"
+      >
+        {segment}
+      </mark>
+    );
+  });
+}
+
+export function ServerCard({ server, highlightQuery }: ServerCardProps) {
   const capabilities = server.capabilities as Record<string, boolean>;
   const capCount = Object.values(capabilities).filter(Boolean).length;
+  const daysSinceUpdate = Math.floor(
+    (Date.now() - new Date(server.updated_at).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const recentlyUpdated =
+    Number.isFinite(daysSinceUpdate) && daysSinceUpdate <= 30;
 
   return (
     <Card variant="interactive" padding="none" className="group">
@@ -25,9 +68,27 @@ export function ServerCard({ server }: ServerCardProps) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <Card.Title className="truncate group-hover:text-brand-600 dark:group-hover:text-brand-400">
-                  {server.name}
+                  {renderHighlightedText(server.name, highlightQuery)}
                 </Card.Title>
                 {server.verified && <VerifiedBadge />}
+              </div>
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                <Badge
+                  size="sm"
+                  variant={server.verified ? "brand" : "warning"}
+                >
+                  {server.verified ? "Verified" : "Unverified"}
+                </Badge>
+                {server.docs_url && (
+                  <Badge size="sm" variant="info">
+                    Docs
+                  </Badge>
+                )}
+                {recentlyUpdated && (
+                  <Badge size="sm" variant="success">
+                    Updated recently
+                  </Badge>
+                )}
               </div>
               <p className="truncate text-caption text-content-tertiary">
                 {server.slug}
@@ -37,7 +98,7 @@ export function ServerCard({ server }: ServerCardProps) {
         </Card.Header>
 
         <Card.Description className="mt-3">
-          {server.description}
+          {renderHighlightedText(server.description, highlightQuery)}
         </Card.Description>
 
         {server.tags.length > 0 && (

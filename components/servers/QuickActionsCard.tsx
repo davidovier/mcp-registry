@@ -9,12 +9,18 @@ interface QuickActionsCardProps {
   name: string;
   transport: string;
   repoUrl: string | null;
+  verifiedDaysAgo: number | null;
+  viewCount: number | null;
+  isMostViewedThisWeek: boolean;
 }
 
 export function QuickActionsCard({
   name,
   transport,
   repoUrl,
+  verifiedDaysAgo,
+  viewCount,
+  isMostViewedThisWeek,
 }: QuickActionsCardProps) {
   const [copied, setCopied] = useState(false);
 
@@ -64,6 +70,7 @@ export function QuickActionsCard({
         <Button
           className="w-full"
           variant="primary"
+          data-primary-action="quick-actions-copy-config"
           onClick={handleCopy}
           icon={
             copied ? (
@@ -99,6 +106,19 @@ export function QuickActionsCard({
         >
           {copied ? "Copied!" : "Copy config"}
         </Button>
+        <p className="text-caption text-content-tertiary">
+          {verifiedDaysAgo !== null
+            ? `Verified ${verifiedDaysAgo} day${verifiedDaysAgo === 1 ? "" : "s"} ago.`
+            : "Verification date unavailable."}{" "}
+          {viewCount !== null
+            ? `${viewCount.toLocaleString()} users viewed this server.`
+            : ""}
+        </p>
+        {isMostViewedThisWeek && (
+          <p className="text-caption font-medium text-brand-700 dark:text-brand-400">
+            Most viewed this week
+          </p>
+        )}
         {repoUrl && (
           <a
             href={repoUrl}

@@ -498,11 +498,13 @@ Heuristic checks per page:
 - **Trust discoverability**: Links to /verification where appropriate
 - **Friction flags**: "Coming soon" blocks, disabled controls
 - **Performance sanity**: DOM content loaded time threshold
+- **Conversion heuristics**: above-the-fold CTA presence, CTA hierarchy, social proof, trust near CTA, search match highlighting, and sectional CTAs on long pages
 
 Output:
 
 - `e2e/reports/product-heuristics.json`
 - `e2e/screenshots/product-heuristics/<route>/<theme>/<viewport>.png` (on failures)
+- `e2e/reports/product-gaps.json` includes merged `heuristicGaps.conversion[]` for conversion-focused issues
 
 Severity rubric:
 

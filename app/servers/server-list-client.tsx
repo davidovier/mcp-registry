@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Select } from "@/components/ui/Select";
+import { trackSortChanged } from "@/lib/analytics";
 import { SORT_OPTIONS, SortMode } from "@/lib/pagination";
 import type { McpServer } from "@/lib/supabase/types";
 
@@ -67,8 +68,9 @@ export function ServerListClient({
   );
 
   const clearAllFilters = useCallback(() => {
-    router.push("/servers");
-  }, [router]);
+    // Use location navigation to make URL reset deterministic for tests and users.
+    window.location.assign("/servers");
+  }, []);
 
   const handleSuggestionClick = useCallback(
     (suggestion: Suggestion) => {
@@ -85,6 +87,9 @@ export function ServerListClient({
       const newSort = e.target.value as SortMode;
       const params = new URLSearchParams(searchParams.toString());
 
+      // Track sort change
+      trackSortChanged(newSort);
+
       // Update sort param (remove if default)
       if (newSort === "verified") {
         params.delete("sort");
@@ -99,6 +104,18 @@ export function ServerListClient({
     },
     [router, searchParams]
   );
+
+  const handleVerifiedToggle = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const currentlyVerified = params.get("verified") === "true";
+    if (currentlyVerified) {
+      params.delete("verified");
+    } else {
+      params.set("verified", "true");
+    }
+    params.delete("cursor");
+    router.push(`/servers?${params.toString()}`);
+  }, [router, searchParams]);
 
   const loadMore = () => {
     if (!nextCursor || isPending) return;
@@ -155,7 +172,12 @@ export function ServerListClient({
           sort={sort}
           searchMode={searchMode}
           hasQuery={hasQuery}
+          verifiedFilterOn={filters.verified === "true"}
+          verifiedResultCount={
+            servers.filter((server) => server.verified).length
+          }
           onSortChange={handleSortChange}
+          onToggleVerified={handleVerifiedToggle}
           onRemoveFilter={removeFilter}
         />
 
@@ -233,7 +255,10 @@ export function ServerListClient({
         sort={sort}
         searchMode={searchMode}
         hasQuery={hasQuery}
+        verifiedFilterOn={filters.verified === "true"}
+        verifiedResultCount={servers.filter((server) => server.verified).length}
         onSortChange={handleSortChange}
+        onToggleVerified={handleVerifiedToggle}
         onRemoveFilter={removeFilter}
       />
 
@@ -255,7 +280,11 @@ export function ServerListClient({
 
       <div className="grid gap-5 sm:grid-cols-2">
         {servers.map((server) => (
-          <ServerCard key={server.id} server={server} />
+          <ServerCard
+            key={server.id}
+            server={server}
+            highlightQuery={filters.q}
+          />
         ))}
       </div>
 
@@ -288,7 +317,10 @@ function HeaderBar({
   sort,
   searchMode,
   hasQuery,
+  verifiedFilterOn,
+  verifiedResultCount,
   onSortChange,
+  onToggleVerified,
   onRemoveFilter,
 }: {
   filters: { key: string; label: string }[];
@@ -297,7 +329,10 @@ function HeaderBar({
   sort: SortMode;
   searchMode?: SearchMode;
   hasQuery?: boolean;
+  verifiedFilterOn: boolean;
+  verifiedResultCount: number;
   onSortChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onToggleVerified: () => void;
   onRemoveFilter: (key: string) => void;
 }) {
   let countLabel: string | null = null;
@@ -321,6 +356,11 @@ function HeaderBar({
     }
   }
 
+  const resultMeta =
+    hasQuery && searchMode === "fts"
+      ? `${verifiedResultCount} verified ${verifiedResultCount === 1 ? "result" : "results"} · Sorted by relevance`
+      : null;
+
   return (
     <div className="mb-6 space-y-3">
       {/* Results count and sort control */}
@@ -336,10 +376,27 @@ function HeaderBar({
               {searchIndicator}
             </span>
           )}
+          {resultMeta && (
+            <span className="text-caption text-content-tertiary">
+              {resultMeta}
+            </span>
+          )}
         </div>
         {!countLabel && !searchIndicator && <div />}
 
-        <div className="w-full sm:w-auto">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <button
+            type="button"
+            onClick={onToggleVerified}
+            className={`inline-flex h-9 items-center rounded-lg border px-3 text-body-sm transition-colors ${
+              verifiedFilterOn
+                ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/30 dark:text-brand-300"
+                : "border-border bg-surface-primary text-content-secondary hover:bg-surface-sunken"
+            }`}
+            aria-pressed={verifiedFilterOn}
+          >
+            Verified only
+          </button>
           <Select
             options={SORT_OPTIONS}
             value={sort}

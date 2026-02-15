@@ -96,7 +96,7 @@ export default async function ServersPage({ searchParams }: Props) {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/submit"
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-primary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                 >
                   Submit a Server
                 </Link>
