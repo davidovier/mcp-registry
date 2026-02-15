@@ -39,6 +39,13 @@ git clean -xfd
 echo "==> Installing dependencies deterministically"
 pnpm install --frozen-lockfile
 
+echo "==> Ensuring Playwright Chromium is available"
+if [[ "${CI:-}" == "true" ]]; then
+  pnpm exec playwright install --with-deps chromium
+else
+  pnpm exec playwright install chromium
+fi
+
 echo "==> Running Agent B audit sequence"
 pnpm exec playwright test e2e/product-spec.spec.ts
 pnpm test:e2e:heuristics
