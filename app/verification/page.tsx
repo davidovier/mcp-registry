@@ -319,9 +319,9 @@ export default function VerificationPage() {
 
           {/* Next Steps */}
           <section>
-            <h2 className="mb-4 text-heading-lg text-content-primary">
+            <h3 className="mb-4 text-heading-lg text-content-primary">
               Next Steps
-            </h2>
+            </h3>
             <Card padding="lg">
               <p className="mb-6 text-body-md text-content-secondary">
                 Find your server in the registry and request verification from

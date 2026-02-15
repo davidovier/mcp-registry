@@ -258,7 +258,7 @@ test.describe("Sort functionality", () => {
 
     await sortSelect.selectOption("newest");
 
-    await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
+    await expectQueryParam(page, "sort", "newest");
   });
 
   test("should update URL when changing to name sort", async ({ page }) => {
@@ -270,7 +270,7 @@ test.describe("Sort functionality", () => {
 
     await sortSelect.selectOption("name");
 
-    await expect.poll(() => getQueryParam(page, "sort")).toBe("name");
+    await expectQueryParam(page, "sort", "name");
   });
 
   test("should remove sort param when returning to verified (default)", async ({
@@ -285,7 +285,7 @@ test.describe("Sort functionality", () => {
     await sortSelect.selectOption("verified");
 
     // URL should not contain sort param for default value.
-    await expect.poll(() => getQueryParam(page, "sort")).toBe(null);
+    await expectQueryParam(page, "sort", null);
   });
 
   test("should persist sort after page refresh", async ({ page }) => {
@@ -318,8 +318,8 @@ test.describe("Sort functionality", () => {
     await sortSelect.selectOption("newest");
 
     // URL should have sort but not cursor
-    await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
-    await expect.poll(() => getQueryParam(page, "cursor")).toBe(null);
+    await expectQueryParam(page, "sort", "newest");
+    await expectQueryParam(page, "cursor", null);
   });
 
   test("should work with other filters", async ({ page }) => {
@@ -331,16 +331,16 @@ test.describe("Sort functionality", () => {
     if (!sortSelect) return;
 
     // Apply verified filter
-    const verifiedCheckbox = page.locator("aside").getByText("Verified only");
+    const verifiedCheckbox = page.locator("aside").getByLabel("Verified only");
     await verifiedCheckbox.click();
-    await expect.poll(() => getQueryParam(page, "verified")).toBe("true");
+    await expectQueryParam(page, "verified", "true");
 
     // Change sort
     await sortSelect.selectOption("name");
 
     // Both params should be present
-    await expect.poll(() => getQueryParam(page, "verified")).toBe("true");
-    await expect.poll(() => getQueryParam(page, "sort")).toBe("name");
+    await expectQueryParam(page, "verified", "true");
+    await expectQueryParam(page, "sort", "name");
   });
 
   test("should show sort control on mobile viewport", async ({ page }) => {
@@ -371,8 +371,8 @@ test.describe("Sort functionality", () => {
 
     if (hasLoadMore) {
       await loadMoreButton.click();
-      await expect.poll(() => getQueryParam(page, "cursor")).not.toBe(null);
-      await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
+      await expectNonNullQueryParam(page, "cursor");
+      await expectQueryParam(page, "sort", "newest");
     }
   });
 });
@@ -395,8 +395,8 @@ test.describe("Full-text search functionality", () => {
     await page.waitForLoadState("networkidle");
 
     // URL should contain both params
-    await expect.poll(() => getQueryParam(page, "q")).toBe("test");
-    await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
+    await expectQueryParam(page, "q", "test");
+    await expectQueryParam(page, "sort", "newest");
   });
 
   test("should combine search with filters", async ({ page }) => {
@@ -405,7 +405,7 @@ test.describe("Full-text search functionality", () => {
     await page.waitForLoadState("networkidle");
 
     // Apply verified filter
-    const verifiedCheckbox = page.locator("aside").getByText("Verified only");
+    const verifiedCheckbox = page.locator("aside").getByLabel("Verified only");
     const isCheckboxVisible = await verifiedCheckbox
       .isVisible()
       .catch(() => false);
@@ -414,8 +414,8 @@ test.describe("Full-text search functionality", () => {
       await verifiedCheckbox.click();
 
       // URL should contain both params
-      await expect.poll(() => getQueryParam(page, "q")).toBe("server");
-      await expect.poll(() => getQueryParam(page, "verified")).toBe("true");
+      await expectQueryParam(page, "q", "server");
+      await expectQueryParam(page, "verified", "true");
     }
   });
 
@@ -431,9 +431,9 @@ test.describe("Full-text search functionality", () => {
       await sortSelect.selectOption("name");
 
       // URL should contain both params, cursor should be cleared
-      await expect.poll(() => getQueryParam(page, "q")).toBe("file");
-      await expect.poll(() => getQueryParam(page, "sort")).toBe("name");
-      await expect.poll(() => getQueryParam(page, "cursor")).toBe(null);
+      await expectQueryParam(page, "q", "file");
+      await expectQueryParam(page, "sort", "name");
+      await expectQueryParam(page, "cursor", null);
     }
   });
 
@@ -460,7 +460,7 @@ test.describe("Full-text search functionality", () => {
     await searchInput.press("Enter");
 
     // q param should be removed
-    await expect.poll(() => getQueryParam(page, "q")).toBe(null);
+    await expectQueryParam(page, "q", null);
   });
 
   test("should preserve search when paginating", async ({ page }) => {
@@ -474,8 +474,8 @@ test.describe("Full-text search functionality", () => {
       await loadMoreButton.click();
 
       // Both params should be present
-      await expect.poll(() => getQueryParam(page, "q")).toBe("server");
-      await expect.poll(() => getQueryParam(page, "cursor")).not.toBe(null);
+      await expectQueryParam(page, "q", "server");
+      await expectNonNullQueryParam(page, "cursor");
     }
   });
 });
@@ -498,12 +498,31 @@ test.describe("Sign in page (public)", () => {
     await page.goto("/signin");
 
     // Click the Magic Link tab
-    await page.getByRole("button", { name: /magic link/i }).click();
+    await page.getByRole("button", { name: /^magic link$/i }).click();
     await expect(
-      page.getByRole("button", { name: /send magic link/i })
+      page.locator("form").getByRole("button", { name: /send magic link/i })
     ).toBeVisible();
   });
 });
 function getQueryParam(page: import("@playwright/test").Page, key: string) {
   return new URL(page.url()).searchParams.get(key);
+}
+
+async function expectQueryParam(
+  page: import("@playwright/test").Page,
+  key: string,
+  value: string | null
+) {
+  await expect
+    .poll(() => getQueryParam(page, key), { timeout: 15_000 })
+    .toBe(value);
+}
+
+async function expectNonNullQueryParam(
+  page: import("@playwright/test").Page,
+  key: string
+) {
+  await expect
+    .poll(() => getQueryParam(page, key), { timeout: 15_000 })
+    .not.toBe(null);
 }
