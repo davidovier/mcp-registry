@@ -23,6 +23,25 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+interface ServerRecord {
+  id: string;
+  slug: string | null;
+  name: string | null;
+  description: string | null;
+  homepage_url: string | null;
+  repo_url: string | null;
+  docs_url: string | null;
+  tags: string[] | null;
+  transport: string | null;
+  auth: string | null;
+  capabilities: McpCapabilities | null;
+  verified: boolean | null;
+  verified_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  owner_id: string | null;
+}
+
 const SERVER_COLUMNS =
   "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,verified_at,created_at,updated_at,owner_id";
 const SERVER_COLUMNS_FALLBACK =
@@ -72,12 +91,19 @@ export default async function ServerDetailPage({ params }: Props) {
   const supabase = await createClient();
 
   // Fetch server data
-  async function fetchServer(columns: string) {
-    return supabase
+  async function fetchServer(
+    columns: string
+  ): Promise<{ data: ServerRecord | null; error: unknown }> {
+    const result = await supabase
       .from("mcp_servers")
       .select(columns)
       .eq("slug", slug)
       .single();
+
+    return {
+      data: (result.data as unknown as ServerRecord | null) ?? null,
+      error: result.error,
+    };
   }
 
   let result = await fetchServer(SERVER_COLUMNS);
@@ -132,18 +158,41 @@ export default async function ServerDetailPage({ params }: Props) {
       : "No description provided.";
   const serverSlug =
     typeof server.slug === "string" && server.slug.trim() ? server.slug : slug;
+  const transport =
+    typeof server.transport === "string" && server.transport.trim()
+      ? server.transport
+      : "stdio";
+  const auth =
+    typeof server.auth === "string" && server.auth.trim()
+      ? server.auth
+      : "none";
+  const repoUrl = typeof server.repo_url === "string" ? server.repo_url : null;
+  const docsUrl = typeof server.docs_url === "string" ? server.docs_url : null;
+  const homepageUrl =
+    typeof server.homepage_url === "string" ? server.homepage_url : null;
+  const createdAt =
+    typeof server.created_at === "string"
+      ? server.created_at
+      : new Date().toISOString();
+  const updatedAtRaw =
+    typeof server.updated_at === "string"
+      ? server.updated_at
+      : new Date().toISOString();
+  const verifiedAt =
+    typeof server.verified_at === "string" ? server.verified_at : null;
+  const isVerified = Boolean(server.verified);
 
   // Calculate quality signals
   const now = new Date();
-  const updatedAt = new Date(server.updated_at);
+  const updatedAt = new Date(updatedAtRaw);
   const daysSinceUpdate = Math.floor(
     (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24)
   );
-  const verifiedDaysAgo = server.verified_at
+  const verifiedDaysAgo = verifiedAt
     ? Math.max(
         0,
         Math.floor(
-          (now.getTime() - new Date(server.verified_at).getTime()) /
+          (now.getTime() - new Date(verifiedAt).getTime()) /
             (1000 * 60 * 60 * 24)
         )
       )
@@ -154,18 +203,18 @@ export default async function ServerDetailPage({ params }: Props) {
   return (
     <div>
       {/* JSON-LD structured data for verified servers */}
-      {server.verified && (
+      {isVerified && (
         <JsonLdScript
           server={{
-            name: server.name,
+            name: serverName,
             description: serverDescription,
             slug: serverSlug,
-            repo_url: server.repo_url,
-            docs_url: server.docs_url,
+            repo_url: repoUrl,
+            docs_url: docsUrl,
             tags,
-            created_at: server.created_at,
-            updated_at: server.updated_at,
-            verified_at: server.verified_at,
+            created_at: createdAt,
+            updated_at: updatedAtRaw,
+            verified_at: verifiedAt,
           }}
         />
       )}
@@ -189,7 +238,7 @@ export default async function ServerDetailPage({ params }: Props) {
             {/* Avatar initial block */}
             <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
               <span className="text-display-md text-content-secondary">
-                {server.name.charAt(0).toUpperCase()}
+                {serverName.charAt(0).toUpperCase()}
               </span>
             </div>
 
@@ -199,7 +248,7 @@ export default async function ServerDetailPage({ params }: Props) {
                 <h1 className="text-display-md text-content-primary">
                   {serverName}
                 </h1>
-                {server.verified && <VerifiedBadge />}
+                {isVerified && <VerifiedBadge />}
               </div>
 
               {/* Slug */}
@@ -232,7 +281,7 @@ export default async function ServerDetailPage({ params }: Props) {
               {/* Tags */}
               {tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
+                  {tags.map((tag: string) => (
                     <Link
                       key={tag}
                       href={`/servers?q=${encodeURIComponent(tag)}`}
@@ -253,16 +302,16 @@ export default async function ServerDetailPage({ params }: Props) {
           {/* Main content */}
           <div className="space-y-8 lg:col-span-2">
             {/* Installation / usage */}
-            <InstallSnippet name={serverName} transport={server.transport} />
+            <InstallSnippet name={serverName} transport={transport} />
 
             {/* Capabilities */}
             <CapabilityBadges data={capabilities} />
 
             {/* External links */}
             <ExternalLinks
-              homepageUrl={server.homepage_url}
-              repoUrl={server.repo_url}
-              docsUrl={server.docs_url}
+              homepageUrl={homepageUrl}
+              repoUrl={repoUrl}
+              docsUrl={docsUrl}
             />
           </div>
 
@@ -271,8 +320,8 @@ export default async function ServerDetailPage({ params }: Props) {
             {/* Quick actions */}
             <QuickActionsCard
               name={serverName}
-              transport={server.transport}
-              repoUrl={server.repo_url}
+              transport={transport}
+              repoUrl={repoUrl}
               verifiedDaysAgo={verifiedDaysAgo}
               viewCount={weeklyViews}
               isMostViewedThisWeek={isMostViewedThisWeek}
@@ -281,22 +330,22 @@ export default async function ServerDetailPage({ params }: Props) {
             {/* Server info panel: consolidated sidebar card */}
             <Card padding="md">
               <QualitySignals
-                hasDocumentation={Boolean(server.docs_url)}
-                hasRepository={Boolean(server.repo_url)}
-                requiresAuth={server.auth !== "none"}
+                hasDocumentation={Boolean(docsUrl)}
+                hasRepository={Boolean(repoUrl)}
+                requiresAuth={auth !== "none"}
                 recentlyUpdated={daysSinceUpdate <= 90}
-                verified={server.verified}
+                verified={isVerified}
               />
 
               <div className="my-4 border-t border-border" />
 
               <MetadataCard
-                transport={server.transport}
-                auth={server.auth}
-                verified={server.verified}
-                verifiedAt={server.verified_at}
-                createdAt={server.created_at}
-                updatedAt={server.updated_at}
+                transport={transport}
+                auth={auth}
+                verified={isVerified}
+                verifiedAt={verifiedAt}
+                createdAt={createdAt}
+                updatedAt={updatedAtRaw}
               />
 
               <div className="my-4 border-t border-border" />
@@ -305,7 +354,7 @@ export default async function ServerDetailPage({ params }: Props) {
                 serverId={server.id}
                 serverSlug={serverSlug}
                 isOwner={isOwner}
-                isVerified={server.verified}
+                isVerified={isVerified}
                 hasPendingRequest={hasPendingRequest}
               />
             </Card>
