@@ -1,21 +1,34 @@
 {
-  "generatedAt": "2026-02-14T22:02:27.497Z",
-  "baselineSource": null,
+  "generatedAt": "2026-02-15T13:46:09.762Z",
+  "policy": "budget_only_trends_informational",
+  "baselineSource": "HEAD:e2e/reports/perf-trends.json",
   "currentSource": "e2e/reports/perf-trends.json",
   "budgetsSource": "docs/perf-budgets.json",
   "nonGating": true,
   "summary": {
-    "totalRegressions": 2,
-    "budgetExceededCount": 2,
-    "trendRegressionCount": 0
+    "totalRegressions": 3,
+    "budgetExceededCount": 3,
+    "trendRegressionCount": 0,
+    "trendWarningsCount": 11
   },
   "regressions": [
     {
+      "route": "/api",
+      "metric": "ttfbMs",
+      "currentValue": 1258,
+      "baselineValue": 545,
+      "percentChange": 130.83,
+      "thresholdPercent": 15,
+      "budget": 1000,
+      "budgetExceeded": true,
+      "thresholdExceeded": true
+    },
+    {
       "route": "/servers",
       "metric": "ttfbMs",
-      "currentValue": 1133,
-      "baselineValue": null,
-      "percentChange": null,
+      "currentValue": 1288,
+      "baselineValue": 1133,
+      "percentChange": 13.68,
       "thresholdPercent": 15,
       "budget": 1000,
       "budgetExceeded": true,
@@ -24,9 +37,9 @@
     {
       "route": "/servers/github",
       "metric": "ttfbMs",
-      "currentValue": 1560,
-      "baselineValue": null,
-      "percentChange": null,
+      "currentValue": 1553,
+      "baselineValue": 1560,
+      "percentChange": -0.45,
       "thresholdPercent": 15,
       "budget": 1000,
       "budgetExceeded": true,

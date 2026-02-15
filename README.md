@@ -138,7 +138,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `pnpm test:e2e:ui`         | Run E2E tests with UI                     |
 | `pnpm test:e2e:security`   | Run security-focused E2E smoke tests      |
 | `pnpm test:e2e:heuristics` | Run product heuristics gap detection      |
+| `pnpm perf:report`         | Generate perf trends + regression report  |
 | `pnpm product:backlog`     | Generate markdown backlog from gap report |
+| `pnpm audit:sha <sha>`     | Isolated full Agent B audit for a commit  |
 | `pnpm security:deps`       | Audit production dependencies for CVEs    |
 | `pnpm security:test`       | Run dependency audit + security E2E tests |
 | `pnpm supabase:start`      | Start local Supabase (Docker)             |
@@ -541,19 +543,22 @@ This creates `docs/product-backlog.md` with:
 - Suggested fixes
 - Evidence and screenshot paths
 
-Full workflow:
+Canonical workflow:
 
 ```bash
-# 1. Run inventory tests (generates base gap report)
-pnpm test:e2e:inventory
-
-# 2. Run heuristics tests (merges into gap report)
+# 1. Run heuristics first (source of heuristic gaps)
 pnpm test:e2e:heuristics
 
-# 3. Generate markdown backlog
+# 2. Run inventory (derives report + preserves merged heuristicGaps)
+pnpm test:e2e:inventory
+
+# 3. Validate deterministic merged report shape
+pnpm exec playwright test e2e/product-gaps.spec.ts
+
+# 4. Generate markdown backlog from canonical report
 pnpm product:backlog
 
-# 4. Review the backlog
+# 5. Review the backlog
 cat docs/product-backlog.md
 ```
 
@@ -575,8 +580,9 @@ Outputs:
 
 Regression detection rules:
 
-- Mark regression when a metric is >15% worse than last committed `perf-trends.json`
-- Or when the current metric exceeds route/default budgets
+- **Policy:** `budget_only_trends_informational` (configured in `docs/perf-budgets.json`)
+- A regression is recorded only when current metrics exceed route/default budgets
+- Baseline trend deltas (>15%) are still computed as informational warnings
 - Non-gating by default (for product intelligence and sprint planning)
 
 ```bash
@@ -589,6 +595,28 @@ pnpm perf:compare
 # Generate all perf outputs (smoke + trends + regressions)
 pnpm perf:report
 ```
+
+#### Isolated SHA Audit
+
+Run the full Agent B system audit against a clean commit state:
+
+```bash
+pnpm audit:sha <sha>
+```
+
+What this does:
+
+- Checks out the target commit in detached HEAD mode
+- Runs `git clean -xfd` to enforce a clean workspace
+- Installs dependencies with `pnpm install --frozen-lockfile`
+- Runs:
+  - `pnpm exec playwright test e2e/product-spec.spec.ts`
+  - `pnpm test:e2e:heuristics`
+  - `pnpm test:e2e:inventory`
+  - `pnpm perf:report`
+  - `pnpm product:backlog`
+
+The script requires a clean working tree before execution and restores your original ref afterward.
 
 ### Validate Everything Locally
 

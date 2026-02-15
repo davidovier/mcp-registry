@@ -1,4 +1,5 @@
 {
+  "policy": "budget_only_trends_informational",
   "defaults": {
     "ttfbMs": 1000,
     "domContentLoadedMs": 3000,

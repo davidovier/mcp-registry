@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T09:54:27.854Z",
+  "generatedAt": "2026-02-15T13:46:05.227Z",
   "thresholds": {
     "maxWallClockMs": 15000,
     "maxTTFBMs": 5000,
@@ -11,11 +11,11 @@
     {
       "page": "signin",
       "url": "/signin",
-      "wallClockMs": 1078,
-      "ttfbMs": 257,
-      "domContentLoadedMs": 345,
-      "resourceCount": 9,
-      "totalTransferKB": 2409,
+      "wallClockMs": 3076,
+      "ttfbMs": 2179,
+      "domContentLoadedMs": 2305,
+      "resourceCount": 8,
+      "totalTransferKB": 2439,
       "statusCode": 200
     }
   ]

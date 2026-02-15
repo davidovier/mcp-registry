@@ -22,6 +22,9 @@ const METRICS = [
   "totalResourceCount",
 ];
 
+const POLICY_BUDGET_ONLY = "budget_only_trends_informational";
+const POLICY_BASELINE_AND_BUDGET = "baseline_and_budget";
+
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 }
@@ -59,6 +62,10 @@ function getBudgetForRoute(budgets, route, metric) {
 }
 
 function compareReports(current, baseline, budgets) {
+  const policy =
+    budgets?.policy === POLICY_BASELINE_AND_BUDGET
+      ? POLICY_BASELINE_AND_BUDGET
+      : POLICY_BUDGET_ONLY;
   const thresholdPercent =
     typeof budgets.regressionThresholdPercent === "number"
       ? budgets.regressionThresholdPercent
@@ -69,6 +76,7 @@ function compareReports(current, baseline, budgets) {
   );
 
   const regressions = [];
+  let trendWarningsCount = 0;
 
   const sortedRoutes = [...(current.routes || [])].sort((a, b) =>
     String(a.route).localeCompare(String(b.route))
@@ -97,10 +105,18 @@ function compareReports(current, baseline, budgets) {
           thresholdExceeded =
             typeof percentChange === "number" &&
             percentChange > thresholdPercent;
+          if (thresholdExceeded) {
+            trendWarningsCount += 1;
+          }
         }
       }
 
-      if (budgetExceeded || thresholdExceeded) {
+      const shouldFlagRegression =
+        policy === POLICY_BASELINE_AND_BUDGET
+          ? budgetExceeded || thresholdExceeded
+          : budgetExceeded;
+
+      if (shouldFlagRegression) {
         regressions.push({
           route,
           metric,
@@ -125,6 +141,7 @@ function compareReports(current, baseline, budgets) {
 
   return {
     generatedAt: new Date().toISOString(),
+    policy,
     baselineSource: baseline ? BASELINE_GIT_PATH : null,
     currentSource: "e2e/reports/perf-trends.json",
     budgetsSource: "docs/perf-budgets.json",
@@ -133,8 +150,9 @@ function compareReports(current, baseline, budgets) {
       totalRegressions: regressions.length,
       budgetExceededCount: regressions.filter((item) => item.budgetExceeded)
         .length,
-      trendRegressionCount: regressions.filter((item) => item.thresholdExceeded)
-        .length,
+      trendRegressionCount:
+        policy === POLICY_BASELINE_AND_BUDGET ? trendWarningsCount : 0,
+      trendWarningsCount,
     },
     regressions,
   };

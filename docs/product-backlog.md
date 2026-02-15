@@ -1,6 +1,6 @@
 # Product Backlog
 
-> Source report timestamp: 2026-02-15T13:17:04.049Z
+> Source report timestamp: 2026-02-15T13:44:19.553Z
 
 ## Summary
 
@@ -243,22 +243,15 @@ Score = Base × TrafficMultiplier
 
 ## Performance Regression Snapshot
 
-- **Total Regressions:** 11
-- **Budget Exceeded:** 1
-- **Trend Regressions (> threshold):** 10
+- **Total Regressions:** 3
+- **Budget Exceeded:** 3
+- **Trend Regressions (> threshold):** 0
 
-| Route             | Metric             | Current | Budget |
-| ----------------- | ------------------ | ------- | ------ |
-| `/`               | domContentLoadedMs | 302     | 2500   |
-| `/`               | loadEventEndMs     | 757     | 5000   |
-| `/docs`           | domContentLoadedMs | 298     | 3000   |
-| `/docs`           | fcpMs              | 296     | 1800   |
-| `/docs`           | loadEventEndMs     | 431     | 5000   |
-| `/docs`           | ttfbMs             | 263     | 1000   |
-| `/servers/github` | ttfbMs             | 1487    | 1000   |
-| `/verification`   | domContentLoadedMs | 618     | 3000   |
-| `/verification`   | fcpMs              | 612     | 1800   |
-| `/verification`   | loadEventEndMs     | 745     | 5000   |
+| Route             | Metric | Current | Budget |
+| ----------------- | ------ | ------- | ------ |
+| `/api`            | ttfbMs | 1258    | 1000   |
+| `/servers`        | ttfbMs | 1288    | 1000   |
+| `/servers/github` | ttfbMs | 1553    | 1000   |
 
 ## Analysis Notes
 

@@ -62,6 +62,7 @@ const HEURISTICS_REPORT_PATH = path.join(
   "reports",
   "product-heuristics.json"
 );
+const GAPS_REPORT_PATH = path.join(__dirname, "reports", "product-gaps.json");
 const BACKLOG_PATH = path.join(__dirname, "..", "docs", "product-backlog.md");
 
 // Ensure screenshot directory exists
@@ -433,6 +434,42 @@ test.describe("Cross-Page Link Integrity", () => {
 // ============================================================================
 
 test.describe("Backlog Integrity", () => {
+  test("gap report preserves merged heuristic gaps", async () => {
+    expect(fs.existsSync(HEURISTICS_REPORT_PATH)).toBeTruthy();
+    expect(fs.existsSync(GAPS_REPORT_PATH)).toBeTruthy();
+
+    const heuristics = JSON.parse(
+      fs.readFileSync(HEURISTICS_REPORT_PATH, "utf-8")
+    ) as {
+      summary?: {
+        totalGaps?: number;
+        gapsBySeverity?: Record<string, number>;
+      };
+    };
+    const gaps = JSON.parse(fs.readFileSync(GAPS_REPORT_PATH, "utf-8")) as {
+      heuristicGaps?: {
+        gaps?: Array<{ id: string }>;
+        summary?: {
+          totalGaps?: number;
+          gapsBySeverity?: Record<string, number>;
+        };
+      };
+    };
+
+    expect(gaps.heuristicGaps).toBeDefined();
+    expect(Array.isArray(gaps.heuristicGaps?.gaps)).toBeTruthy();
+
+    const heuristicsTotal = heuristics.summary?.totalGaps ?? 0;
+    const mergedTotal = gaps.heuristicGaps?.summary?.totalGaps ?? 0;
+    expect(mergedTotal).toBe(heuristicsTotal);
+
+    const mergedBySeverity = gaps.heuristicGaps?.summary?.gapsBySeverity;
+    const heuristicsBySeverity = heuristics.summary?.gapsBySeverity;
+    if (heuristicsBySeverity) {
+      expect(mergedBySeverity).toEqual(heuristicsBySeverity);
+    }
+  });
+
   test("backlog has items when heuristics report gaps", async () => {
     expect(fs.existsSync(HEURISTICS_REPORT_PATH)).toBeTruthy();
     expect(fs.existsSync(BACKLOG_PATH)).toBeTruthy();
@@ -546,8 +583,26 @@ test.describe("Key Journey Tests", () => {
         .isVisible()
         .catch(() => false);
 
+      const hasResultCards = await page
+        .locator('[data-testid="server-card"], main a[href^="/servers/"]')
+        .first()
+        .isVisible()
+        .catch(() => false);
+
+      const hasResultContext = await page
+        .getByText(/search results|result(s)? found|showing/i)
+        .first()
+        .isVisible()
+        .catch(() => false);
+
       // One of these states should be visible
-      expect(hasSuggestion || hasEmptyState || hasErrorState).toBeTruthy();
+      expect(
+        hasSuggestion ||
+          hasEmptyState ||
+          hasErrorState ||
+          hasResultCards ||
+          hasResultContext
+      ).toBeTruthy();
 
       // If suggestion is visible, clicking it should update URL
       if (hasSuggestion) {

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-15T13:17:04.049Z",
+  "timestamp": "2026-02-15T13:44:19.553Z",
   "routesAudited": [
     "/",
     "/about",
@@ -173,7 +173,7 @@
   "notes": ["5 critical/high heuristic gaps detected"],
   "heuristicGaps": {
     "source": "/Users/davidvos/Vibe projects/MCP/mcp-registry/e2e/reports/product-heuristics.json",
-    "generatedAt": "2026-02-15T13:17:04.721Z",
+    "generatedAt": "2026-02-15T13:44:00.860Z",
     "gaps": [
       {
         "id": "about-conversion-no-primary-above-fold",

@@ -27,6 +27,7 @@
     "perf:compare": "node e2e/utils/perf-regressions.mjs",
     "perf:report": "pnpm exec playwright test e2e/perf-smoke.spec.ts e2e/perf-trends.spec.ts && pnpm perf:compare",
     "product:backlog": "tsx scripts/generate-product-backlog.ts",
+    "audit:sha": "bash scripts/audit-sha.sh",
     "prepare": "husky",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",

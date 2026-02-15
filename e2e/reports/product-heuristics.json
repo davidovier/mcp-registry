@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T13:17:04.721Z",
+  "generatedAt": "2026-02-15T13:44:00.860Z",
   "baseUrl": "http://localhost:3000",
   "pages": [
     {
@@ -7,7 +7,7 @@
       "name": "Homepage",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:51.023Z",
+      "timestamp": "2026-02-15T13:43:49.247Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -22,7 +22,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 282
+        "domContentLoadedMs": 95
       },
       "gaps": []
     },
@@ -31,7 +31,7 @@
       "name": "About",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:03.646Z",
+      "timestamp": "2026-02-15T13:43:57.620Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -46,7 +46,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 108
+        "domContentLoadedMs": 392
       },
       "gaps": [
         {
@@ -68,7 +68,7 @@
       "name": "API Docs",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:58.564Z",
+      "timestamp": "2026-02-15T13:43:54.749Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -83,7 +83,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 808
+        "domContentLoadedMs": 564
       },
       "gaps": [
         {
@@ -105,7 +105,7 @@
       "name": "Changelog",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:01.264Z",
+      "timestamp": "2026-02-15T13:43:56.240Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -120,7 +120,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1331
+        "domContentLoadedMs": 443
       },
       "gaps": [
         {
@@ -142,7 +142,7 @@
       "name": "Contributing",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:03.269Z",
+      "timestamp": "2026-02-15T13:43:56.955Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -157,7 +157,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1685
+        "domContentLoadedMs": 427
       },
       "gaps": [
         {
@@ -179,7 +179,7 @@
       "name": "Documentation",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:57.343Z",
+      "timestamp": "2026-02-15T13:43:53.818Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -194,7 +194,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 332
+        "domContentLoadedMs": 626
       },
       "gaps": []
     },
@@ -203,7 +203,7 @@
       "name": "Privacy Policy",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:03.975Z",
+      "timestamp": "2026-02-15T13:43:58.157Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -218,7 +218,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 156
+        "domContentLoadedMs": 384
       },
       "gaps": []
     },
@@ -227,7 +227,7 @@
       "name": "Browse Servers",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:52.646Z",
+      "timestamp": "2026-02-15T13:43:50.691Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -242,7 +242,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1377
+        "domContentLoadedMs": 1399
       },
       "gaps": [
         {
@@ -263,14 +263,14 @@
       "name": "Browse Servers (Search Results)",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:54.128Z",
+      "timestamp": "2026-02-15T13:43:51.323Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "primary-button",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 3,
+        "nextStepLinkCount": 4,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -278,7 +278,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1450
+        "domContentLoadedMs": 591
       },
       "gaps": [
         {
@@ -299,7 +299,7 @@
       "name": "Server Detail",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:56.856Z",
+      "timestamp": "2026-02-15T13:43:53.041Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -314,7 +314,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 2,
-        "domContentLoadedMs": 2569
+        "domContentLoadedMs": 1568
       },
       "gaps": [
         {
@@ -335,7 +335,7 @@
       "name": "Sign In",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:04.450Z",
+      "timestamp": "2026-02-15T13:43:59.810Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -350,7 +350,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 65
+        "domContentLoadedMs": 940
       },
       "gaps": []
     },
@@ -359,7 +359,7 @@
       "name": "Submit Server",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:04.715Z",
+      "timestamp": "2026-02-15T13:44:00.853Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -374,7 +374,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 114
+        "domContentLoadedMs": 862
       },
       "gaps": []
     },
@@ -383,7 +383,7 @@
       "name": "Terms of Service",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:17:04.233Z",
+      "timestamp": "2026-02-15T13:43:58.714Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -398,7 +398,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 94
+        "domContentLoadedMs": 402
       },
       "gaps": []
     },
@@ -407,7 +407,7 @@
       "name": "Verification",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:16:59.594Z",
+      "timestamp": "2026-02-15T13:43:55.525Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -422,7 +422,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 109
+        "domContentLoadedMs": 484
       },
       "gaps": [
         {
