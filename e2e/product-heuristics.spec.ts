@@ -1057,7 +1057,7 @@ test.describe("Product Heuristics (Non-Gating)", () => {
   }) => {
     // This sweeps many routes sequentially and can exceed the default test
     // timeout on slower CI runners.
-    test.setTimeout(4 * 60 * 1000);
+    test.setTimeout(10 * 60 * 1000);
 
     ensureDir(path.dirname(REPORT_PATH));
     ensureDir(SCREENSHOT_DIR);
@@ -1065,82 +1065,78 @@ test.describe("Product Heuristics (Non-Gating)", () => {
     const results: PageHeuristicResult[] = [];
     const theme = "light"; // Could be parameterized
     const viewport = "desktop"; // Could be parameterized
-    const context = await browser.newContext({
-      viewport: { width: 1280, height: 720 },
-    });
-    let routePage = await context.newPage();
 
     console.log("\n=== Product Heuristics Analysis ===\n");
 
-    try {
-      for (const route of PUBLIC_ROUTES) {
-        console.log(`Checking: ${route.name} (${route.path})`);
+    for (const route of PUBLIC_ROUTES) {
+      console.log(`Checking: ${route.name} (${route.path})`);
 
-        if (routePage.isClosed()) {
-          routePage = await context.newPage();
-        }
+      const context = await browser.newContext({
+        viewport: { width: 1280, height: 720 },
+      });
+      const routePage = await context.newPage();
 
-        try {
-          const result = await runHeuristicChecks(
-            routePage,
-            route,
-            theme,
-            viewport
-          );
-          results.push(result);
+      try {
+        // Hard cap route execution so one slow/crashed route cannot block the sweep.
+        const result = await Promise.race([
+          runHeuristicChecks(routePage, route, theme, viewport),
+          new Promise<PageHeuristicResult>((_, reject) =>
+            setTimeout(
+              () => reject(new Error(`Route heuristics timeout for ${route.path}`)),
+              45_000
+            )
+          ),
+        ]);
 
-          if (result.gaps.length > 0) {
-            console.log(`  Found ${result.gaps.length} gap(s):`);
-            for (const gap of result.gaps) {
-              console.log(`    - [${gap.severity.toUpperCase()}] ${gap.title}`);
-            }
-          } else {
-            console.log("  No gaps detected");
+        results.push(result);
+
+        if (result.gaps.length > 0) {
+          console.log(`  Found ${result.gaps.length} gap(s):`);
+          for (const gap of result.gaps) {
+            console.log(`    - [${gap.severity.toUpperCase()}] ${gap.title}`);
           }
-        } catch (error) {
-          console.log(`  ERROR: ${error}`);
-          results.push({
-            route: route.path,
-            name: route.name,
-            theme,
-            viewport,
-            timestamp: new Date().toISOString(),
-            checks: {
-              status: 0,
-              h1Count: 0,
-              hasPrimaryAction: false,
-              hasNextStepNavigation: false,
-              nextStepLinkCount: 0,
-              codeBlockCount: 0,
-              hasRequiredSections: false,
-              missingSections: [],
-              linksToVerification: false,
-              comingSoonCount: 0,
-              disabledControlCount: 0,
-              domContentLoadedMs: 0,
+        } else {
+          console.log("  No gaps detected");
+        }
+      } catch (error) {
+        console.log(`  ERROR: ${error}`);
+        results.push({
+          route: route.path,
+          name: route.name,
+          theme,
+          viewport,
+          timestamp: new Date().toISOString(),
+          checks: {
+            status: 0,
+            h1Count: 0,
+            hasPrimaryAction: false,
+            hasNextStepNavigation: false,
+            nextStepLinkCount: 0,
+            codeBlockCount: 0,
+            hasRequiredSections: false,
+            missingSections: [],
+            linksToVerification: false,
+            comingSoonCount: 0,
+            disabledControlCount: 0,
+            domContentLoadedMs: 0,
+          },
+          gaps: [
+            {
+              id: generateGapId(route.path, "ux", "page-error"),
+              title: "Page failed to load",
+              severity: "critical",
+              category: "ux",
+              description: `Error loading page: ${String(error).slice(0, 200)}`,
+              route: route.path,
+              suggestedFix: "Investigate and fix the page loading error",
+              effortEstimate: "M",
             },
-            gaps: [
-              {
-                id: generateGapId(route.path, "ux", "page-error"),
-                title: "Page failed to load",
-                severity: "critical",
-                category: "ux",
-                description: `Error loading page: ${String(error).slice(0, 200)}`,
-                route: route.path,
-                suggestedFix: "Investigate and fix the page loading error",
-                effortEstimate: "M",
-              },
-            ],
-          });
-
-          // If the page closed/crashed, recreate it so later routes can continue.
-          if (routePage.isClosed()) {
-            routePage = await context.newPage();
-          }
-        }
+          ],
+        });
+      } finally {
+        await routePage.close().catch(() => undefined);
+        await context.close().catch(() => undefined);
       }
-    } finally {
-      await context.close().catch(() => undefined);
     }
 
     const report = buildReport(results, baseURL || "http://localhost:3000");
