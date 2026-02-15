@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-16 text-center">
+    <div className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-16 text-center">
       <h1 className="text-display-md text-content-primary">Page Not Found</h1>
       <p className="mt-3 max-w-lg text-body-md text-content-secondary">
         The page you requested does not exist or may have been moved.
@@ -15,6 +15,6 @@ export default function NotFound() {
           Back to home
         </Link>
       </div>
-    </main>
+    </div>
   );
 }
