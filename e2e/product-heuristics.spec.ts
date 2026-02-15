@@ -1082,7 +1082,10 @@ test.describe("Product Heuristics (Non-Gating)", () => {
           runHeuristicChecks(routePage, route, theme, viewport),
           new Promise<PageHeuristicResult>((_, reject) =>
             setTimeout(
-              () => reject(new Error(`Route heuristics timeout for ${route.path}`)),
+              () =>
+                reject(
+                  new Error(`Route heuristics timeout for ${route.path}`)
+                ),
               45_000
             )
           ),
