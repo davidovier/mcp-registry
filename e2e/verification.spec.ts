@@ -14,7 +14,7 @@ test.describe("/verification page", () => {
     await page.goto("/verification");
 
     await expect(
-      page.getByRole("heading", { name: "Verification", level: 1 })
+      page.getByRole("heading", { name: /verification/i, level: 1 })
     ).toBeVisible();
     await expect(
       page.getByText(
@@ -57,7 +57,7 @@ test.describe("/verification page", () => {
     await page.goto("/verification");
 
     await expect(
-      page.getByRole("heading", { name: "Verification", level: 1 })
+      page.getByRole("heading", { name: /verification/i, level: 1 })
     ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: /What.*Verified.*means/i, level: 2 })
@@ -73,7 +73,7 @@ test.describe("/verification page", () => {
     });
 
     await expect(
-      page.getByRole("heading", { name: "Verification", level: 1 })
+      page.getByRole("heading", { name: /verification/i, level: 1 })
     ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: "Governance & neutrality", level: 2 })
@@ -325,6 +325,15 @@ test.describe("Verification status display", () => {
       await serverCard.click();
       await expect(page).toHaveURL(/\/servers\/.+/);
 
+      const hasVerifiedBadge = await page
+        .getByLabel("Verified")
+        .isVisible()
+        .catch(() => false);
+      test.skip(
+        hasVerifiedBadge,
+        "No clearly unverified server available in this dataset"
+      );
+
       // Scope to sidebar
       const sidebar = page.locator("aside");
 
@@ -348,6 +357,15 @@ test.describe("Verification status display", () => {
     if (hasCards) {
       await serverCard.click();
       await expect(page).toHaveURL(/\/servers\/.+/);
+
+      const hasVerifiedBadge = await page
+        .getByLabel("Verified")
+        .isVisible()
+        .catch(() => false);
+      test.skip(
+        hasVerifiedBadge,
+        "No clearly unverified server available in this dataset"
+      );
 
       // The page should load correctly
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

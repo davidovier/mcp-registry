@@ -258,7 +258,9 @@ test.describe("Sort functionality", () => {
 
     await sortSelect.selectOption("newest");
 
-    await expect(page).toHaveURL(/sort=newest/);
+    await expect
+      .poll(() => getQueryParam(page, "sort"))
+      .toBe("newest");
   });
 
   test("should update URL when changing to name sort", async ({ page }) => {
@@ -270,7 +272,7 @@ test.describe("Sort functionality", () => {
 
     await sortSelect.selectOption("name");
 
-    await expect(page).toHaveURL(/sort=name/);
+    await expect.poll(() => getQueryParam(page, "sort")).toBe("name");
   });
 
   test("should remove sort param when returning to verified (default)", async ({
@@ -284,8 +286,8 @@ test.describe("Sort functionality", () => {
 
     await sortSelect.selectOption("verified");
 
-    // URL should not contain sort param for default value
-    await expect(page).not.toHaveURL(/sort=/);
+    // URL should not contain sort param for default value.
+    await expect.poll(() => getQueryParam(page, "sort")).toBe(null);
   });
 
   test("should persist sort after page refresh", async ({ page }) => {
@@ -318,8 +320,8 @@ test.describe("Sort functionality", () => {
     await sortSelect.selectOption("newest");
 
     // URL should have sort but not cursor
-    await expect(page).toHaveURL(/sort=newest/);
-    await expect(page).not.toHaveURL(/cursor=/);
+    await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
+    await expect.poll(() => getQueryParam(page, "cursor")).toBe(null);
   });
 
   test("should work with other filters", async ({ page }) => {
@@ -333,14 +335,14 @@ test.describe("Sort functionality", () => {
     // Apply verified filter
     const verifiedCheckbox = page.locator("aside").getByText("Verified only");
     await verifiedCheckbox.click();
-    await expect(page).toHaveURL(/verified=true/);
+    await expect.poll(() => getQueryParam(page, "verified")).toBe("true");
 
     // Change sort
     await sortSelect.selectOption("name");
 
     // Both params should be present
-    await expect(page).toHaveURL(/verified=true/);
-    await expect(page).toHaveURL(/sort=name/);
+    await expect.poll(() => getQueryParam(page, "verified")).toBe("true");
+    await expect.poll(() => getQueryParam(page, "sort")).toBe("name");
   });
 
   test("should show sort control on mobile viewport", async ({ page }) => {
@@ -371,10 +373,8 @@ test.describe("Sort functionality", () => {
 
     if (hasLoadMore) {
       await loadMoreButton.click();
-      // Wait for the URL to update with cursor param
-      await expect(page).toHaveURL(/cursor=/);
-      // Sort param should still be present
-      await expect(page).toHaveURL(/sort=newest/);
+      await expect.poll(() => getQueryParam(page, "cursor")).not.toBe(null);
+      await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
     }
   });
 });
@@ -397,8 +397,8 @@ test.describe("Full-text search functionality", () => {
     await page.waitForLoadState("networkidle");
 
     // URL should contain both params
-    await expect(page).toHaveURL(/q=test/);
-    await expect(page).toHaveURL(/sort=newest/);
+    await expect.poll(() => getQueryParam(page, "q")).toBe("test");
+    await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
   });
 
   test("should combine search with filters", async ({ page }) => {
@@ -416,8 +416,8 @@ test.describe("Full-text search functionality", () => {
       await verifiedCheckbox.click();
 
       // URL should contain both params
-      await expect(page).toHaveURL(/q=server/);
-      await expect(page).toHaveURL(/verified=true/);
+      await expect.poll(() => getQueryParam(page, "q")).toBe("server");
+      await expect.poll(() => getQueryParam(page, "verified")).toBe("true");
     }
   });
 
@@ -433,9 +433,9 @@ test.describe("Full-text search functionality", () => {
       await sortSelect.selectOption("name");
 
       // URL should contain both params, cursor should be cleared
-      await expect(page).toHaveURL(/q=file/);
-      await expect(page).toHaveURL(/sort=name/);
-      await expect(page).not.toHaveURL(/cursor=/);
+      await expect.poll(() => getQueryParam(page, "q")).toBe("file");
+      await expect.poll(() => getQueryParam(page, "sort")).toBe("name");
+      await expect.poll(() => getQueryParam(page, "cursor")).toBe(null);
     }
   });
 
@@ -462,7 +462,7 @@ test.describe("Full-text search functionality", () => {
     await searchInput.press("Enter");
 
     // q param should be removed
-    await expect(page).not.toHaveURL(/q=/);
+    await expect.poll(() => getQueryParam(page, "q")).toBe(null);
   });
 
   test("should preserve search when paginating", async ({ page }) => {
@@ -476,8 +476,8 @@ test.describe("Full-text search functionality", () => {
       await loadMoreButton.click();
 
       // Both params should be present
-      await expect(page).toHaveURL(/q=server/);
-      await expect(page).toHaveURL(/cursor=/);
+      await expect.poll(() => getQueryParam(page, "q")).toBe("server");
+      await expect.poll(() => getQueryParam(page, "cursor")).not.toBe(null);
     }
   });
 });
@@ -506,3 +506,6 @@ test.describe("Sign in page (public)", () => {
     ).toBeVisible();
   });
 });
+function getQueryParam(page: import("@playwright/test").Page, key: string) {
+  return new URL(page.url()).searchParams.get(key);
+}
