@@ -15,6 +15,10 @@ export function SearchHero({ totalCount, resultsCount }: SearchHeroProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
+  const toServersHref = useCallback((params: URLSearchParams) => {
+    const query = params.toString();
+    return query ? `/servers?${query}` : "/servers";
+  }, []);
 
   const currentQ = searchParams.get("q") || "";
   const hasQuery = currentQ.trim().length > 0;
@@ -41,9 +45,9 @@ export function SearchHero({ totalCount, resultsCount }: SearchHeroProps) {
         params.delete("q");
       }
       params.delete("cursor");
-      router.push(`/servers?${params.toString()}`);
+      router.push(toServersHref(params));
     },
-    [router, searchParams, resultsCount]
+    [router, searchParams, resultsCount, toServersHref]
   );
 
   return (

@@ -332,7 +332,7 @@ export default function VerificationPage() {
                   href="/servers"
                   className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
                 >
-                  Browse Servers
+                  Browse the Registry
                   <svg
                     className="h-4 w-4"
                     fill="none"

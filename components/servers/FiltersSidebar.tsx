@@ -26,6 +26,10 @@ interface FiltersSidebarProps {
 export function FiltersSidebar({ className }: FiltersSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const toServersHref = useCallback((params: URLSearchParams) => {
+    const query = params.toString();
+    return query ? `/servers?${query}` : "/servers";
+  }, []);
 
   const currentTransport = searchParams.get("transport") || "";
   const currentAuth = searchParams.get("auth") || "";
@@ -43,9 +47,9 @@ export function FiltersSidebar({ className }: FiltersSidebarProps) {
       }
       // Reset cursor when filters change
       params.delete("cursor");
-      router.push(`/servers?${params.toString()}`);
+      router.push(toServersHref(params));
     },
-    [router, searchParams]
+    [router, searchParams, toServersHref]
   );
 
   const handleRadioChange = useCallback(

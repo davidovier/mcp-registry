@@ -28,6 +28,10 @@ export function MobileFilters({ className }: MobileFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const toServersHref = useCallback((params: URLSearchParams) => {
+    const query = params.toString();
+    return query ? `/servers?${query}` : "/servers";
+  }, []);
 
   const currentTransport = searchParams.get("transport") || "";
   const currentAuth = searchParams.get("auth") || "";
@@ -66,10 +70,10 @@ export function MobileFilters({ className }: MobileFiltersProps) {
         params.delete(key);
       }
       params.delete("cursor");
-      router.push(`/servers?${params.toString()}`);
+      router.push(toServersHref(params));
       closeSheet();
     },
-    [router, searchParams, closeSheet]
+    [router, searchParams, closeSheet, toServersHref]
   );
 
   const handleRadioChange = useCallback(
@@ -84,9 +88,9 @@ export function MobileFilters({ className }: MobileFiltersProps) {
     const params = new URLSearchParams();
     const q = searchParams.get("q");
     if (q) params.set("q", q);
-    router.push(`/servers?${params.toString()}`);
+    router.push(toServersHref(params));
     closeSheet();
-  }, [router, searchParams, closeSheet]);
+  }, [router, searchParams, closeSheet, toServersHref]);
 
   return (
     <div className={className}>

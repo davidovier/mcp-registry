@@ -49,6 +49,11 @@ export function ServerListClient({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const toServersHref = useCallback((params: URLSearchParams) => {
+    const query = params.toString();
+    return query ? `/servers?${query}` : "/servers";
+  }, []);
+
   const activeFilters: { key: string; label: string }[] = [];
   if (filters.transport)
     activeFilters.push({ key: "transport", label: filters.transport });
@@ -62,9 +67,9 @@ export function ServerListClient({
       const params = new URLSearchParams(searchParams.toString());
       params.delete(key);
       params.delete("cursor");
-      router.push(`/servers?${params.toString()}`);
+      router.push(toServersHref(params));
     },
-    [router, searchParams]
+    [router, searchParams, toServersHref]
   );
 
   const clearAllFilters = useCallback(() => {
@@ -77,9 +82,9 @@ export function ServerListClient({
       const params = new URLSearchParams(searchParams.toString());
       params.set("q", suggestion.name);
       params.delete("cursor");
-      router.push(`/servers?${params.toString()}`);
+      router.push(toServersHref(params));
     },
-    [router, searchParams]
+    [router, searchParams, toServersHref]
   );
 
   const handleSortChange = useCallback(
@@ -100,9 +105,9 @@ export function ServerListClient({
       // Always reset cursor when sort changes
       params.delete("cursor");
 
-      router.push(`/servers?${params.toString()}`);
+      router.push(toServersHref(params));
     },
-    [router, searchParams]
+    [router, searchParams, toServersHref]
   );
 
   const handleVerifiedToggle = useCallback(() => {
@@ -114,8 +119,8 @@ export function ServerListClient({
       params.set("verified", "true");
     }
     params.delete("cursor");
-    router.push(`/servers?${params.toString()}`);
-  }, [router, searchParams]);
+    router.push(toServersHref(params));
+  }, [router, searchParams, toServersHref]);
 
   const loadMore = () => {
     if (!nextCursor || isPending) return;
@@ -148,11 +153,7 @@ export function ServerListClient({
         // Update URL with new cursor for shareability
         const urlParams = new URLSearchParams(searchParams.toString());
         urlParams.set("cursor", nextCursor);
-        window.history.replaceState(
-          null,
-          "",
-          `/servers?${urlParams.toString()}`
-        );
+        window.history.replaceState(null, "", toServersHref(urlParams));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load more");
       }
