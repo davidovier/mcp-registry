@@ -49,7 +49,23 @@ function renderHighlightedText(text: string, query?: string): React.ReactNode {
 }
 
 export function ServerCard({ server, highlightQuery }: ServerCardProps) {
-  const capabilities = server.capabilities as Record<string, boolean>;
+  const safeName =
+    typeof server.name === "string" && server.name.trim()
+      ? server.name
+      : "Unnamed server";
+  const safeSlug =
+    typeof server.slug === "string" && server.slug.trim()
+      ? server.slug
+      : "unknown";
+  const safeDescription =
+    typeof server.description === "string" && server.description.trim()
+      ? server.description
+      : "No description provided.";
+  const safeTags = Array.isArray(server.tags) ? server.tags : [];
+  const capabilities =
+    server.capabilities && typeof server.capabilities === "object"
+      ? (server.capabilities as Record<string, boolean>)
+      : {};
   const capCount = Object.values(capabilities).filter(Boolean).length;
   const daysSinceUpdate = Math.floor(
     (Date.now() - new Date(server.updated_at).getTime()) / (1000 * 60 * 60 * 24)
@@ -59,16 +75,16 @@ export function ServerCard({ server, highlightQuery }: ServerCardProps) {
 
   return (
     <Card variant="interactive" padding="none" className="group">
-      <Link href={`/servers/${server.slug}`} className="block p-4">
+      <Link href={`/servers/${safeSlug}`} className="block p-4">
         <Card.Header>
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-neutral-100 to-neutral-200 text-heading-md font-semibold text-content-secondary dark:from-neutral-800 dark:to-neutral-700">
-              {server.name.charAt(0).toUpperCase()}
+              {safeName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <Card.Title className="truncate group-hover:text-brand-600 dark:group-hover:text-brand-400">
-                  {renderHighlightedText(server.name, highlightQuery)}
+                  {renderHighlightedText(safeName, highlightQuery)}
                 </Card.Title>
                 {server.verified && <VerifiedBadge />}
               </div>
@@ -91,26 +107,26 @@ export function ServerCard({ server, highlightQuery }: ServerCardProps) {
                 )}
               </div>
               <p className="truncate text-caption text-content-tertiary">
-                {server.slug}
+                {safeSlug}
               </p>
             </div>
           </div>
         </Card.Header>
 
         <Card.Description className="mt-3">
-          {renderHighlightedText(server.description, highlightQuery)}
+          {renderHighlightedText(safeDescription, highlightQuery)}
         </Card.Description>
 
-        {server.tags.length > 0 && (
+        {safeTags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {server.tags.slice(0, 3).map((tag) => (
+            {safeTags.slice(0, 3).map((tag) => (
               <Badge key={tag} size="sm" variant="default">
                 {tag}
               </Badge>
             ))}
-            {server.tags.length > 3 && (
+            {safeTags.length > 3 && (
               <Badge size="sm" variant="default">
-                +{server.tags.length - 3}
+                +{safeTags.length - 3}
               </Badge>
             )}
           </div>

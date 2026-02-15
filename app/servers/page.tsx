@@ -130,19 +130,32 @@ async function ServerList({
   cursor?: string;
   sort?: string;
 }) {
-  const supabase = await createClient();
-  const limit = PAGINATION.DEFAULT_LIMIT;
-  const sort = normalizeSort(sortParam);
-  const searchQuery = q?.trim() || null;
-  const hasSearchQuery = !!searchQuery;
-  const cursor = cursorParam
-    ? decodeCursor(cursorParam, sort, hasSearchQuery)
-    : null;
+  try {
+    const supabase = await createClient();
+    const limit = PAGINATION.DEFAULT_LIMIT;
+    const sort = normalizeSort(sortParam);
+    const searchQuery = q?.trim() || null;
+    const hasSearchQuery = !!searchQuery;
+    const cursor = cursorParam
+      ? decodeCursor(cursorParam, sort, hasSearchQuery)
+      : null;
 
-  // Use FTS when search query is present
-  if (searchQuery) {
-    return handleSearchQuery(supabase, {
-      q: searchQuery,
+    // Use FTS when search query is present
+    if (searchQuery) {
+      return handleSearchQuery(supabase, {
+        q: searchQuery,
+        transport,
+        auth,
+        verified,
+        limit,
+        sort,
+        cursor,
+      });
+    }
+
+    // Standard query without search
+    return handleStandardQuery(supabase, {
+      q,
       transport,
       auth,
       verified,
@@ -150,18 +163,17 @@ async function ServerList({
       sort,
       cursor,
     });
+  } catch (error) {
+    console.error("Servers page failed to load data:", error);
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-body-md text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+        <p className="font-medium">Failed to load servers</p>
+        <p className="mt-1 text-body-sm">
+          Please try refreshing the page or clearing your filters.
+        </p>
+      </div>
+    );
   }
-
-  // Standard query without search
-  return handleStandardQuery(supabase, {
-    q,
-    transport,
-    auth,
-    verified,
-    limit,
-    sort,
-    cursor,
-  });
 }
 
 /**

@@ -23,6 +23,20 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+const SERVER_COLUMNS =
+  "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,verified_at,created_at,updated_at,owner_id";
+const SERVER_COLUMNS_FALLBACK =
+  "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,created_at,updated_at,owner_id";
+
+function isUndefinedColumnError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const maybe = error as { code?: string; message?: string };
+  return (
+    maybe.code === "42703" ||
+    /column .* does not exist/i.test(maybe.message || "")
+  );
+}
+
 function estimateWeeklyViews(slug: string): number {
   let hash = 0;
   for (let i = 0; i < slug.length; i++) {
@@ -58,20 +72,33 @@ export default async function ServerDetailPage({ params }: Props) {
   const supabase = await createClient();
 
   // Fetch server data
-  const { data: server, error } = await supabase
-    .from("mcp_servers")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  async function fetchServer(columns: string) {
+    return supabase
+      .from("mcp_servers")
+      .select(columns)
+      .eq("slug", slug)
+      .single();
+  }
+
+  let result = await fetchServer(SERVER_COLUMNS);
+  if (result.error && isUndefinedColumnError(result.error)) {
+    result = await fetchServer(SERVER_COLUMNS_FALLBACK);
+  }
+
+  const { data: server, error } = result;
 
   if (error || !server) {
     notFound();
   }
 
   // Fetch current user for ownership check
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user: { id: string } | null = null;
+  try {
+    const authResult = await supabase.auth.getUser();
+    user = authResult.data.user;
+  } catch {
+    user = null;
+  }
 
   // Check if user is the owner
   const isOwner = Boolean(user && server.owner_id === user.id);
@@ -79,16 +106,32 @@ export default async function ServerDetailPage({ params }: Props) {
   // Check for pending verification request
   let hasPendingRequest = false;
   if (server.id) {
-    const { data: pendingRequest } = await supabase
-      .from("verification_requests")
-      .select("id")
-      .eq("server_id", server.id)
-      .eq("status", "pending")
-      .maybeSingle();
-    hasPendingRequest = Boolean(pendingRequest);
+    try {
+      const { data: pendingRequest } = await supabase
+        .from("verification_requests")
+        .select("id")
+        .eq("server_id", server.id)
+        .eq("status", "pending")
+        .maybeSingle();
+      hasPendingRequest = Boolean(pendingRequest);
+    } catch {
+      hasPendingRequest = false;
+    }
   }
 
-  const capabilities = server.capabilities as McpCapabilities;
+  const capabilities =
+    server.capabilities && typeof server.capabilities === "object"
+      ? (server.capabilities as McpCapabilities)
+      : {};
+  const tags = Array.isArray(server.tags) ? server.tags : [];
+  const serverName =
+    typeof server.name === "string" && server.name.trim() ? server.name : slug;
+  const serverDescription =
+    typeof server.description === "string" && server.description.trim()
+      ? server.description
+      : "No description provided.";
+  const serverSlug =
+    typeof server.slug === "string" && server.slug.trim() ? server.slug : slug;
 
   // Calculate quality signals
   const now = new Date();
@@ -105,7 +148,7 @@ export default async function ServerDetailPage({ params }: Props) {
         )
       )
     : null;
-  const weeklyViews = estimateWeeklyViews(server.slug);
+  const weeklyViews = estimateWeeklyViews(serverSlug);
   const isMostViewedThisWeek = weeklyViews >= 2500;
 
   return (
@@ -115,11 +158,11 @@ export default async function ServerDetailPage({ params }: Props) {
         <JsonLdScript
           server={{
             name: server.name,
-            description: server.description,
-            slug: server.slug,
+            description: serverDescription,
+            slug: serverSlug,
             repo_url: server.repo_url,
             docs_url: server.docs_url,
-            tags: server.tags,
+            tags,
             created_at: server.created_at,
             updated_at: server.updated_at,
             verified_at: server.verified_at,
@@ -133,7 +176,7 @@ export default async function ServerDetailPage({ params }: Props) {
           <Breadcrumbs
             items={[
               { label: "Servers", href: "/servers" },
-              { label: server.name },
+              { label: serverName },
             ]}
           />
         </div>
@@ -154,19 +197,19 @@ export default async function ServerDetailPage({ params }: Props) {
               {/* Name + verified */}
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-display-md text-content-primary">
-                  {server.name}
+                  {serverName}
                 </h1>
                 {server.verified && <VerifiedBadge />}
               </div>
 
               {/* Slug */}
               <p className="mt-0.5 font-mono text-body-md text-content-tertiary">
-                {server.slug}
+                {serverSlug}
               </p>
 
               {/* Description */}
               <p className="mt-2 text-body-lg text-content-secondary">
-                {server.description}
+                {serverDescription}
               </p>
 
               <div className="mt-3 flex flex-wrap items-center gap-2 text-caption text-content-tertiary">
@@ -187,9 +230,9 @@ export default async function ServerDetailPage({ params }: Props) {
               </div>
 
               {/* Tags */}
-              {server.tags.length > 0 && (
+              {tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {server.tags.map((tag) => (
+                  {tags.map((tag) => (
                     <Link
                       key={tag}
                       href={`/servers?q=${encodeURIComponent(tag)}`}
@@ -210,7 +253,7 @@ export default async function ServerDetailPage({ params }: Props) {
           {/* Main content */}
           <div className="space-y-8 lg:col-span-2">
             {/* Installation / usage */}
-            <InstallSnippet name={server.name} transport={server.transport} />
+            <InstallSnippet name={serverName} transport={server.transport} />
 
             {/* Capabilities */}
             <CapabilityBadges data={capabilities} />
@@ -227,7 +270,7 @@ export default async function ServerDetailPage({ params }: Props) {
           <aside className="space-y-6">
             {/* Quick actions */}
             <QuickActionsCard
-              name={server.name}
+              name={serverName}
               transport={server.transport}
               repoUrl={server.repo_url}
               verifiedDaysAgo={verifiedDaysAgo}
@@ -260,7 +303,7 @@ export default async function ServerDetailPage({ params }: Props) {
 
               <TrustActionsCard
                 serverId={server.id}
-                serverSlug={server.slug}
+                serverSlug={serverSlug}
                 isOwner={isOwner}
                 isVerified={server.verified}
                 hasPendingRequest={hasPendingRequest}

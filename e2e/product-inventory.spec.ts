@@ -37,6 +37,11 @@ const PUBLIC_ROUTES = [
 const REPORT_PATH = path.join(__dirname, "reports", "product-inventory.json");
 const GAP_REPORT_PATH = path.join(__dirname, "reports", "product-gaps.json");
 const PERF_REPORT_PATH = path.join(__dirname, "reports", "perf-report.json");
+const HEURISTICS_REPORT_PATH = path.join(
+  __dirname,
+  "reports",
+  "product-heuristics.json"
+);
 
 const EXPECTED_HEADER_NAV_LINKS = [
   "Browse",
@@ -180,7 +185,43 @@ interface ProductGapReport {
     }[];
     note: string;
   };
+  heuristicGaps?: {
+    source: string | null;
+    generatedAt: string | null;
+    gaps: HeuristicGap[];
+    conversion: HeuristicGap[];
+    summary: {
+      totalGaps: number;
+      gapsBySeverity: Record<Severity, number>;
+      topOffenders: { route: string; gapCount: number }[];
+    };
+  };
   notes: string[];
+}
+
+type Severity = "critical" | "high" | "medium" | "low";
+
+interface HeuristicGap {
+  id: string;
+  title: string;
+  severity: Severity;
+  category: string;
+  description: string;
+  route: string;
+  evidence?: string;
+  screenshotPath?: string;
+  suggestedFix: string;
+  effortEstimate: "S" | "M" | "L";
+}
+
+interface HeuristicReport {
+  generatedAt: string;
+  pages: Array<{ route: string; gaps: HeuristicGap[] }>;
+  summary: {
+    totalGaps: number;
+    gapsBySeverity: Record<Severity, number>;
+    topOffenders: { route: string; gapCount: number }[];
+  };
 }
 
 function sortedUnique(values: string[]): string[] {
@@ -466,12 +507,107 @@ function deriveGapReport(report: InventoryReport): ProductGapReport {
   };
 }
 
-function writeInventoryAndGapReports(report: InventoryReport) {
-  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
-  fs.writeFileSync(
-    GAP_REPORT_PATH,
-    JSON.stringify(deriveGapReport(report), null, 2)
+function readHeuristicReport(): HeuristicReport | null {
+  if (!fs.existsSync(HEURISTICS_REPORT_PATH)) return null;
+  try {
+    return JSON.parse(
+      fs.readFileSync(HEURISTICS_REPORT_PATH, "utf-8")
+    ) as HeuristicReport;
+  } catch {
+    return null;
+  }
+}
+
+function sortHeuristicGaps(gaps: HeuristicGap[]): HeuristicGap[] {
+  const severityOrder: Record<Severity, number> = {
+    critical: 0,
+    high: 1,
+    medium: 2,
+    low: 3,
+  };
+  return [...gaps].sort((a, b) => {
+    const severityDiff = severityOrder[a.severity] - severityOrder[b.severity];
+    if (severityDiff !== 0) return severityDiff;
+    const routeDiff = a.route.localeCompare(b.route);
+    if (routeDiff !== 0) return routeDiff;
+    return a.id.localeCompare(b.id);
+  });
+}
+
+function mergeHeuristicGaps(report: ProductGapReport): ProductGapReport {
+  const heuristics = readHeuristicReport();
+  let mergedHeuristicGaps = report.heuristicGaps;
+
+  if (heuristics) {
+    const allGaps = sortHeuristicGaps(
+      heuristics.pages.flatMap((page) => page.gaps || [])
+    );
+    const conversion = sortHeuristicGaps(
+      allGaps.filter((gap) => gap.category === "conversion")
+    );
+
+    mergedHeuristicGaps = {
+      source: HEURISTICS_REPORT_PATH,
+      generatedAt: heuristics.generatedAt,
+      gaps: allGaps,
+      conversion,
+      summary: heuristics.summary,
+    };
+  } else if (fs.existsSync(GAP_REPORT_PATH)) {
+    try {
+      const current = JSON.parse(
+        fs.readFileSync(GAP_REPORT_PATH, "utf-8")
+      ) as ProductGapReport;
+      if (current.heuristicGaps) {
+        const safeSummary = current.heuristicGaps.summary;
+        if (safeSummary?.gapsBySeverity) {
+          mergedHeuristicGaps = {
+            ...current.heuristicGaps,
+            gaps: sortHeuristicGaps(current.heuristicGaps.gaps || []),
+            conversion: sortHeuristicGaps(
+              current.heuristicGaps.conversion || []
+            ),
+          };
+        }
+      }
+    } catch {
+      // Ignore and keep derived report without merged heuristics.
+    }
+  }
+
+  const notes = report.notes.filter(
+    (note) => !/critical\/high heuristic gaps detected/i.test(note)
   );
+  if (
+    mergedHeuristicGaps &&
+    mergedHeuristicGaps.summary &&
+    mergedHeuristicGaps.summary.totalGaps > 0
+  ) {
+    const criticalHigh =
+      mergedHeuristicGaps.summary.gapsBySeverity.critical +
+      mergedHeuristicGaps.summary.gapsBySeverity.high;
+    if (criticalHigh > 0) {
+      notes.push(`${criticalHigh} critical/high heuristic gaps detected`);
+    }
+  }
+
+  const normalizedNotes = sortedUnique(notes).slice(0, 8);
+  const finalNotes =
+    normalizedNotes.length > 0
+      ? normalizedNotes
+      : ["No major product gaps detected in current audit."];
+
+  return {
+    ...report,
+    heuristicGaps: mergedHeuristicGaps,
+    notes: finalNotes,
+  };
+}
+
+function writeInventoryAndGapReports(report: InventoryReport) {
+  const gapReport = mergeHeuristicGaps(deriveGapReport(report));
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
+  fs.writeFileSync(GAP_REPORT_PATH, JSON.stringify(gapReport, null, 2));
 }
 
 // Helper to collect page inventory

@@ -33,6 +33,13 @@ const INSIGHTS_CACHE_PATH = path.join(
   "reports",
   "analytics-insights.json"
 );
+const HEURISTICS_REPORT_PATH = path.join(
+  __dirname,
+  "..",
+  "e2e",
+  "reports",
+  "product-heuristics.json"
+);
 const OUTPUT_PATH = path.join(__dirname, "..", "docs", "product-backlog.md");
 
 // Route importance for traffic estimation (higher = more traffic)
@@ -114,6 +121,19 @@ interface GapReport {
     };
   };
   notes: string[];
+}
+
+interface HeuristicsReport {
+  generatedAt: string;
+  pages: Array<{
+    route: string;
+    gaps: HeuristicGap[];
+  }>;
+  summary: {
+    totalGaps: number;
+    gapsBySeverity: Record<Severity, number>;
+    topOffenders: { route: string; gapCount: number }[];
+  };
 }
 
 interface PerfRegressionReport {
@@ -275,6 +295,17 @@ function loadInsightsReport(): InsightsReport | null {
   }
 }
 
+function loadHeuristicsReport(): HeuristicsReport | null {
+  if (!fs.existsSync(HEURISTICS_REPORT_PATH)) return null;
+  try {
+    return JSON.parse(
+      fs.readFileSync(HEURISTICS_REPORT_PATH, "utf-8")
+    ) as HeuristicsReport;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Calculate opportunity score for a backlog item.
  *
@@ -375,6 +406,7 @@ function convertToBacklogItems(
   insights: InsightsReport | null
 ): BacklogItem[] {
   const insightRoutes = extractInsightRoutes(insights);
+  const heuristicsFallback = loadHeuristicsReport();
   const items: Omit<BacklogItem, "opportunityScore">[] = [];
 
   for (const link of report.brokenLinks) {
@@ -498,22 +530,34 @@ function convertToBacklogItems(
     });
   }
 
-  if (report.heuristicGaps?.gaps) {
-    for (const gap of report.heuristicGaps.gaps) {
-      items.push({
-        id: gap.id,
-        title: gap.title,
-        severity: gap.severity,
-        impact: severityToImpact(gap.severity),
-        effort: gap.effortEstimate,
-        route: gap.route,
-        evidence: gap.evidence,
-        screenshotPath: gap.screenshotPath,
-        suggestedFix: gap.suggestedFix,
-        category: gap.category,
-        source: "heuristics",
-      });
-    }
+  const heuristicGaps =
+    report.heuristicGaps?.gaps && report.heuristicGaps.gaps.length > 0
+      ? report.heuristicGaps.gaps
+      : heuristicsFallback?.pages.flatMap((page) => page.gaps) || [];
+
+  for (const gap of heuristicGaps) {
+    items.push({
+      id: gap.id,
+      title: gap.title,
+      severity: gap.severity,
+      impact: severityToImpact(gap.severity),
+      effort: gap.effortEstimate,
+      route: gap.route,
+      evidence: gap.evidence,
+      screenshotPath: gap.screenshotPath,
+      suggestedFix: gap.suggestedFix,
+      category: gap.category,
+      source: "heuristics",
+    });
+  }
+
+  if (
+    heuristicsFallback &&
+    (!report.heuristicGaps || !report.heuristicGaps.gaps?.length)
+  ) {
+    console.warn(
+      "Heuristic gaps missing in product-gaps.json; using product-heuristics.json fallback"
+    );
   }
 
   // Add analytics insights as backlog items

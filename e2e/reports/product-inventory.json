@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T10:11:57.150Z",
+  "generatedAt": "2026-02-15T13:17:04.049Z",
   "baseUrl": "http://localhost:3000",
   "pageCount": 12,
   "totalInternalLinks": 12,
@@ -181,7 +181,7 @@
       "hasEmptyState": false,
       "hasCodeBlock": false,
       "hasTable": true,
-      "hasForm": false,
+      "hasForm": true,
       "hasSearchInput": false,
       "headerLinks": [
         "API",
@@ -818,7 +818,7 @@
     "pagesWithEmptyState": 0,
     "pagesWithCodeBlocks": 0,
     "pagesWithTables": 1,
-    "pagesWithForms": 3,
+    "pagesWithForms": 4,
     "pagesWithBreadcrumbs": 8
   }
 }

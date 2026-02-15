@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T10:12:41.246Z",
+  "generatedAt": "2026-02-15T13:17:04.721Z",
   "baseUrl": "http://localhost:3000",
   "pages": [
     {
@@ -7,7 +7,7 @@
       "name": "Homepage",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:31.255Z",
+      "timestamp": "2026-02-15T13:16:51.023Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -22,7 +22,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 636
+        "domContentLoadedMs": 282
       },
       "gaps": []
     },
@@ -31,7 +31,7 @@
       "name": "About",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:39.035Z",
+      "timestamp": "2026-02-15T13:17:03.646Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -46,7 +46,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1443
+        "domContentLoadedMs": 108
       },
       "gaps": [
         {
@@ -68,7 +68,7 @@
       "name": "API Docs",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:34.832Z",
+      "timestamp": "2026-02-15T13:16:58.564Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -83,7 +83,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 142
+        "domContentLoadedMs": 808
       },
       "gaps": [
         {
@@ -105,7 +105,7 @@
       "name": "Changelog",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:36.327Z",
+      "timestamp": "2026-02-15T13:17:01.264Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -120,7 +120,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 154
+        "domContentLoadedMs": 1331
       },
       "gaps": [
         {
@@ -142,7 +142,7 @@
       "name": "Contributing",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:37.309Z",
+      "timestamp": "2026-02-15T13:17:03.269Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -157,7 +157,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 658
+        "domContentLoadedMs": 1685
       },
       "gaps": [
         {
@@ -179,12 +179,12 @@
       "name": "Documentation",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:33.852Z",
+      "timestamp": "2026-02-15T13:16:57.343Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
-        "primaryActionType": "cta-link",
+        "primaryActionType": "primary-button",
         "hasNextStepNavigation": true,
         "nextStepLinkCount": 2,
         "codeBlockCount": 2,
@@ -194,29 +194,16 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 113
+        "domContentLoadedMs": 332
       },
-      "gaps": [
-        {
-          "id": "docs-conversion-no-primary-above-fold",
-          "title": "No primary CTA above the fold",
-          "severity": "high",
-          "category": "conversion",
-          "description": "No primary call-to-action is visible in the first viewport height",
-          "route": "/docs",
-          "evidence": "Primary CTA above fold count: 0",
-          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png",
-          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
-          "effortEstimate": "S"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/privacy",
       "name": "Privacy Policy",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:41.013Z",
+      "timestamp": "2026-02-15T13:17:03.975Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -231,7 +218,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1807
+        "domContentLoadedMs": 156
       },
       "gaps": []
     },
@@ -240,7 +227,7 @@
       "name": "Browse Servers",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:31.973Z",
+      "timestamp": "2026-02-15T13:16:52.646Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -255,7 +242,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 123
+        "domContentLoadedMs": 1377
       },
       "gaps": [
         {
@@ -276,7 +263,7 @@
       "name": "Browse Servers (Search Results)",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:32.272Z",
+      "timestamp": "2026-02-15T13:16:54.128Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -291,7 +278,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 274
+        "domContentLoadedMs": 1450
       },
       "gaps": [
         {
@@ -312,7 +299,7 @@
       "name": "Server Detail",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:32.992Z",
+      "timestamp": "2026-02-15T13:16:56.856Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -327,7 +314,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 2,
-        "domContentLoadedMs": 576
+        "domContentLoadedMs": 2569
       },
       "gaps": [
         {
@@ -348,73 +335,55 @@
       "name": "Sign In",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:41.201Z",
+      "timestamp": "2026-02-15T13:17:04.450Z",
       "checks": {
-        "status": 0,
-        "h1Count": 0,
-        "hasPrimaryAction": false,
+        "status": 200,
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
         "hasNextStepNavigation": false,
         "nextStepLinkCount": 0,
         "codeBlockCount": 0,
-        "hasRequiredSections": false,
+        "hasRequiredSections": true,
         "missingSections": [],
-        "linksToVerification": false,
+        "linksToVerification": true,
+        "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 0
+        "domContentLoadedMs": 65
       },
-      "gaps": [
-        {
-          "id": "signin-ux-page-error",
-          "title": "Page failed to load",
-          "severity": "critical",
-          "category": "ux",
-          "description": "Error loading page: Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/signin\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/signin\", waiting until \"load\"\u001b[22m\n",
-          "route": "/signin",
-          "suggestedFix": "Investigate and fix the page loading error",
-          "effortEstimate": "M"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/submit",
       "name": "Submit Server",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:41.236Z",
+      "timestamp": "2026-02-15T13:17:04.715Z",
       "checks": {
-        "status": 0,
-        "h1Count": 0,
-        "hasPrimaryAction": false,
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
+        "status": 200,
+        "h1Count": 1,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
         "codeBlockCount": 0,
-        "hasRequiredSections": false,
+        "hasRequiredSections": true,
         "missingSections": [],
-        "linksToVerification": false,
+        "linksToVerification": true,
+        "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 0
+        "domContentLoadedMs": 114
       },
-      "gaps": [
-        {
-          "id": "submit-ux-page-error",
-          "title": "Page failed to load",
-          "severity": "critical",
-          "category": "ux",
-          "description": "Error loading page: Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/submit\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/submit\", waiting until \"load\"\u001b[22m\n",
-          "route": "/submit",
-          "suggestedFix": "Investigate and fix the page loading error",
-          "effortEstimate": "M"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/terms",
       "name": "Terms of Service",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:41.198Z",
+      "timestamp": "2026-02-15T13:17:04.233Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -429,7 +398,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 75
+        "domContentLoadedMs": 94
       },
       "gaps": []
     },
@@ -438,7 +407,7 @@
       "name": "Verification",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T10:12:35.576Z",
+      "timestamp": "2026-02-15T13:16:59.594Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -453,7 +422,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 134
+        "domContentLoadedMs": 109
       },
       "gaps": [
         {
@@ -473,10 +442,10 @@
   ],
   "summary": {
     "totalPages": 14,
-    "totalGaps": 11,
+    "totalGaps": 8,
     "gapsBySeverity": {
-      "critical": 2,
-      "high": 6,
+      "critical": 0,
+      "high": 5,
       "medium": 0,
       "low": 3
     },
@@ -498,7 +467,7 @@
         "gapCount": 1
       },
       {
-        "route": "/docs",
+        "route": "/servers",
         "gapCount": 1
       }
     ]

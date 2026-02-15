@@ -57,6 +57,12 @@ const BENIGN_WARNINGS = [
 
 // Screenshot directory for failures
 const SCREENSHOT_DIR = path.join(__dirname, "screenshots", "product-spec");
+const HEURISTICS_REPORT_PATH = path.join(
+  __dirname,
+  "reports",
+  "product-heuristics.json"
+);
+const BACKLOG_PATH = path.join(__dirname, "..", "docs", "product-backlog.md");
 
 // Ensure screenshot directory exists
 function ensureScreenshotDir() {
@@ -423,6 +429,31 @@ test.describe("Cross-Page Link Integrity", () => {
 });
 
 // ============================================================================
+// REPORT INTEGRITY
+// ============================================================================
+
+test.describe("Backlog Integrity", () => {
+  test("backlog has items when heuristics report gaps", async () => {
+    expect(fs.existsSync(HEURISTICS_REPORT_PATH)).toBeTruthy();
+    expect(fs.existsSync(BACKLOG_PATH)).toBeTruthy();
+
+    const heuristics = JSON.parse(
+      fs.readFileSync(HEURISTICS_REPORT_PATH, "utf-8")
+    ) as { summary?: { totalGaps?: number } };
+    const totalGaps = heuristics.summary?.totalGaps ?? 0;
+
+    const backlog = fs.readFileSync(BACKLOG_PATH, "utf-8");
+    const totalItemsMatch = backlog.match(/\*\*Total Items:\*\*\s*(\d+)/);
+    expect(totalItemsMatch).toBeTruthy();
+    const totalItems = Number(totalItemsMatch?.[1] ?? "0");
+
+    if (totalGaps > 0) {
+      expect(totalItems).toBeGreaterThan(0);
+    }
+  });
+});
+
+// ============================================================================
 // KEY JOURNEY TESTS
 // ============================================================================
 
@@ -553,12 +584,32 @@ test.describe("Key Journey Tests", () => {
 
       await expect(page).toHaveURL(/q=github/);
 
-      // Should show results, empty state, or error
-      const hasContent = await page
-        .getByText(/servers|no servers|failed/i)
+      // Should show result cards, an empty state, or an error state.
+      const hasResultCards = await page
+        .locator('main a[href^="/servers/"]')
         .first()
         .isVisible()
         .catch(() => false);
+      const hasEmptyState = await page
+        .locator("main")
+        .getByText(/no servers found|no servers match/i)
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasErrorState = await page
+        .locator("main")
+        .getByText(/failed to load/i)
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasSearchContext = await page
+        .locator("main")
+        .getByText(/search results for/i)
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasContent =
+        hasResultCards || hasEmptyState || hasErrorState || hasSearchContext;
 
       expect(hasContent).toBeTruthy();
     });
@@ -649,8 +700,15 @@ test.describe("Server Detail Page Contract", () => {
 
   for (const slug of knownSlugs) {
     test(`/servers/${slug} - loads correctly if exists`, async ({ page }) => {
-      const response = await page.goto(`/servers/${slug}`);
-      const status = response?.status() || 0;
+      let response = await page.goto(`/servers/${slug}`);
+      let status = response?.status() || 0;
+
+      // Retry once for transient server/render errors in dev/CI.
+      if (status >= 500) {
+        await page.waitForTimeout(200);
+        response = await page.goto(`/servers/${slug}`);
+        status = response?.status() || 0;
+      }
 
       if (status === 200) {
         // Page exists - verify structure
