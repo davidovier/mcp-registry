@@ -3,13 +3,16 @@
 import { useState, useTransition } from "react";
 
 import { requestVerification } from "@/app/servers/[slug]/actions";
+import { trackVerificationRequest } from "@/lib/analytics";
 
 interface RequestVerificationButtonProps {
   serverId: string;
+  serverSlug?: string;
 }
 
 export function RequestVerificationButton({
   serverId,
+  serverSlug,
 }: RequestVerificationButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +29,10 @@ export function RequestVerificationButton({
       if (result.error) {
         setError(result.error);
       } else {
+        // Track successful verification request
+        if (serverSlug) {
+          trackVerificationRequest(serverSlug);
+        }
         setSuccess(true);
         setShowForm(false);
       }

@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
+import { trackFilterUsed } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 const TRANSPORT_OPTIONS = [
@@ -35,6 +36,8 @@ export function FiltersSidebar({ className }: FiltersSidebarProps) {
       const params = new URLSearchParams(searchParams.toString());
       if (value) {
         params.set(key, value);
+        // Track filter usage
+        trackFilterUsed(key, value);
       } else {
         params.delete(key);
       }

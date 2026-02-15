@@ -63,6 +63,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      events: {
+        Row: {
+          id: string;
+          event_type: string;
+          route: string | null;
+          metadata: Json;
+          session_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_type: string;
+          route?: string | null;
+          metadata?: Json;
+          session_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          event_type?: string;
+          route?: string | null;
+          metadata?: Json;
+          session_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       bootstrap_state: {
         Row: {
           created_at: string;

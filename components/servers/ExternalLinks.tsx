@@ -1,3 +1,7 @@
+"use client";
+
+import { trackExternalLinkClick } from "@/lib/analytics";
+
 interface ExternalLinksProps {
   homepageUrl: string | null;
   repoUrl: string | null;
@@ -79,6 +83,7 @@ export function ExternalLinks({
             href={urls[link.key]!}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackExternalLinkClick(urls[link.key]!, link.key)}
             className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-secondary px-3 py-2 text-body-sm text-content-primary transition-colors hover:border-border-strong"
           >
             {link.icon}

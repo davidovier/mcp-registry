@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import {
+  CTAVisibilityTracker,
+  ScrollDepthTracker,
+} from "@/components/analytics";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 
@@ -65,6 +69,9 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        {/* Analytics tracking (renders nothing visible) */}
+        <ScrollDepthTracker />
+        <CTAVisibilityTracker />
       </body>
     </html>
   );

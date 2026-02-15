@@ -2,6 +2,7 @@ import { RequestVerificationButton } from "./RequestVerificationButton";
 
 interface TrustActionsCardProps {
   serverId: string;
+  serverSlug?: string;
   isOwner: boolean;
   isVerified: boolean;
   hasPendingRequest: boolean;
@@ -9,6 +10,7 @@ interface TrustActionsCardProps {
 
 export function TrustActionsCard({
   serverId,
+  serverSlug,
   isOwner,
   isVerified,
   hasPendingRequest,
@@ -67,7 +69,10 @@ export function TrustActionsCard({
 
         {/* Verification section */}
         {showVerificationButton && (
-          <RequestVerificationButton serverId={serverId} />
+          <RequestVerificationButton
+            serverId={serverId}
+            serverSlug={serverSlug}
+          />
         )}
 
         {showPendingBadge && (

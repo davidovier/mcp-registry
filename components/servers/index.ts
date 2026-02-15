@@ -11,5 +11,6 @@ export { QuickActionsCard } from "./QuickActionsCard";
 export { RequestVerificationButton } from "./RequestVerificationButton";
 export { SearchHero } from "./SearchHero";
 export { ServerCard } from "./ServerCard";
+export { ServerViewTracker } from "./ServerViewTracker";
 export { TrustActionsCard } from "./TrustActionsCard";
 export { VerifiedBadge } from "./VerifiedBadge";
