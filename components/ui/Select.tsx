@@ -1,6 +1,12 @@
 "use client";
 
-import { forwardRef } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -21,10 +27,77 @@ interface SelectProps
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   (
-    { className, label, hint, error, options, placeholder, id, ...props },
+    {
+      className,
+      label,
+      hint,
+      error,
+      options,
+      placeholder,
+      id,
+      onChange,
+      ...props
+    },
     ref
   ) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, "-");
+    const internalRef = useRef<HTMLSelectElement>(null);
+
+    // Expose the internal ref via the forwarded ref
+    useImperativeHandle(ref, () => internalRef.current!, []);
+
+    // Handle change events
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (onChange) {
+          onChange(e);
+        }
+      },
+      [onChange]
+    );
+
+    // Add native event listener as fallback for programmatic changes (e.g., Playwright)
+    // This ensures onChange is called even when events are dispatched programmatically
+    useEffect(() => {
+      const select = internalRef.current;
+      if (!select || !onChange) return;
+
+      let lastValue = select.value;
+
+      const handleNativeChange = () => {
+        // Only fire if value actually changed (avoid double-firing with React's onChange)
+        if (select.value !== lastValue) {
+          lastValue = select.value;
+          // Create a synthetic-like event object
+          const syntheticEvent = {
+            target: select,
+            currentTarget: select,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+          } as unknown as React.ChangeEvent<HTMLSelectElement>;
+          onChange(syntheticEvent);
+        }
+      };
+
+      // Listen to multiple events to catch programmatic changes
+      select.addEventListener("input", handleNativeChange);
+      select.addEventListener("change", handleNativeChange);
+
+      // Also use MutationObserver to detect value changes via DOM manipulation
+      const observer = new MutationObserver(() => {
+        handleNativeChange();
+      });
+      observer.observe(select, {
+        attributes: true,
+        attributeFilter: ["value"],
+      });
+
+      return () => {
+        select.removeEventListener("input", handleNativeChange);
+        select.removeEventListener("change", handleNativeChange);
+        observer.disconnect();
+      };
+    }, [onChange]);
 
     return (
       <div className="space-y-1.5">
@@ -38,13 +111,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
         <div className="relative">
           <select
-            ref={ref}
+            ref={internalRef}
             id={selectId}
             className={cn(
               `h-10 w-full appearance-none rounded-lg border border-border bg-surface-secondary px-3 pr-10 text-content-primary transition-colors duration-150 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50`,
               error && "border-red-500 focus:border-red-500 focus:ring-red-500",
               className
             )}
+            onChange={handleChange}
             {...props}
           >
             {placeholder && (

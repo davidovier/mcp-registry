@@ -78,8 +78,10 @@ test.describe("Servers page (public)", () => {
     await page.goto("/servers");
     await page.waitForLoadState("networkidle");
 
-    // Click the Verified only checkbox in the sidebar
-    const verifiedCheckbox = page.locator("aside").getByText("Verified only");
+    // Click the "Verified only" checkbox using role selector
+    const verifiedCheckbox = page
+      .locator("aside")
+      .getByRole("checkbox", { name: "Verified only" });
     await verifiedCheckbox.click();
 
     // URL should now contain verified=true
@@ -233,6 +235,22 @@ test.describe("Sort functionality", () => {
     return isVisible ? sortSelect : null;
   }
 
+  // Helper to select an option with proper event dispatch for React
+  async function selectOptionWithEvents(
+    locator: import("@playwright/test").Locator,
+    value: string
+  ) {
+    await locator.evaluate((select: HTMLSelectElement, val: string) => {
+      select.value = val;
+      select.dispatchEvent(
+        new InputEvent("input", { bubbles: true, cancelable: true })
+      );
+      select.dispatchEvent(
+        new Event("change", { bubbles: true, cancelable: true })
+      );
+    }, value);
+  }
+
   test("should show sort dropdown with verified first as default", async ({
     page,
   }) => {
@@ -256,7 +274,7 @@ test.describe("Sort functionality", () => {
     const sortSelect = await getSortSelect(page);
     if (!sortSelect) return;
 
-    await sortSelect.selectOption("newest");
+    await selectOptionWithEvents(sortSelect, "newest");
 
     await expectQueryParam(page, "sort", "newest");
   });
@@ -268,7 +286,7 @@ test.describe("Sort functionality", () => {
     const sortSelect = await getSortSelect(page);
     if (!sortSelect) return;
 
-    await sortSelect.selectOption("name");
+    await selectOptionWithEvents(sortSelect, "name");
 
     await expectQueryParam(page, "sort", "name");
   });
@@ -282,7 +300,7 @@ test.describe("Sort functionality", () => {
     const sortSelect = await getSortSelect(page);
     if (!sortSelect) return;
 
-    await sortSelect.selectOption("verified");
+    await selectOptionWithEvents(sortSelect, "verified");
 
     // URL should not contain sort param for default value.
     await expectQueryParam(page, "sort", null);
@@ -315,7 +333,7 @@ test.describe("Sort functionality", () => {
     const sortSelect = await getSortSelect(page);
     if (!sortSelect) return;
 
-    await sortSelect.selectOption("newest");
+    await selectOptionWithEvents(sortSelect, "newest");
 
     // URL should have sort but not cursor
     await expectQueryParam(page, "sort", "newest");
@@ -330,13 +348,15 @@ test.describe("Sort functionality", () => {
     const sortSelect = await getSortSelect(page);
     if (!sortSelect) return;
 
-    // Apply verified filter
-    const verifiedCheckbox = page.locator("aside").getByLabel("Verified only");
+    // Apply verified filter using role selector
+    const verifiedCheckbox = page
+      .locator("aside")
+      .getByRole("checkbox", { name: "Verified only" });
     await verifiedCheckbox.click();
     await expectQueryParam(page, "verified", "true");
 
     // Change sort
-    await sortSelect.selectOption("name");
+    await selectOptionWithEvents(sortSelect, "name");
 
     // Both params should be present
     await expectQueryParam(page, "verified", "true");
@@ -404,8 +424,10 @@ test.describe("Full-text search functionality", () => {
     await page.goto("/servers?q=server");
     await page.waitForLoadState("networkidle");
 
-    // Apply verified filter
-    const verifiedCheckbox = page.locator("aside").getByLabel("Verified only");
+    // Apply verified filter using role selector
+    const verifiedCheckbox = page
+      .locator("aside")
+      .getByRole("checkbox", { name: "Verified only" });
     const isCheckboxVisible = await verifiedCheckbox
       .isVisible()
       .catch(() => false);
@@ -428,7 +450,15 @@ test.describe("Full-text search functionality", () => {
     const isSortVisible = await sortSelect.isVisible().catch(() => false);
 
     if (isSortVisible) {
-      await sortSelect.selectOption("name");
+      await sortSelect.evaluate((select: HTMLSelectElement, val: string) => {
+        select.value = val;
+        select.dispatchEvent(
+          new InputEvent("input", { bubbles: true, cancelable: true })
+        );
+        select.dispatchEvent(
+          new Event("change", { bubbles: true, cancelable: true })
+        );
+      }, "name");
 
       // URL should contain both params, cursor should be cleared
       await expectQueryParam(page, "q", "file");

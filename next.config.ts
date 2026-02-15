@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
   async headers() {
     // Vercel deployments need additional CSP permissions for Vercel Live features
     const isVercel = !!process.env.VERCEL;
+    const isDev = process.env.NODE_ENV === "development";
 
     const csp = [
       "default-src 'self'",
@@ -29,9 +30,12 @@ const nextConfig: NextConfig = {
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       // Allow Vercel's live preview scripts on Vercel deployments
+      // In development, allow unsafe-eval for testing tools
       isVercel
         ? "script-src 'self' 'unsafe-inline' https://vercel.live"
-        : "script-src 'self' 'unsafe-inline'",
+        : isDev
+          ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+          : "script-src 'self' 'unsafe-inline'",
       // Allow Supabase and Vercel live connections
       isVercel
         ? "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live wss://ws-us3.pusher.com"

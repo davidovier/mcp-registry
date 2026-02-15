@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { trackFilterUsed } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -136,9 +136,36 @@ function FilterOption({
   onChange: () => void;
   bold?: boolean;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Add native event listener for Playwright compatibility
+  // React's synthetic events don't always fire with programmatic interactions
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+
+    let lastChecked = input.checked;
+    const handleNativeChange = () => {
+      // Only fire if checked state actually changed
+      if (input.checked !== lastChecked) {
+        lastChecked = input.checked;
+        onChange();
+      }
+    };
+
+    input.addEventListener("change", handleNativeChange);
+    input.addEventListener("click", handleNativeChange);
+
+    return () => {
+      input.removeEventListener("change", handleNativeChange);
+      input.removeEventListener("click", handleNativeChange);
+    };
+  }, [onChange]);
+
   return (
     <label className="flex cursor-pointer items-center gap-2">
       <input
+        ref={inputRef}
         type="checkbox"
         checked={checked}
         onChange={onChange}
