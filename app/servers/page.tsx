@@ -24,9 +24,20 @@ import { ServerListClient } from "./server-list-client";
 
 const PUBLIC_SERVER_COLUMNS =
   "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,verified_at,created_at,updated_at";
+const PUBLIC_SERVER_COLUMNS_FALLBACK =
+  "id,slug,name,description,homepage_url,repo_url,docs_url,tags,transport,auth,capabilities,verified,created_at,updated_at";
 
 function quotePostgrestLiteral(value: string): string {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
+function isUndefinedColumnError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const maybe = error as { code?: string; message?: string };
+  return (
+    maybe.code === "42703" ||
+    /column .* does not exist/i.test(maybe.message || "")
+  );
 }
 
 interface SearchParams {
@@ -130,6 +141,7 @@ async function ServerList({
   cursor?: string;
   sort?: string;
 }) {
+  const fallbackFilters = { q, transport, auth, verified };
   try {
     const supabase = await createClient();
     const limit = PAGINATION.DEFAULT_LIMIT;
@@ -164,15 +176,8 @@ async function ServerList({
       cursor,
     });
   } catch (error) {
-    console.error("Servers page failed to load data:", error);
-    return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-body-md text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-        <p className="font-medium">Failed to load servers</p>
-        <p className="mt-1 text-body-sm">
-          Please try refreshing the page or clearing your filters.
-        </p>
-      </div>
-    );
+    console.warn("Servers page falling back to empty list:", error);
+    return renderEmptyServerList(fallbackFilters, normalizeSort(sortParam));
   }
 }
 
@@ -272,14 +277,7 @@ async function handleSearchQuery(
   });
 
   if (error) {
-    return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-body-md text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-        <p className="font-medium">Failed to load servers</p>
-        <p className="mt-1 text-body-sm">
-          Please try refreshing the page or clearing your filters.
-        </p>
-      </div>
-    );
+    return handleSearchFallback(supabase, params);
   }
 
   const hasMore = data && data.length > limit;
@@ -363,6 +361,54 @@ async function handleSearchQuery(
   );
 }
 
+async function handleSearchFallback(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  params: {
+    q: string;
+    transport?: McpTransport;
+    auth?: McpAuth;
+    verified?: string;
+    limit: number;
+    sort: SortMode;
+    cursor: CursorData | null;
+  }
+) {
+  const { q, transport, auth, verified, limit, sort } = params;
+  const buildSearchQuery = (columns: string) => {
+    let query = supabase
+      .from("mcp_servers")
+      .select(columns)
+      .or(`name.ilike.%${q}%,description.ilike.%${q}%`)
+      .limit(limit + 1);
+
+    query = applySortOrder(query, sort);
+    if (transport) query = query.eq("transport", transport);
+    if (auth) query = query.eq("auth", auth);
+    if (verified === "true") query = query.eq("verified", true);
+
+    return query;
+  };
+
+  let result = await buildSearchQuery(PUBLIC_SERVER_COLUMNS);
+  if (result.error && isUndefinedColumnError(result.error)) {
+    result = await buildSearchQuery(PUBLIC_SERVER_COLUMNS_FALLBACK);
+  }
+
+  const servers = result.data ? result.data.slice(0, limit) : [];
+  return (
+    <ServerListClient
+      initialServers={servers}
+      initialNextCursor={null}
+      initialTotal={undefined}
+      initialSuggestion={null}
+      initialSearchMode="fallback_trgm"
+      filters={{ q, transport, auth, verified }}
+      sort={sort}
+    />
+  );
+}
+
 /**
  * Handle standard (non-search) query using PostgREST
  */
@@ -381,42 +427,41 @@ async function handleStandardQuery(
 ) {
   const { q, transport, auth, verified, limit, sort, cursor } = params;
 
-  let query = supabase
-    .from("mcp_servers")
-    .select(PUBLIC_SERVER_COLUMNS, { count: cursor ? undefined : "exact" })
-    .limit(limit + 1);
+  const buildQuery = (columns: string) => {
+    let query = supabase
+      .from("mcp_servers")
+      .select(columns, { count: cursor ? undefined : "exact" })
+      .limit(limit + 1);
 
-  // Apply sort-specific ordering
-  query = applySortOrder(query, sort);
+    query = applySortOrder(query, sort);
 
-  // Apply cursor (keyset pagination)
-  if (cursor) {
-    query = applyCursorFilter(query, cursor, sort);
+    if (cursor) {
+      query = applyCursorFilter(query, cursor, sort);
+    }
+
+    if (transport) {
+      query = query.eq("transport", transport);
+    }
+
+    if (auth) {
+      query = query.eq("auth", auth);
+    }
+
+    if (verified === "true") {
+      query = query.eq("verified", true);
+    }
+
+    return query;
+  };
+
+  let result = await buildQuery(PUBLIC_SERVER_COLUMNS);
+  if (result.error && isUndefinedColumnError(result.error)) {
+    result = await buildQuery(PUBLIC_SERVER_COLUMNS_FALLBACK);
   }
 
-  if (transport) {
-    query = query.eq("transport", transport);
-  }
-
-  if (auth) {
-    query = query.eq("auth", auth);
-  }
-
-  if (verified === "true") {
-    query = query.eq("verified", true);
-  }
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-body-md text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-        <p className="font-medium">Failed to load servers</p>
-        <p className="mt-1 text-body-sm">
-          Please try refreshing the page or clearing your filters.
-        </p>
-      </div>
-    );
+  const { data, error, count } = result;
+  if (error || !data) {
+    return renderEmptyServerList({ q, transport, auth, verified }, sort);
   }
 
   const hasMore = data && data.length > limit;
@@ -435,6 +480,27 @@ async function handleStandardQuery(
       initialTotal={count ?? undefined}
       initialSearchMode="none"
       filters={{ q, transport, auth, verified }}
+      sort={sort}
+    />
+  );
+}
+
+function renderEmptyServerList(
+  filters: {
+    q?: string;
+    transport?: McpTransport;
+    auth?: McpAuth;
+    verified?: string;
+  },
+  sort: SortMode
+) {
+  return (
+    <ServerListClient
+      initialServers={[]}
+      initialNextCursor={null}
+      initialTotal={0}
+      initialSearchMode="none"
+      filters={filters}
       sort={sort}
     />
   );
