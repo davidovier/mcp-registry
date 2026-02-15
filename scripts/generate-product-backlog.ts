@@ -26,7 +26,30 @@ const PERF_REGRESSIONS_PATH = path.join(
   "reports",
   "perf-regressions.json"
 );
+const INSIGHTS_CACHE_PATH = path.join(
+  __dirname,
+  "..",
+  "e2e",
+  "reports",
+  "analytics-insights.json"
+);
 const OUTPUT_PATH = path.join(__dirname, "..", "docs", "product-backlog.md");
+
+// Route importance for traffic estimation (higher = more traffic)
+const ROUTE_TRAFFIC_WEIGHT: Record<string, number> = {
+  "/": 1.5, // Homepage - highest traffic
+  "/servers": 1.5, // Browse - high traffic
+  "/docs": 1.2, // Documentation
+  "/api": 1.1, // API docs
+  "/submit": 1.3, // Submit flow - conversion critical
+  "/signin": 1.2, // Auth flow
+  "/verification": 1.0,
+  "/about": 0.8,
+  "/contributing": 0.7,
+  "/changelog": 0.6,
+  "/privacy": 0.5,
+  "/terms": 0.5,
+};
 
 type Severity = "critical" | "high" | "medium" | "low";
 
@@ -107,6 +130,34 @@ interface PerfRegressionReport {
   }>;
 }
 
+interface AnalyticsInsight {
+  id: string;
+  category: string;
+  severity: Severity;
+  title: string;
+  description: string;
+  evidence: string;
+  suggested_fix: string;
+  metric_value: number;
+  threshold: number;
+}
+
+interface InsightsReport {
+  period: {
+    start: string;
+    end: string;
+    days: number;
+  };
+  insights: AnalyticsInsight[];
+  summary: {
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+    total: number;
+  };
+}
+
 interface BacklogItem {
   id: string;
   title: string;
@@ -118,7 +169,8 @@ interface BacklogItem {
   screenshotPath?: string;
   suggestedFix: string;
   category: string;
-  source: "product-gaps" | "heuristics" | "performance";
+  source: "product-gaps" | "heuristics" | "performance" | "analytics";
+  opportunityScore: number;
 }
 
 const severityWeight: Record<Severity, number> = {
@@ -164,12 +216,33 @@ function escapeCell(text: string): string {
   return text.replace(/\|/g, "\\|").replace(/\n/g, " ");
 }
 
+function compareByOpportunityScore(a: BacklogItem, b: BacklogItem): number {
+  // Primary: opportunity score (descending)
+  const scoreDiff = b.opportunityScore - a.opportunityScore;
+  if (scoreDiff !== 0) return scoreDiff;
+
+  // Secondary: severity (descending)
+  const severityDiff = severityWeight[b.severity] - severityWeight[a.severity];
+  if (severityDiff !== 0) return severityDiff;
+
+  // Tertiary: route (ascending for stability)
+  const routeDiff = a.route.localeCompare(b.route);
+  if (routeDiff !== 0) return routeDiff;
+
+  // Fallback: id (ascending for stability)
+  return a.id.localeCompare(b.id);
+}
+
 function compareByGroupOrder(a: BacklogItem, b: BacklogItem): number {
   const routeDiff = a.route.localeCompare(b.route);
   if (routeDiff !== 0) return routeDiff;
 
   const categoryDiff = a.category.localeCompare(b.category);
   if (categoryDiff !== 0) return categoryDiff;
+
+  // Use opportunity score within groups
+  const scoreDiff = b.opportunityScore - a.opportunityScore;
+  if (scoreDiff !== 0) return scoreDiff;
 
   const severityDiff = severityWeight[b.severity] - severityWeight[a.severity];
   if (severityDiff !== 0) return severityDiff;
@@ -191,8 +264,118 @@ function loadPerfRegressionReport(): PerfRegressionReport | null {
   }
 }
 
-function convertToBacklogItems(report: GapReport): BacklogItem[] {
-  const items: BacklogItem[] = [];
+function loadInsightsReport(): InsightsReport | null {
+  if (!fs.existsSync(INSIGHTS_CACHE_PATH)) return null;
+  try {
+    return JSON.parse(
+      fs.readFileSync(INSIGHTS_CACHE_PATH, "utf-8")
+    ) as InsightsReport;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Calculate opportunity score for a backlog item.
+ *
+ * Scoring formula:
+ *   Base = (severityWeight × 25) + categoryBoost + effortBoost + dropoffBoost
+ *   Final = Base × trafficMultiplier
+ *
+ * Factors:
+ *   - Severity: critical=100, high=75, medium=50, low=25
+ *   - Conversion category: +20 points
+ *   - Effort efficiency: S=+10, M=+5, L=+0
+ *   - Dropoff signal: +30 if route appears in analytics insights
+ *   - Traffic multiplier: 0.5-1.5x based on route importance
+ */
+function calculateOpportunityScore(
+  item: Omit<BacklogItem, "opportunityScore">,
+  insightsRoutes: Set<string>
+): number {
+  // Base severity score (25-100)
+  const severityScore = severityWeight[item.severity] * 25;
+
+  // Conversion category boost (+20)
+  const categoryBoost = item.category === "conversion" ? 20 : 0;
+
+  // Effort efficiency boost (favor quick wins)
+  const effortBoost: Record<"S" | "M" | "L", number> = { S: 10, M: 5, L: 0 };
+  const effortScore = effortBoost[item.effort];
+
+  // Dropoff signal boost (+30 if route has analytics dropoff)
+  const dropoffBoost = insightsRoutes.has(item.route) ? 30 : 0;
+
+  // Calculate base score
+  const baseScore = severityScore + categoryBoost + effortScore + dropoffBoost;
+
+  // Apply traffic multiplier
+  const trafficMultiplier = getTrafficMultiplier(item.route);
+
+  // Final score (round to 1 decimal)
+  return Math.round(baseScore * trafficMultiplier * 10) / 10;
+}
+
+/**
+ * Get traffic multiplier for a route.
+ * Routes not in the map default to 1.0.
+ * Server detail pages (/servers/[slug]) get 1.2x.
+ */
+function getTrafficMultiplier(route: string): number {
+  // Direct match
+  if (ROUTE_TRAFFIC_WEIGHT[route]) {
+    return ROUTE_TRAFFIC_WEIGHT[route];
+  }
+
+  // Server detail pages
+  if (route.startsWith("/servers/") && route !== "/servers") {
+    return 1.2;
+  }
+
+  // Default multiplier
+  return 1.0;
+}
+
+/**
+ * Extract routes that have dropoff/conversion issues from insights.
+ */
+function extractInsightRoutes(insights: InsightsReport | null): Set<string> {
+  const routes = new Set<string>();
+
+  if (!insights) return routes;
+
+  // Analytics insights are page-level, map insight categories to routes
+  for (const insight of insights.insights) {
+    // CTA issues affect homepage and servers
+    if (insight.id.includes("cta-")) {
+      routes.add("/");
+      routes.add("/servers");
+    }
+    // Scroll engagement affects content pages
+    if (insight.id.includes("scroll-")) {
+      routes.add("/");
+      routes.add("/docs");
+      routes.add("/about");
+    }
+    // Search issues affect servers page
+    if (insight.id.includes("search-")) {
+      routes.add("/servers");
+    }
+    // Submit issues affect submit page
+    if (insight.id.includes("submit-")) {
+      routes.add("/submit");
+    }
+  }
+
+  return routes;
+}
+
+function convertToBacklogItems(
+  report: GapReport,
+  insights: InsightsReport | null
+): BacklogItem[] {
+  const insightRoutes = extractInsightRoutes(insights);
+  const items: Omit<BacklogItem, "opportunityScore">[] = [];
 
   for (const link of report.brokenLinks) {
     items.push({
@@ -333,14 +516,44 @@ function convertToBacklogItems(report: GapReport): BacklogItem[] {
     }
   }
 
+  // Add analytics insights as backlog items
+  if (insights) {
+    for (const insight of insights.insights) {
+      // Map insight to route
+      let route = "/";
+      if (insight.id.includes("search-")) route = "/servers";
+      else if (insight.id.includes("submit-")) route = "/submit";
+
+      items.push({
+        id: `analytics-${insight.id}`,
+        title: insight.title,
+        severity: insight.severity,
+        impact: insight.description,
+        effort: "M", // Default to medium for analytics-driven items
+        route,
+        evidence: insight.evidence,
+        suggestedFix: insight.suggested_fix,
+        category: insight.category,
+        source: "analytics",
+      });
+    }
+  }
+
+  // Calculate opportunity scores and deduplicate
   const seen = new Set<string>();
-  return items
+  const scoredItems: BacklogItem[] = items
     .filter((item) => {
       if (seen.has(item.id)) return false;
       seen.add(item.id);
       return true;
     })
-    .sort(compareByGroupOrder);
+    .map((item) => ({
+      ...item,
+      opportunityScore: calculateOpportunityScore(item, insightRoutes),
+    }));
+
+  // Sort by opportunity score (descending)
+  return scoredItems.sort((a, b) => b.opportunityScore - a.opportunityScore);
 }
 
 function getTopRoutes(
@@ -365,18 +578,8 @@ function getCountsByCategory(
 }
 
 function getTopActions(items: BacklogItem[]): BacklogItem[] {
-  const effortOrder: Record<"S" | "M" | "L", number> = { S: 0, M: 1, L: 2 };
-
-  return [...items]
-    .sort((a, b) => {
-      const severityDiff =
-        severityWeight[b.severity] - severityWeight[a.severity];
-      if (severityDiff !== 0) return severityDiff;
-      const effortDiff = effortOrder[a.effort] - effortOrder[b.effort];
-      if (effortDiff !== 0) return effortDiff;
-      return compareByGroupOrder(a, b);
-    })
-    .slice(0, 5);
+  // Sort by opportunity score (descending) - already includes severity, effort, etc.
+  return [...items].sort(compareByOpportunityScore).slice(0, 5);
 }
 
 function getItemsBySeverity(
@@ -406,11 +609,13 @@ function renderPriorityTable(
   if (items.length === 0) return;
   lines.push(`## ${title}`);
   lines.push("");
-  lines.push("| Title | Route | Category | Effort | Suggested Fix |");
-  lines.push("| ----- | ----- | -------- | ------ | ------------- |");
-  items.forEach((item) => {
+  lines.push("| Score | Title | Route | Category | Effort | Suggested Fix |");
+  lines.push("| ----- | ----- | ----- | -------- | ------ | ------------- |");
+  // Sort by opportunity score within the priority group
+  const sortedItems = [...items].sort(compareByOpportunityScore);
+  sortedItems.forEach((item) => {
     lines.push(
-      `| ${escapeCell(item.title)} | \`${item.route}\` | ${item.category} | ${item.effort} | ${escapeCell(item.suggestedFix)} |`
+      `| **${item.opportunityScore}** | ${escapeCell(item.title)} | \`${item.route}\` | ${item.category} | ${item.effort} | ${escapeCell(item.suggestedFix)} |`
     );
   });
   lines.push("");
@@ -419,10 +624,12 @@ function renderPriorityTable(
 function generateMarkdown(
   items: BacklogItem[],
   report: GapReport,
-  perfRegressions: PerfRegressionReport | null
+  perfRegressions: PerfRegressionReport | null,
+  insights: InsightsReport | null
 ): string {
   const lines: string[] = [];
-  const stableItems = [...items].sort(compareByGroupOrder);
+  // Sort by opportunity score (primary sort)
+  const stableItems = [...items].sort(compareByOpportunityScore);
   const bySeverity = {
     critical: stableItems.filter((i) => i.severity === "critical").length,
     high: stableItems.filter((i) => i.severity === "high").length,
@@ -446,6 +653,19 @@ function generateMarkdown(
   lines.push(`- **High:** ${bySeverity.high}`);
   lines.push(`- **Medium:** ${bySeverity.medium}`);
   lines.push(`- **Low:** ${bySeverity.low}`);
+  if (stableItems.length > 0) {
+    const maxScore = Math.max(...stableItems.map((i) => i.opportunityScore));
+    const avgScore =
+      stableItems.reduce((sum, i) => sum + i.opportunityScore, 0) /
+      stableItems.length;
+    lines.push(`- **Max Opportunity Score:** ${maxScore}`);
+    lines.push(`- **Avg Opportunity Score:** ${avgScore.toFixed(1)}`);
+  }
+  if (insights) {
+    lines.push(
+      `- **Analytics Insights:** ${insights.summary.total} dropoff signals`
+    );
+  }
   lines.push("");
 
   if (byCategory.length > 0) {
@@ -469,6 +689,28 @@ function generateMarkdown(
     lines.push("");
   }
 
+  lines.push("### Opportunity Score");
+  lines.push("");
+  lines.push(
+    "Items are ranked by **Opportunity Score** (0-200), calculated as:"
+  );
+  lines.push("");
+  lines.push("```");
+  lines.push(
+    "Base = (Severity × 25) + CategoryBoost + EffortBoost + DropoffBoost"
+  );
+  lines.push("Score = Base × TrafficMultiplier");
+  lines.push("```");
+  lines.push("");
+  lines.push("| Factor | Values |");
+  lines.push("| ------ | ------ |");
+  lines.push("| Severity | Critical=100, High=75, Medium=50, Low=25 |");
+  lines.push("| Conversion Category | +20 points |");
+  lines.push("| Effort Efficiency | S=+10, M=+5, L=+0 |");
+  lines.push("| Dropoff Signal | +30 if analytics show dropoff on route |");
+  lines.push("| Traffic Multiplier | 0.5x-1.5x based on route importance |");
+  lines.push("");
+
   lines.push("### Related Inputs");
   lines.push("");
   lines.push("- Reports: `e2e/reports/product-gaps.json`");
@@ -476,16 +718,22 @@ function generateMarkdown(
   lines.push("- Generator: `scripts/generate-product-backlog.ts`");
   if (perfRegressions)
     lines.push("- Perf regressions: `e2e/reports/perf-regressions.json`");
+  if (insights)
+    lines.push("- Analytics insights: `e2e/reports/analytics-insights.json`");
   lines.push("");
 
   if (topActions.length > 0) {
-    lines.push("## Top 5 Next Actions");
+    lines.push("## Top 5 Next Actions (by Opportunity Score)");
     lines.push("");
-    lines.push("| Priority | Item | Route | Effort | Suggested Fix |");
-    lines.push("| -------- | ---- | ----- | ------ | ------------- |");
+    lines.push(
+      "| Rank | Score | Item | Route | Severity | Effort | Suggested Fix |"
+    );
+    lines.push(
+      "| ---- | ----- | ---- | ----- | -------- | ------ | ------------- |"
+    );
     topActions.forEach((item, index) => {
       lines.push(
-        `| ${index + 1} | ${escapeCell(item.title)} | \`${item.route}\` | ${item.effort} | ${escapeCell(item.suggestedFix)} |`
+        `| ${index + 1} | **${item.opportunityScore}** | ${escapeCell(item.title)} | \`${item.route}\` | ${severityToLabel(item.severity)} | ${item.effort} | ${escapeCell(item.suggestedFix)} |`
       );
     });
     lines.push("");
@@ -494,10 +742,12 @@ function generateMarkdown(
   if (stableItems.length > 0) {
     lines.push("## Execution Tracker");
     lines.push("");
-    lines.push("| ID | Status | Owner | Sprint | Target Date |");
-    lines.push("| -- | ------ | ----- | ------ | ----------- |");
+    lines.push("| Score | ID | Severity | Status | Owner | Sprint |");
+    lines.push("| ----- | -- | -------- | ------ | ----- | ------ |");
     stableItems.forEach((item) => {
-      lines.push(`| \`${item.id}\` | Todo | TBD | TBD | TBD |`);
+      lines.push(
+        `| ${item.opportunityScore} | \`${item.id}\` | ${severityToLabel(item.severity)} | Todo | TBD | TBD |`
+      );
     });
     lines.push("");
   }
@@ -550,11 +800,12 @@ function generateMarkdown(
   if (lowItems.length > 0) {
     lines.push("## Low Priority");
     lines.push("");
-    lines.push("| Title | Route | Category | Effort |");
-    lines.push("| ----- | ----- | -------- | ------ |");
-    lowItems.forEach((item) => {
+    lines.push("| Score | Title | Route | Category | Effort |");
+    lines.push("| ----- | ----- | ----- | -------- | ------ |");
+    const sortedLowItems = [...lowItems].sort(compareByOpportunityScore);
+    sortedLowItems.forEach((item) => {
       lines.push(
-        `| ${escapeCell(item.title)} | \`${item.route}\` | ${item.category} | ${item.effort} |`
+        `| ${item.opportunityScore} | ${escapeCell(item.title)} | \`${item.route}\` | ${item.category} | ${item.effort} |`
       );
     });
     lines.push("");
@@ -605,6 +856,7 @@ function generateMarkdown(
   stableItems.forEach((item) => {
     lines.push(`### ${item.title}`);
     lines.push("");
+    lines.push(`- **Opportunity Score:** ${item.opportunityScore}`);
     lines.push(`- **ID:** \`${item.id}\``);
     lines.push(`- **Severity:** ${severityToLabel(item.severity)}`);
     lines.push(`- **Impact:** ${item.impact}`);
@@ -696,11 +948,29 @@ function main() {
   console.log(`Read gap report from: ${GAPS_REPORT_PATH}`);
   console.log(`Report timestamp: ${report.timestamp}`);
 
-  const items = convertToBacklogItems(report);
   const perfRegressions = loadPerfRegressionReport();
+  const insights = loadInsightsReport();
+
+  if (insights) {
+    console.log(
+      `Loaded analytics insights: ${insights.summary.total} dropoff signals`
+    );
+  } else {
+    console.log(`No analytics insights found (optional)`);
+  }
+
+  const items = convertToBacklogItems(report, insights);
   console.log(`Converted to ${items.length} backlog items`);
 
-  const markdown = generateMarkdown(items, report, perfRegressions);
+  if (items.length > 0) {
+    const maxScore = Math.max(...items.map((i) => i.opportunityScore));
+    const avgScore =
+      items.reduce((sum, i) => sum + i.opportunityScore, 0) / items.length;
+    console.log(`Max opportunity score: ${maxScore}`);
+    console.log(`Avg opportunity score: ${avgScore.toFixed(1)}`);
+  }
+
+  const markdown = generateMarkdown(items, report, perfRegressions, insights);
 
   const docsDir = path.dirname(OUTPUT_PATH);
   if (!fs.existsSync(docsDir)) {
@@ -720,6 +990,15 @@ function main() {
     `  Medium: ${items.filter((i) => i.severity === "medium").length}`
   );
   console.log(`  Low: ${items.filter((i) => i.severity === "low").length}`);
+
+  if (items.length > 0) {
+    console.log("\nTop 5 by Opportunity Score:");
+    items.slice(0, 5).forEach((item, i) => {
+      console.log(
+        `  ${i + 1}. [${item.opportunityScore}] ${item.title} (${item.route})`
+      );
+    });
+  }
 }
 
 main();

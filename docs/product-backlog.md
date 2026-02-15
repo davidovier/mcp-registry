@@ -9,6 +9,8 @@
 - **High:** 6
 - **Medium:** 2
 - **Low:** 5
+- **Max Opportunity Score:** 126
+- **Avg Opportunity Score:** 72.8
 
 ### By Category
 
@@ -24,6 +26,23 @@
 - `/changelog`: 1 items
 - `/contributing`: 1 items
 
+### Opportunity Score
+
+Items are ranked by **Opportunity Score** (0-200), calculated as:
+
+```
+Base = (Severity × 25) + CategoryBoost + EffortBoost + DropoffBoost
+Score = Base × TrafficMultiplier
+```
+
+| Factor              | Values                                   |
+| ------------------- | ---------------------------------------- |
+| Severity            | Critical=100, High=75, Medium=50, Low=25 |
+| Conversion Category | +20 points                               |
+| Effort Efficiency   | S=+10, M=+5, L=+0                        |
+| Dropoff Signal      | +30 if analytics show dropoff on route   |
+| Traffic Multiplier  | 0.5x-1.5x based on route importance      |
+
 ### Related Inputs
 
 - Reports: `e2e/reports/product-gaps.json`
@@ -31,33 +50,33 @@
 - Generator: `scripts/generate-product-backlog.ts`
 - Perf regressions: `e2e/reports/perf-regressions.json`
 
-## Top 5 Next Actions
+## Top 5 Next Actions (by Opportunity Score)
 
-| Priority | Item                          | Route           | Effort | Suggested Fix                                                          |
-| -------- | ----------------------------- | --------------- | ------ | ---------------------------------------------------------------------- |
-| 1        | No primary CTA above the fold | `/about`        | S      | Move a single primary action higher so users can act without scrolling |
-| 2        | No primary CTA above the fold | `/api`          | S      | Move a single primary action higher so users can act without scrolling |
-| 3        | No primary CTA above the fold | `/changelog`    | S      | Move a single primary action higher so users can act without scrolling |
-| 4        | No primary CTA above the fold | `/contributing` | S      | Move a single primary action higher so users can act without scrolling |
-| 5        | No primary CTA above the fold | `/docs`         | S      | Move a single primary action higher so users can act without scrolling |
+| Rank | Score     | Item                                 | Route           | Severity | Effort | Suggested Fix                                                                                |
+| ---- | --------- | ------------------------------------ | --------------- | -------- | ------ | -------------------------------------------------------------------------------------------- |
+| 1    | **126**   | No primary CTA above the fold        | `/docs`         | HIGH     | S      | Move a single primary action higher so users can act without scrolling                       |
+| 2    | **115.5** | No primary CTA above the fold        | `/api`          | HIGH     | S      | Move a single primary action higher so users can act without scrolling                       |
+| 3    | **105**   | No primary CTA above the fold        | `/verification` | HIGH     | S      | Move a single primary action higher so users can act without scrolling                       |
+| 4    | **104**   | No social proof near decision points | `/submit`       | MEDIUM   | S      | Add lightweight social proof such as verification freshness, view count, or usage indicators |
+| 5    | **84**    | No primary CTA above the fold        | `/about`        | HIGH     | S      | Move a single primary action higher so users can act without scrolling                       |
 
 ## Execution Tracker
 
-| ID                                              | Status | Owner | Sprint | Target Date |
-| ----------------------------------------------- | ------ | ----- | ------ | ----------- |
-| `about-conversion-no-primary-above-fold`        | Todo   | TBD   | TBD    | TBD         |
-| `api-conversion-no-primary-above-fold`          | Todo   | TBD   | TBD    | TBD         |
-| `changelog-conversion-no-primary-above-fold`    | Todo   | TBD   | TBD    | TBD         |
-| `contributing-conversion-no-primary-above-fold` | Todo   | TBD   | TBD    | TBD         |
-| `docs-conversion-no-primary-above-fold`         | Todo   | TBD   | TBD    | TBD         |
-| `servers-friction-coming-soon`                  | Todo   | TBD   | TBD    | TBD         |
-| `servers-q-github-friction-coming-soon`         | Todo   | TBD   | TBD    | TBD         |
-| `servers-github-friction-disabled-controls`     | Todo   | TBD   | TBD    | TBD         |
-| `signin-friction-disabled-controls`             | Todo   | TBD   | TBD    | TBD         |
-| `submit-conversion-missing-social-proof`        | Todo   | TBD   | TBD    | TBD         |
-| `submit-friction-disabled-controls`             | Todo   | TBD   | TBD    | TBD         |
-| `submit-navigation-dead-end`                    | Todo   | TBD   | TBD    | TBD         |
-| `verification-conversion-no-primary-above-fold` | Todo   | TBD   | TBD    | TBD         |
+| Score | ID                                              | Severity | Status | Owner | Sprint |
+| ----- | ----------------------------------------------- | -------- | ------ | ----- | ------ |
+| 126   | `docs-conversion-no-primary-above-fold`         | HIGH     | Todo   | TBD   | TBD    |
+| 115.5 | `api-conversion-no-primary-above-fold`          | HIGH     | Todo   | TBD   | TBD    |
+| 105   | `verification-conversion-no-primary-above-fold` | HIGH     | Todo   | TBD   | TBD    |
+| 104   | `submit-conversion-missing-social-proof`        | MEDIUM   | Todo   | TBD   | TBD    |
+| 84    | `about-conversion-no-primary-above-fold`        | HIGH     | Todo   | TBD   | TBD    |
+| 73.5  | `contributing-conversion-no-primary-above-fold` | HIGH     | Todo   | TBD   | TBD    |
+| 71.5  | `submit-navigation-dead-end`                    | MEDIUM   | Todo   | TBD   | TBD    |
+| 63    | `changelog-conversion-no-primary-above-fold`    | HIGH     | Todo   | TBD   | TBD    |
+| 45.5  | `submit-friction-disabled-controls`             | LOW      | Todo   | TBD   | TBD    |
+| 45    | `servers-friction-coming-soon`                  | LOW      | Todo   | TBD   | TBD    |
+| 42    | `servers-github-friction-disabled-controls`     | LOW      | Todo   | TBD   | TBD    |
+| 42    | `signin-friction-disabled-controls`             | LOW      | Todo   | TBD   | TBD    |
+| 30    | `servers-q-github-friction-coming-soon`         | LOW      | Todo   | TBD   | TBD    |
 
 ### Routes Audited
 
@@ -76,31 +95,31 @@
 
 ## High Priority
 
-| Title                         | Route           | Category   | Effort | Suggested Fix                                                          |
-| ----------------------------- | --------------- | ---------- | ------ | ---------------------------------------------------------------------- |
-| No primary CTA above the fold | `/about`        | conversion | S      | Move a single primary action higher so users can act without scrolling |
-| No primary CTA above the fold | `/api`          | conversion | S      | Move a single primary action higher so users can act without scrolling |
-| No primary CTA above the fold | `/changelog`    | conversion | S      | Move a single primary action higher so users can act without scrolling |
-| No primary CTA above the fold | `/contributing` | conversion | S      | Move a single primary action higher so users can act without scrolling |
-| No primary CTA above the fold | `/docs`         | conversion | S      | Move a single primary action higher so users can act without scrolling |
-| No primary CTA above the fold | `/verification` | conversion | S      | Move a single primary action higher so users can act without scrolling |
+| Score     | Title                         | Route           | Category   | Effort | Suggested Fix                                                          |
+| --------- | ----------------------------- | --------------- | ---------- | ------ | ---------------------------------------------------------------------- |
+| **126**   | No primary CTA above the fold | `/docs`         | conversion | S      | Move a single primary action higher so users can act without scrolling |
+| **115.5** | No primary CTA above the fold | `/api`          | conversion | S      | Move a single primary action higher so users can act without scrolling |
+| **105**   | No primary CTA above the fold | `/verification` | conversion | S      | Move a single primary action higher so users can act without scrolling |
+| **84**    | No primary CTA above the fold | `/about`        | conversion | S      | Move a single primary action higher so users can act without scrolling |
+| **73.5**  | No primary CTA above the fold | `/contributing` | conversion | S      | Move a single primary action higher so users can act without scrolling |
+| **63**    | No primary CTA above the fold | `/changelog`    | conversion | S      | Move a single primary action higher so users can act without scrolling |
 
 ## Medium Priority
 
-| Title                                | Route     | Category   | Effort | Suggested Fix                                                                                |
-| ------------------------------------ | --------- | ---------- | ------ | -------------------------------------------------------------------------------------------- |
-| No social proof near decision points | `/submit` | conversion | S      | Add lightweight social proof such as verification freshness, view count, or usage indicators |
-| Dead-end page                        | `/submit` | navigation | M      | Add related links or 'next steps' section to guide users                                     |
+| Score    | Title                                | Route     | Category   | Effort | Suggested Fix                                                                                |
+| -------- | ------------------------------------ | --------- | ---------- | ------ | -------------------------------------------------------------------------------------------- |
+| **104**  | No social proof near decision points | `/submit` | conversion | S      | Add lightweight social proof such as verification freshness, view count, or usage indicators |
+| **71.5** | Dead-end page                        | `/submit` | navigation | M      | Add related links or 'next steps' section to guide users                                     |
 
 ## Low Priority
 
-| Title                              | Route               | Category | Effort |
-| ---------------------------------- | ------------------- | -------- | ------ |
-| Contains 'Coming Soon' placeholder | `/servers`          | friction | M      |
-| Contains 'Coming Soon' placeholder | `/servers?q=github` | friction | M      |
-| Disabled controls in main content  | `/servers/github`   | friction | S      |
-| Disabled controls in main content  | `/signin`           | friction | S      |
-| Disabled controls in main content  | `/submit`           | friction | S      |
+| Score | Title                              | Route               | Category | Effort |
+| ----- | ---------------------------------- | ------------------- | -------- | ------ |
+| 45.5  | Disabled controls in main content  | `/submit`           | friction | S      |
+| 45    | Contains 'Coming Soon' placeholder | `/servers`          | friction | M      |
+| 42    | Disabled controls in main content  | `/servers/github`   | friction | S      |
+| 42    | Disabled controls in main content  | `/signin`           | friction | S      |
+| 30    | Contains 'Coming Soon' placeholder | `/servers?q=github` | friction | M      |
 
 ## Grouped by Route
 
@@ -133,19 +152,21 @@
 
 ### No primary CTA above the fold
 
-- **ID:** `about-conversion-no-primary-above-fold`
+- **Opportunity Score:** 126
+- **ID:** `docs-conversion-no-primary-above-fold`
 - **Severity:** HIGH
 - **Impact:** Significantly impacts trust, conversion, or usability
 - **Effort:** Small (< 2 hours)
-- **Route:** `/about`
+- **Route:** `/docs`
 - **Category:** conversion
 - **Source:** heuristics
 - **Evidence:** Primary CTA above fold count: 0
-- **Screenshot:** `e2e/screenshots/product-heuristics/about/light/desktop/conversion-no-above-fold-cta.png`
+- **Screenshot:** `e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png`
 - **Suggested Fix:** Move a single primary action higher so users can act without scrolling
 
 ### No primary CTA above the fold
 
+- **Opportunity Score:** 115.5
 - **ID:** `api-conversion-no-primary-above-fold`
 - **Severity:** HIGH
 - **Impact:** Significantly impacts trust, conversion, or usability
@@ -159,19 +180,47 @@
 
 ### No primary CTA above the fold
 
-- **ID:** `changelog-conversion-no-primary-above-fold`
+- **Opportunity Score:** 105
+- **ID:** `verification-conversion-no-primary-above-fold`
 - **Severity:** HIGH
 - **Impact:** Significantly impacts trust, conversion, or usability
 - **Effort:** Small (< 2 hours)
-- **Route:** `/changelog`
+- **Route:** `/verification`
 - **Category:** conversion
 - **Source:** heuristics
 - **Evidence:** Primary CTA above fold count: 0
-- **Screenshot:** `e2e/screenshots/product-heuristics/changelog/light/desktop/conversion-no-above-fold-cta.png`
+- **Screenshot:** `e2e/screenshots/product-heuristics/verification/light/desktop/conversion-no-above-fold-cta.png`
+- **Suggested Fix:** Move a single primary action higher so users can act without scrolling
+
+### No social proof near decision points
+
+- **Opportunity Score:** 104
+- **ID:** `submit-conversion-missing-social-proof`
+- **Severity:** MEDIUM
+- **Impact:** Polish/usability issue affecting user experience
+- **Effort:** Small (< 2 hours)
+- **Route:** `/submit`
+- **Category:** conversion
+- **Source:** heuristics
+- **Suggested Fix:** Add lightweight social proof such as verification freshness, view count, or usage indicators
+
+### No primary CTA above the fold
+
+- **Opportunity Score:** 84
+- **ID:** `about-conversion-no-primary-above-fold`
+- **Severity:** HIGH
+- **Impact:** Significantly impacts trust, conversion, or usability
+- **Effort:** Small (< 2 hours)
+- **Route:** `/about`
+- **Category:** conversion
+- **Source:** heuristics
+- **Evidence:** Primary CTA above fold count: 0
+- **Screenshot:** `e2e/screenshots/product-heuristics/about/light/desktop/conversion-no-above-fold-cta.png`
 - **Suggested Fix:** Move a single primary action higher so users can act without scrolling
 
 ### No primary CTA above the fold
 
+- **Opportunity Score:** 73.5
 - **ID:** `contributing-conversion-no-primary-above-fold`
 - **Severity:** HIGH
 - **Impact:** Significantly impacts trust, conversion, or usability
@@ -183,92 +232,9 @@
 - **Screenshot:** `e2e/screenshots/product-heuristics/contributing/light/desktop/conversion-no-above-fold-cta.png`
 - **Suggested Fix:** Move a single primary action higher so users can act without scrolling
 
-### No primary CTA above the fold
-
-- **ID:** `docs-conversion-no-primary-above-fold`
-- **Severity:** HIGH
-- **Impact:** Significantly impacts trust, conversion, or usability
-- **Effort:** Small (< 2 hours)
-- **Route:** `/docs`
-- **Category:** conversion
-- **Source:** heuristics
-- **Evidence:** Primary CTA above fold count: 0
-- **Screenshot:** `e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png`
-- **Suggested Fix:** Move a single primary action higher so users can act without scrolling
-
-### Contains 'Coming Soon' placeholder
-
-- **ID:** `servers-friction-coming-soon`
-- **Severity:** LOW
-- **Impact:** Minor consistency or optimization opportunity
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/servers`
-- **Category:** friction
-- **Source:** heuristics
-- **Evidence:** 1 coming soon blocks
-- **Suggested Fix:** Replace placeholder content with actual functionality or remove
-
-### Contains 'Coming Soon' placeholder
-
-- **ID:** `servers-q-github-friction-coming-soon`
-- **Severity:** LOW
-- **Impact:** Minor consistency or optimization opportunity
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/servers?q=github`
-- **Category:** friction
-- **Source:** heuristics
-- **Evidence:** 1 coming soon blocks
-- **Suggested Fix:** Replace placeholder content with actual functionality or remove
-
-### Disabled controls in main content
-
-- **ID:** `servers-github-friction-disabled-controls`
-- **Severity:** LOW
-- **Impact:** Minor consistency or optimization opportunity
-- **Effort:** Small (< 2 hours)
-- **Route:** `/servers/github`
-- **Category:** friction
-- **Source:** heuristics
-- **Evidence:** 2 disabled controls
-- **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
-
-### Disabled controls in main content
-
-- **ID:** `signin-friction-disabled-controls`
-- **Severity:** LOW
-- **Impact:** Minor consistency or optimization opportunity
-- **Effort:** Small (< 2 hours)
-- **Route:** `/signin`
-- **Category:** friction
-- **Source:** heuristics
-- **Evidence:** 1 disabled controls
-- **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
-
-### No social proof near decision points
-
-- **ID:** `submit-conversion-missing-social-proof`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Small (< 2 hours)
-- **Route:** `/submit`
-- **Category:** conversion
-- **Source:** heuristics
-- **Suggested Fix:** Add lightweight social proof such as verification freshness, view count, or usage indicators
-
-### Disabled controls in main content
-
-- **ID:** `submit-friction-disabled-controls`
-- **Severity:** LOW
-- **Impact:** Minor consistency or optimization opportunity
-- **Effort:** Small (< 2 hours)
-- **Route:** `/submit`
-- **Category:** friction
-- **Source:** heuristics
-- **Evidence:** 1 disabled controls
-- **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
-
 ### Dead-end page
 
+- **Opportunity Score:** 71.5
 - **ID:** `submit-navigation-dead-end`
 - **Severity:** MEDIUM
 - **Impact:** Polish/usability issue affecting user experience
@@ -281,16 +247,82 @@
 
 ### No primary CTA above the fold
 
-- **ID:** `verification-conversion-no-primary-above-fold`
+- **Opportunity Score:** 63
+- **ID:** `changelog-conversion-no-primary-above-fold`
 - **Severity:** HIGH
 - **Impact:** Significantly impacts trust, conversion, or usability
 - **Effort:** Small (< 2 hours)
-- **Route:** `/verification`
+- **Route:** `/changelog`
 - **Category:** conversion
 - **Source:** heuristics
 - **Evidence:** Primary CTA above fold count: 0
-- **Screenshot:** `e2e/screenshots/product-heuristics/verification/light/desktop/conversion-no-above-fold-cta.png`
+- **Screenshot:** `e2e/screenshots/product-heuristics/changelog/light/desktop/conversion-no-above-fold-cta.png`
 - **Suggested Fix:** Move a single primary action higher so users can act without scrolling
+
+### Disabled controls in main content
+
+- **Opportunity Score:** 45.5
+- **ID:** `submit-friction-disabled-controls`
+- **Severity:** LOW
+- **Impact:** Minor consistency or optimization opportunity
+- **Effort:** Small (< 2 hours)
+- **Route:** `/submit`
+- **Category:** friction
+- **Source:** heuristics
+- **Evidence:** 1 disabled controls
+- **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
+
+### Contains 'Coming Soon' placeholder
+
+- **Opportunity Score:** 45
+- **ID:** `servers-friction-coming-soon`
+- **Severity:** LOW
+- **Impact:** Minor consistency or optimization opportunity
+- **Effort:** Medium (2-8 hours)
+- **Route:** `/servers`
+- **Category:** friction
+- **Source:** heuristics
+- **Evidence:** 1 coming soon blocks
+- **Suggested Fix:** Replace placeholder content with actual functionality or remove
+
+### Disabled controls in main content
+
+- **Opportunity Score:** 42
+- **ID:** `servers-github-friction-disabled-controls`
+- **Severity:** LOW
+- **Impact:** Minor consistency or optimization opportunity
+- **Effort:** Small (< 2 hours)
+- **Route:** `/servers/github`
+- **Category:** friction
+- **Source:** heuristics
+- **Evidence:** 2 disabled controls
+- **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
+
+### Disabled controls in main content
+
+- **Opportunity Score:** 42
+- **ID:** `signin-friction-disabled-controls`
+- **Severity:** LOW
+- **Impact:** Minor consistency or optimization opportunity
+- **Effort:** Small (< 2 hours)
+- **Route:** `/signin`
+- **Category:** friction
+- **Source:** heuristics
+- **Evidence:** 1 disabled controls
+- **Suggested Fix:** Review if disabled controls are necessary or should be removed/enabled
+
+### Contains 'Coming Soon' placeholder
+
+- **Opportunity Score:** 30
+- **ID:** `servers-q-github-friction-coming-soon`
+- **Severity:** LOW
+- **Impact:** Minor consistency or optimization opportunity
+- **Effort:** Medium (2-8 hours)
+- **Route:** `/servers?q=github`
+- **Category:** friction
+- **Source:** heuristics
+- **Evidence:** 1 coming soon blocks
+- **Suggested Fix:** Replace placeholder content with actual functionality or remove
 
 </details>
 
