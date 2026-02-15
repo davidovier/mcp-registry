@@ -258,9 +258,7 @@ test.describe("Sort functionality", () => {
 
     await sortSelect.selectOption("newest");
 
-    await expect
-      .poll(() => getQueryParam(page, "sort"))
-      .toBe("newest");
+    await expect.poll(() => getQueryParam(page, "sort")).toBe("newest");
   });
 
   test("should update URL when changing to name sort", async ({ page }) => {
