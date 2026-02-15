@@ -1,25 +1,24 @@
 # Product Backlog
 
-> Source report timestamp: 2026-02-14T23:32:49.180Z
+> Source report timestamp: 2026-02-15T09:08:38.304Z
 
 ## Summary
 
-- **Total Items:** 6
+- **Total Items:** 4
 - **Critical:** 0
 - **High:** 0
-- **Medium:** 3
+- **Medium:** 1
 - **Low:** 3
 
 ### By Category
 
 - **friction:** 3
-- **navigation:** 2
-- **ux:** 1
+- **navigation:** 1
 
 ### Top Offender Routes
 
-- `/servers`: 3 items
 - `/submit`: 2 items
+- `/servers`: 1 items
 - `/signin`: 1 items
 
 ### Related Inputs
@@ -31,21 +30,18 @@
 
 ## Top 5 Next Actions
 
-| Priority | Item                              | Route      | Effort | Suggested Fix                                                          |
-| -------- | --------------------------------- | ---------- | ------ | ---------------------------------------------------------------------- |
-| 1        | No clear primary action           | `/servers` | S      | Add a prominent primary action button or CTA link in main content      |
-| 2        | Dead-end page                     | `/servers` | M      | Add related links or 'next steps' section to guide users               |
-| 3        | Dead-end page                     | `/submit`  | M      | Add related links or 'next steps' section to guide users               |
-| 4        | Disabled controls in main content | `/signin`  | S      | Review if disabled controls are necessary or should be removed/enabled |
-| 5        | Disabled controls in main content | `/submit`  | S      | Review if disabled controls are necessary or should be removed/enabled |
+| Priority | Item                               | Route      | Effort | Suggested Fix                                                          |
+| -------- | ---------------------------------- | ---------- | ------ | ---------------------------------------------------------------------- |
+| 1        | Dead-end page                      | `/submit`  | M      | Add related links or 'next steps' section to guide users               |
+| 2        | Disabled controls in main content  | `/signin`  | S      | Review if disabled controls are necessary or should be removed/enabled |
+| 3        | Disabled controls in main content  | `/submit`  | S      | Review if disabled controls are necessary or should be removed/enabled |
+| 4        | Contains 'Coming Soon' placeholder | `/servers` | M      | Replace placeholder content with actual functionality or remove        |
 
 ## Execution Tracker
 
 | ID                                  | Status | Owner | Sprint | Target Date |
 | ----------------------------------- | ------ | ----- | ------ | ----------- |
 | `servers-friction-coming-soon`      | Todo   | TBD   | TBD    | TBD         |
-| `servers-navigation-dead-end`       | Todo   | TBD   | TBD    | TBD         |
-| `servers-ux-no-primary-action`      | Todo   | TBD   | TBD    | TBD         |
 | `signin-friction-disabled-controls` | Todo   | TBD   | TBD    | TBD         |
 | `submit-friction-disabled-controls` | Todo   | TBD   | TBD    | TBD         |
 | `submit-navigation-dead-end`        | Todo   | TBD   | TBD    | TBD         |
@@ -67,11 +63,9 @@
 
 ## Medium Priority
 
-| Title                   | Route      | Category   | Effort | Suggested Fix                                                     |
-| ----------------------- | ---------- | ---------- | ------ | ----------------------------------------------------------------- |
-| Dead-end page           | `/servers` | navigation | M      | Add related links or 'next steps' section to guide users          |
-| No clear primary action | `/servers` | ux         | S      | Add a prominent primary action button or CTA link in main content |
-| Dead-end page           | `/submit`  | navigation | M      | Add related links or 'next steps' section to guide users          |
+| Title         | Route     | Category   | Effort | Suggested Fix                                            |
+| ------------- | --------- | ---------- | ------ | -------------------------------------------------------- |
+| Dead-end page | `/submit` | navigation | M      | Add related links or 'next steps' section to guide users |
 
 ## Low Priority
 
@@ -83,19 +77,18 @@
 
 ## Grouped by Route
 
-| Route      | Item Count | Categories               |
-| ---------- | ---------- | ------------------------ |
-| `/servers` | 3          | friction, navigation, ux |
-| `/signin`  | 1          | friction                 |
-| `/submit`  | 2          | friction, navigation     |
+| Route      | Item Count | Categories           |
+| ---------- | ---------- | -------------------- |
+| `/servers` | 1          | friction             |
+| `/signin`  | 1          | friction             |
+| `/submit`  | 2          | friction, navigation |
 
 ## Grouped by Category
 
 | Category   | Item Count | Example Routes             |
 | ---------- | ---------- | -------------------------- |
 | friction   | 3          | /servers, /signin, /submit |
-| navigation | 2          | /servers, /submit          |
-| ux         | 1          | /servers                   |
+| navigation | 1          | /submit                    |
 
 ## All Items Detail
 
@@ -113,30 +106,6 @@
 - **Source:** heuristics
 - **Evidence:** 1 coming soon blocks
 - **Suggested Fix:** Replace placeholder content with actual functionality or remove
-
-### Dead-end page
-
-- **ID:** `servers-navigation-dead-end`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Medium (2-8 hours)
-- **Route:** `/servers`
-- **Category:** navigation
-- **Source:** heuristics
-- **Screenshot:** `e2e/screenshots/product-heuristics/servers/light/desktop/dead-end.png`
-- **Suggested Fix:** Add related links or 'next steps' section to guide users
-
-### No clear primary action
-
-- **ID:** `servers-ux-no-primary-action`
-- **Severity:** MEDIUM
-- **Impact:** Polish/usability issue affecting user experience
-- **Effort:** Small (< 2 hours)
-- **Route:** `/servers`
-- **Category:** ux
-- **Source:** heuristics
-- **Screenshot:** `e2e/screenshots/product-heuristics/servers/light/desktop/no-primary-action.png`
-- **Suggested Fix:** Add a prominent primary action button or CTA link in main content
 
 ### Disabled controls in main content
 

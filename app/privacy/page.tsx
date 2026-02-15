@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { Card } from "@/components/ui/Card";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -101,6 +103,29 @@ export default function PrivacyPage() {
                 support@mcp-registry.com
               </a>
             </p>
+          </section>
+
+          {/* Related Links */}
+          <section className="border-t border-border pt-10">
+            <Card padding="lg">
+              <p className="mb-6 text-body-md text-content-secondary">
+                Continue exploring the MCP Registry.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/servers"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+                >
+                  Browse Servers
+                </Link>
+                <Link
+                  href="/terms"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Terms of Service
+                </Link>
+              </div>
+            </Card>
           </section>
         </div>
       </div>

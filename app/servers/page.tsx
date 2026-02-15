@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { Suspense } from "react";
 
 import type { SearchMode, Suggestion } from "@/app/api/servers/route";
 import { FiltersSidebar } from "@/components/servers/FiltersSidebar";
 import { MobileFilters } from "@/components/servers/MobileFilters";
 import { SearchHero } from "@/components/servers/SearchHero";
+import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import {
   createCursorFromRow,
@@ -75,6 +77,38 @@ export default async function ServersPage({ searchParams }: Props) {
               />
             </Suspense>
           </div>
+        </div>
+      </section>
+
+      {/* Related actions footer */}
+      <section className="border-t border-border bg-surface-secondary">
+        <div className="mx-auto max-w-6xl px-4 py-8">
+          <Card padding="lg">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-body-md font-medium text-content-primary">
+                  Have an MCP server to share?
+                </p>
+                <p className="mt-1 text-body-sm text-content-secondary">
+                  Submit your server to the registry for review.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/submit"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+                >
+                  Submit a Server
+                </Link>
+                <Link
+                  href="/docs"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-primary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Documentation
+                </Link>
+              </div>
+            </div>
+          </Card>
         </div>
       </section>
     </div>

@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { SubmitForm } from "@/components/submit";
+import { Card } from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -34,6 +36,39 @@ export default async function SubmitPage() {
         </header>
 
         <SubmitForm />
+
+        {/* Help section */}
+        <section className="mt-12 border-t border-border pt-8">
+          <Card padding="lg">
+            <h2 className="mb-4 text-heading-md text-content-primary">
+              Need help?
+            </h2>
+            <p className="mb-6 text-body-md text-content-secondary">
+              Review our guidelines for submitting high-quality server listings,
+              or browse existing servers for inspiration.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/contributing"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+              >
+                Submission Guidelines
+              </Link>
+              <Link
+                href="/servers"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              >
+                Browse Servers
+              </Link>
+              <Link
+                href="/verification"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              >
+                Verification Criteria
+              </Link>
+            </div>
+          </Card>
+        </section>
       </div>
     </div>
   );

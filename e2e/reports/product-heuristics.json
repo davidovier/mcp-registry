@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-14T23:34:54.049Z",
+  "generatedAt": "2026-02-15T09:08:17.069Z",
   "baseUrl": "http://localhost:3000",
   "pages": [
     {
@@ -7,7 +7,7 @@
       "name": "Homepage",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:46.491Z",
+      "timestamp": "2026-02-15T09:08:08.655Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -21,7 +21,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 79
+        "domContentLoadedMs": 72
       },
       "gaps": []
     },
@@ -30,7 +30,7 @@
       "name": "About",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:51.064Z",
+      "timestamp": "2026-02-15T09:08:13.795Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -44,7 +44,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 349
+        "domContentLoadedMs": 410
       },
       "gaps": []
     },
@@ -53,7 +53,7 @@
       "name": "API Docs",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:49.021Z",
+      "timestamp": "2026-02-15T09:08:11.282Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -67,7 +67,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 463
+        "domContentLoadedMs": 666
       },
       "gaps": []
     },
@@ -76,7 +76,7 @@
       "name": "Changelog",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:50.039Z",
+      "timestamp": "2026-02-15T09:08:12.531Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -90,7 +90,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 366
+        "domContentLoadedMs": 458
       },
       "gaps": []
     },
@@ -99,7 +99,7 @@
       "name": "Contributing",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:50.567Z",
+      "timestamp": "2026-02-15T09:08:13.206Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -113,7 +113,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 377
+        "domContentLoadedMs": 499
       },
       "gaps": []
     },
@@ -122,7 +122,7 @@
       "name": "Documentation",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:48.411Z",
+      "timestamp": "2026-02-15T09:08:10.437Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -136,7 +136,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 518
+        "domContentLoadedMs": 665
       },
       "gaps": []
     },
@@ -145,7 +145,7 @@
       "name": "Privacy Policy",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:51.557Z",
+      "timestamp": "2026-02-15T09:08:14.366Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -159,7 +159,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 348
+        "domContentLoadedMs": 394
       },
       "gaps": []
     },
@@ -168,12 +168,13 @@
       "name": "Browse Servers",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:47.747Z",
+      "timestamp": "2026-02-15T09:08:09.596Z",
       "checks": {
         "h1Count": 1,
-        "hasPrimaryAction": false,
-        "hasNextStepNavigation": false,
-        "nextStepLinkCount": 0,
+        "hasPrimaryAction": true,
+        "primaryActionType": "cta-link",
+        "hasNextStepNavigation": true,
+        "nextStepLinkCount": 2,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -181,31 +182,9 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1081
+        "domContentLoadedMs": 856
       },
       "gaps": [
-        {
-          "id": "servers-navigation-dead-end",
-          "title": "Dead-end page",
-          "severity": "medium",
-          "category": "navigation",
-          "description": "Page has no internal links to guide users to next steps",
-          "route": "/servers",
-          "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/dead-end.png",
-          "suggestedFix": "Add related links or 'next steps' section to guide users",
-          "effortEstimate": "M"
-        },
-        {
-          "id": "servers-ux-no-primary-action",
-          "title": "No clear primary action",
-          "severity": "medium",
-          "category": "ux",
-          "description": "Page lacks a clear primary call-to-action button or link",
-          "route": "/servers",
-          "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/no-primary-action.png",
-          "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-          "effortEstimate": "S"
-        },
         {
           "id": "servers-friction-coming-soon",
           "title": "Contains 'Coming Soon' placeholder",
@@ -224,7 +203,7 @@
       "name": "Sign In",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:53.185Z",
+      "timestamp": "2026-02-15T09:08:16.048Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -238,7 +217,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 1,
-        "domContentLoadedMs": 973
+        "domContentLoadedMs": 885
       },
       "gaps": [
         {
@@ -259,7 +238,7 @@
       "name": "Submit Server",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:54.042Z",
+      "timestamp": "2026-02-15T09:08:17.061Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -273,7 +252,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 1,
-        "domContentLoadedMs": 651
+        "domContentLoadedMs": 779
       },
       "gaps": [
         {
@@ -305,7 +284,7 @@
       "name": "Terms of Service",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:52.065Z",
+      "timestamp": "2026-02-15T09:08:14.980Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -319,7 +298,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 361
+        "domContentLoadedMs": 434
       },
       "gaps": []
     },
@@ -328,7 +307,7 @@
       "name": "Verification",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-14T23:34:49.525Z",
+      "timestamp": "2026-02-15T09:08:11.890Z",
       "checks": {
         "h1Count": 1,
         "hasPrimaryAction": true,
@@ -342,28 +321,28 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 356
+        "domContentLoadedMs": 432
       },
       "gaps": []
     }
   ],
   "summary": {
     "totalPages": 12,
-    "totalGaps": 6,
+    "totalGaps": 4,
     "gapsBySeverity": {
       "critical": 0,
       "high": 0,
-      "medium": 3,
+      "medium": 1,
       "low": 3
     },
     "topOffenders": [
       {
-        "route": "/servers",
-        "gapCount": 3
-      },
-      {
         "route": "/submit",
         "gapCount": 2
+      },
+      {
+        "route": "/servers",
+        "gapCount": 1
       },
       {
         "route": "/signin",

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-14T23:32:49.180Z",
+  "timestamp": "2026-02-15T09:08:38.304Z",
   "routesAudited": [
     "/",
     "/about",
@@ -173,30 +173,8 @@
   "notes": ["No major product gaps detected in current audit."],
   "heuristicGaps": {
     "source": "/Users/davidvos/Vibe projects/MCP/mcp-registry/e2e/reports/product-heuristics.json",
-    "generatedAt": "2026-02-14T23:33:46.088Z",
+    "generatedAt": "2026-02-15T09:08:17.069Z",
     "gaps": [
-      {
-        "id": "servers-navigation-dead-end",
-        "title": "Dead-end page",
-        "severity": "medium",
-        "category": "navigation",
-        "description": "Page has no internal links to guide users to next steps",
-        "route": "/servers",
-        "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/dead-end.png",
-        "suggestedFix": "Add related links or 'next steps' section to guide users",
-        "effortEstimate": "M"
-      },
-      {
-        "id": "servers-ux-no-primary-action",
-        "title": "No clear primary action",
-        "severity": "medium",
-        "category": "ux",
-        "description": "Page lacks a clear primary call-to-action button or link",
-        "route": "/servers",
-        "screenshotPath": "e2e/screenshots/product-heuristics/servers/light/desktop/no-primary-action.png",
-        "suggestedFix": "Add a prominent primary action button or CTA link in main content",
-        "effortEstimate": "S"
-      },
       {
         "id": "submit-navigation-dead-end",
         "title": "Dead-end page",
@@ -244,21 +222,21 @@
     ],
     "summary": {
       "totalPages": 12,
-      "totalGaps": 6,
+      "totalGaps": 4,
       "gapsBySeverity": {
         "critical": 0,
         "high": 0,
-        "medium": 3,
+        "medium": 1,
         "low": 3
       },
       "topOffenders": [
         {
-          "route": "/servers",
-          "gapCount": 3
-        },
-        {
           "route": "/submit",
           "gapCount": 2
+        },
+        {
+          "route": "/servers",
+          "gapCount": 1
         },
         {
           "route": "/signin",

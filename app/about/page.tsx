@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Card } from "@/components/ui/Card";
@@ -200,6 +201,52 @@ export default function AboutPage() {
                 Development prioritizes clarity and ecosystem health over rapid
                 feature expansion.
               </p>
+            </Card>
+          </section>
+
+          {/* Next Steps */}
+          <section>
+            <h2 className="mb-4 text-heading-lg text-content-primary">
+              Next Steps
+            </h2>
+            <Card padding="lg">
+              <p className="mb-6 text-body-md text-content-secondary">
+                Ready to discover MCP servers? Browse the registry to find tools
+                that match your needs.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/servers"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+                >
+                  Explore the Registry
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href="/docs"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Read Documentation
+                </Link>
+                <Link
+                  href="/contributing"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Contribute
+                </Link>
+              </div>
             </Card>
           </section>
         </div>

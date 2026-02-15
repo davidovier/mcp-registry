@@ -314,12 +314,50 @@ export default function VerificationPage() {
                 Verification is optional. Unverified servers can still be high
                 quality.
               </p>
-              <div className="mt-6 border-t border-border pt-4">
+            </Card>
+          </section>
+
+          {/* Next Steps */}
+          <section>
+            <h2 className="mb-4 text-heading-lg text-content-primary">
+              Next Steps
+            </h2>
+            <Card padding="lg">
+              <p className="mb-6 text-body-md text-content-secondary">
+                Find your server in the registry and request verification from
+                its detail page, or browse to discover new servers.
+              </p>
+              <div className="flex flex-wrap gap-3">
                 <Link
                   href="/servers"
-                  className="text-body-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
                 >
-                  Browse the registry →
+                  Browse Servers
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href="/submit"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Submit a Server
+                </Link>
+                <Link
+                  href="/docs"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Documentation
                 </Link>
               </div>
             </Card>

@@ -695,30 +695,49 @@ export default function ApiDocsPage() {
             </Card>
           </section>
 
-          {/* Links */}
+          {/* Next Steps */}
           <section>
             <h2 className="mb-4 text-heading-lg text-content-primary">
-              Related
+              Next Steps
             </h2>
             <Card padding="lg">
-              <ul className="space-y-2 text-body-md">
-                <li>
-                  <Link
-                    href="/servers"
-                    className="text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+              <p className="mb-6 text-body-md text-content-secondary">
+                Ready to try the API? Explore available servers or learn more
+                about how to integrate with the registry.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/servers"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+                >
+                  Explore Servers
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    Browse the registry &rarr;
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/verification"
-                    className="text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
-                  >
-                    Learn verification criteria &rarr;
-                  </Link>
-                </li>
-              </ul>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href="/docs"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Read Documentation
+                </Link>
+                <Link
+                  href="/verification"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface-secondary px-4 font-medium text-content-primary transition-all duration-150 hover:-translate-y-[1px] hover:border-border-strong hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  Verification Criteria
+                </Link>
+              </div>
             </Card>
           </section>
         </div>
