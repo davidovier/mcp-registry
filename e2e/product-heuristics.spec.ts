@@ -1053,6 +1053,10 @@ test.describe("Product Heuristics (Non-Gating)", () => {
     page,
     baseURL,
   }) => {
+    // This sweeps many routes sequentially and can exceed the default test
+    // timeout on slower CI runners.
+    test.setTimeout(4 * 60 * 1000);
+
     ensureDir(path.dirname(REPORT_PATH));
     ensureDir(SCREENSHOT_DIR);
 
