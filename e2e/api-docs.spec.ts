@@ -41,13 +41,14 @@ test.describe("API Documentation page", () => {
       "Base URL",
       "Endpoints",
       "Query Parameters",
+      "Search Behavior",
       "Pagination Model",
       "Response Shape",
       "Errors",
       "Caching & Freshness",
       "API Stability",
       "Responsible Use",
-      "Related",
+      "Next Steps",
     ];
 
     for (const heading of expectedHeadings) {
@@ -78,7 +79,7 @@ test.describe("API Documentation page", () => {
   test("should have working link to /servers", async ({ page }) => {
     await page.goto("/api");
 
-    const browseLink = page.getByRole("link", { name: /Browse the registry/i });
+    const browseLink = page.getByRole("link", { name: /Explore Servers/i });
     await expect(browseLink).toBeVisible();
     await browseLink.click();
 
@@ -89,7 +90,7 @@ test.describe("API Documentation page", () => {
     await page.goto("/api");
 
     const verificationLink = page.getByRole("link", {
-      name: /Learn verification criteria/i,
+      name: /Verification Criteria/i,
     });
     await expect(verificationLink).toBeVisible();
     await verificationLink.click();

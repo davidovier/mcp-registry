@@ -92,9 +92,20 @@ test.describe("Search Intelligence", () => {
         .isVisible()
         .catch(() => false);
 
+      const hasEmptyState = await page
+        .getByText(/no servers found|no results/i)
+        .isVisible()
+        .catch(() => false);
+
+      // Verify page rendered correctly - in CI without DB, will show error or empty
+      const mainContent = page.locator("main");
+      await expect(mainContent).toBeVisible();
+
       // In real DB mode with results, should show indicator
       // In CI mode or no results, just verify page loads properly
-      expect(hasRankedIndicator || hasResults || hasErrorState).toBeTruthy();
+      expect(
+        hasRankedIndicator || hasResults || hasErrorState || hasEmptyState
+      ).toBeTruthy();
     });
 
     test("should show 'Showing closest matches' for fallback mode", async ({

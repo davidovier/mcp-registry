@@ -131,9 +131,11 @@ test.describe("/contributing page", () => {
     const h1 = page.locator("h1");
     await expect(h1).toHaveCount(1);
 
-    // Check h2s (7 section headings + 1 sr-only "Site footer" in footer)
+    // Check h2s (8 section headings + 1 sr-only "Site footer" in footer)
+    // Sections: What Makes..., Technical Validation, How Review Works,
+    // Verification vs Approval, Governance, Responsible, How to Contribute, Get Started
     const h2s = page.locator("h2");
-    await expect(h2s).toHaveCount(8);
+    await expect(h2s).toHaveCount(9);
 
     // Page should have no h3s (avoiding h1 -> h3 skips without h2)
     // All content sections use h2 only in this page design

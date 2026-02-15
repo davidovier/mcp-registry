@@ -237,7 +237,7 @@ test.describe("Changelog page", () => {
     ).toBeVisible();
   });
 
-  test("should have proper heading hierarchy (1 H1, 5 H2s for sections)", async ({
+  test("should have proper heading hierarchy (1 H1, 6 H2s for sections)", async ({
     page,
   }) => {
     await page.goto("/changelog");
@@ -246,9 +246,11 @@ test.describe("Changelog page", () => {
     const h1 = page.locator("h1");
     await expect(h1).toHaveCount(1);
 
-    // Check h2s (5 section headings + 1 sr-only "Site footer" in footer = 6)
+    // Check h2s (6 section headings + 1 sr-only "Site footer" in footer = 7)
+    // Sections: Versioning & Scope, Latest Release, Recent Updates,
+    // How to Follow Updates, Support & Feedback, Next Steps
     const h2s = page.locator("h2");
-    await expect(h2s).toHaveCount(6);
+    await expect(h2s).toHaveCount(7);
   });
 
   test("should have external GitHub links with proper attributes", async ({
