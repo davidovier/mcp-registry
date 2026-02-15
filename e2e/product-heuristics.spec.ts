@@ -521,8 +521,10 @@ async function runHeuristicChecks(
 ): Promise<PageHeuristicResult> {
   const gaps: HeuristicGap[] = [];
 
-  const response = await page.goto(route.path);
-  await page.waitForLoadState("domcontentloaded");
+  const response = await page.goto(route.path, {
+    waitUntil: "domcontentloaded",
+    timeout: 30_000,
+  });
   const status = response?.status() ?? 0;
   const viewportSize = page.viewportSize() || { width: 1280, height: 720 };
   const visibleActions = await collectVisibleActions(page);
@@ -1050,7 +1052,7 @@ function buildReport(
 // Main test suite
 test.describe("Product Heuristics (Non-Gating)", () => {
   test("run heuristic checks on all public routes", async ({
-    page,
+    browser,
     baseURL,
   }) => {
     // This sweeps many routes sequentially and can exceed the default test
@@ -1069,8 +1071,18 @@ test.describe("Product Heuristics (Non-Gating)", () => {
     for (const route of PUBLIC_ROUTES) {
       console.log(`Checking: ${route.name} (${route.path})`);
 
+      const context = await browser.newContext({
+        viewport: { width: 1280, height: 720 },
+      });
+      const routePage = await context.newPage();
+
       try {
-        const result = await runHeuristicChecks(page, route, theme, viewport);
+        const result = await runHeuristicChecks(
+          routePage,
+          route,
+          theme,
+          viewport
+        );
         results.push(result);
 
         if (result.gaps.length > 0) {
@@ -1116,6 +1128,8 @@ test.describe("Product Heuristics (Non-Gating)", () => {
             },
           ],
         });
+      } finally {
+        await context.close().catch(() => undefined);
       }
     }
 
