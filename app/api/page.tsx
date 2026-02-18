@@ -83,6 +83,28 @@ export default function ApiDocsPage() {
           <p className="mt-2 text-body-md text-content-tertiary">
             The API is read-only and publicly cacheable.
           </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/servers"
+              data-primary-action="api-hero-explore-servers"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 font-medium text-white transition-all duration-150 hover:-translate-y-[1px] hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:bg-brand-500 dark:text-neutral-950 dark:hover:bg-brand-400"
+            >
+              Explore Servers
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-10">

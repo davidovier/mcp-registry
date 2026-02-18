@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-15T13:44:19.553Z",
+  "timestamp": "2026-02-15T18:16:45.032Z",
   "routesAudited": [
     "/",
     "/about",
@@ -15,7 +15,13 @@
     "/verification"
   ],
   "brokenLinks": [],
-  "missingRoutes": [],
+  "missingRoutes": [
+    "/servers/filesystem",
+    "/servers/github",
+    "/servers/postgres",
+    "/servers/slack",
+    "/servers/web-search"
+  ],
   "navCoverage": {
     "headerLinks": [
       "API",
@@ -170,10 +176,13 @@
     "flags": [],
     "note": "Performance flags are informative and do not block CI unless severe."
   },
-  "notes": ["5 critical/high heuristic gaps detected"],
+  "notes": [
+    "5 critical/high heuristic gaps detected",
+    "5 linked routes appear missing"
+  ],
   "heuristicGaps": {
     "source": "/Users/davidvos/Vibe projects/MCP/mcp-registry/e2e/reports/product-heuristics.json",
-    "generatedAt": "2026-02-15T13:44:00.860Z",
+    "generatedAt": "2026-02-15T19:08:41.827Z",
     "gaps": [
       {
         "id": "about-conversion-no-primary-above-fold",
@@ -184,18 +193,6 @@
         "route": "/about",
         "evidence": "Primary CTA above fold count: 0",
         "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/conversion-no-above-fold-cta.png",
-        "suggestedFix": "Move a single primary action higher so users can act without scrolling",
-        "effortEstimate": "S"
-      },
-      {
-        "id": "api-conversion-no-primary-above-fold",
-        "title": "No primary CTA above the fold",
-        "severity": "high",
-        "category": "conversion",
-        "description": "No primary call-to-action is visible in the first viewport height",
-        "route": "/api",
-        "evidence": "Primary CTA above fold count: 0",
-        "screenshotPath": "e2e/screenshots/product-heuristics/api/light/desktop/conversion-no-above-fold-cta.png",
         "suggestedFix": "Move a single primary action higher so users can act without scrolling",
         "effortEstimate": "S"
       },
@@ -224,6 +221,18 @@
         "effortEstimate": "S"
       },
       {
+        "id": "docs-conversion-no-primary-above-fold",
+        "title": "No primary CTA above the fold",
+        "severity": "high",
+        "category": "conversion",
+        "description": "No primary call-to-action is visible in the first viewport height",
+        "route": "/docs",
+        "evidence": "Primary CTA above fold count: 0",
+        "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png",
+        "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+        "effortEstimate": "S"
+      },
+      {
         "id": "verification-conversion-no-primary-above-fold",
         "title": "No primary CTA above the fold",
         "severity": "high",
@@ -234,6 +243,27 @@
         "screenshotPath": "e2e/screenshots/product-heuristics/verification/light/desktop/conversion-no-above-fold-cta.png",
         "suggestedFix": "Move a single primary action higher so users can act without scrolling",
         "effortEstimate": "S"
+      },
+      {
+        "id": "submit-conversion-missing-social-proof",
+        "title": "No social proof near decision points",
+        "severity": "medium",
+        "category": "conversion",
+        "description": "Page does not present trust or adoption signals to reinforce action",
+        "route": "/submit",
+        "suggestedFix": "Add lightweight social proof such as verification freshness, view count, or usage indicators",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "submit-navigation-dead-end",
+        "title": "Dead-end page",
+        "severity": "medium",
+        "category": "navigation",
+        "description": "Page has no internal links to guide users to next steps",
+        "route": "/submit",
+        "screenshotPath": "e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png",
+        "suggestedFix": "Add related links or 'next steps' section to guide users",
+        "effortEstimate": "M"
       },
       {
         "id": "servers-friction-coming-soon",
@@ -267,6 +297,28 @@
         "evidence": "2 disabled controls",
         "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
         "effortEstimate": "S"
+      },
+      {
+        "id": "signin-friction-disabled-controls",
+        "title": "Disabled controls in main content",
+        "severity": "low",
+        "category": "friction",
+        "description": "Page has 1 disabled interactive controls",
+        "route": "/signin",
+        "evidence": "1 disabled controls",
+        "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+        "effortEstimate": "S"
+      },
+      {
+        "id": "submit-friction-disabled-controls",
+        "title": "Disabled controls in main content",
+        "severity": "low",
+        "category": "friction",
+        "description": "Page has 1 disabled interactive controls",
+        "route": "/submit",
+        "evidence": "1 disabled controls",
+        "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+        "effortEstimate": "S"
       }
     ],
     "conversion": [
@@ -279,18 +331,6 @@
         "route": "/about",
         "evidence": "Primary CTA above fold count: 0",
         "screenshotPath": "e2e/screenshots/product-heuristics/about/light/desktop/conversion-no-above-fold-cta.png",
-        "suggestedFix": "Move a single primary action higher so users can act without scrolling",
-        "effortEstimate": "S"
-      },
-      {
-        "id": "api-conversion-no-primary-above-fold",
-        "title": "No primary CTA above the fold",
-        "severity": "high",
-        "category": "conversion",
-        "description": "No primary call-to-action is visible in the first viewport height",
-        "route": "/api",
-        "evidence": "Primary CTA above fold count: 0",
-        "screenshotPath": "e2e/screenshots/product-heuristics/api/light/desktop/conversion-no-above-fold-cta.png",
         "suggestedFix": "Move a single primary action higher so users can act without scrolling",
         "effortEstimate": "S"
       },
@@ -319,6 +359,18 @@
         "effortEstimate": "S"
       },
       {
+        "id": "docs-conversion-no-primary-above-fold",
+        "title": "No primary CTA above the fold",
+        "severity": "high",
+        "category": "conversion",
+        "description": "No primary call-to-action is visible in the first viewport height",
+        "route": "/docs",
+        "evidence": "Primary CTA above fold count: 0",
+        "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png",
+        "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+        "effortEstimate": "S"
+      },
+      {
         "id": "verification-conversion-no-primary-above-fold",
         "title": "No primary CTA above the fold",
         "severity": "high",
@@ -329,24 +381,34 @@
         "screenshotPath": "e2e/screenshots/product-heuristics/verification/light/desktop/conversion-no-above-fold-cta.png",
         "suggestedFix": "Move a single primary action higher so users can act without scrolling",
         "effortEstimate": "S"
+      },
+      {
+        "id": "submit-conversion-missing-social-proof",
+        "title": "No social proof near decision points",
+        "severity": "medium",
+        "category": "conversion",
+        "description": "Page does not present trust or adoption signals to reinforce action",
+        "route": "/submit",
+        "suggestedFix": "Add lightweight social proof such as verification freshness, view count, or usage indicators",
+        "effortEstimate": "S"
       }
     ],
     "summary": {
       "totalPages": 14,
-      "totalGaps": 8,
+      "totalGaps": 12,
       "gapsBySeverity": {
         "critical": 0,
         "high": 5,
-        "medium": 0,
-        "low": 3
+        "medium": 2,
+        "low": 5
       },
       "topOffenders": [
         {
-          "route": "/about",
-          "gapCount": 1
+          "route": "/submit",
+          "gapCount": 3
         },
         {
-          "route": "/api",
+          "route": "/about",
           "gapCount": 1
         },
         {
@@ -358,7 +420,7 @@
           "gapCount": 1
         },
         {
-          "route": "/servers",
+          "route": "/docs",
           "gapCount": 1
         }
       ]

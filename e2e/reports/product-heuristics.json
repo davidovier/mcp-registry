@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T13:44:00.860Z",
+  "generatedAt": "2026-02-15T19:08:41.827Z",
   "baseUrl": "http://localhost:3000",
   "pages": [
     {
@@ -7,7 +7,7 @@
       "name": "Homepage",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:49.247Z",
+      "timestamp": "2026-02-15T19:08:29.013Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -22,7 +22,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 95
+        "domContentLoadedMs": 73
       },
       "gaps": []
     },
@@ -31,7 +31,7 @@
       "name": "About",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:57.620Z",
+      "timestamp": "2026-02-15T19:08:38.444Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -46,7 +46,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 392
+        "domContentLoadedMs": 439
       },
       "gaps": [
         {
@@ -68,14 +68,14 @@
       "name": "API Docs",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:54.749Z",
+      "timestamp": "2026-02-15T19:08:35.327Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
-        "primaryActionType": "cta-link",
+        "primaryActionType": "primary-button",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 3,
+        "nextStepLinkCount": 4,
         "codeBlockCount": 6,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -83,29 +83,16 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 564
+        "domContentLoadedMs": 585
       },
-      "gaps": [
-        {
-          "id": "api-conversion-no-primary-above-fold",
-          "title": "No primary CTA above the fold",
-          "severity": "high",
-          "category": "conversion",
-          "description": "No primary call-to-action is visible in the first viewport height",
-          "route": "/api",
-          "evidence": "Primary CTA above fold count: 0",
-          "screenshotPath": "e2e/screenshots/product-heuristics/api/light/desktop/conversion-no-above-fold-cta.png",
-          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
-          "effortEstimate": "S"
-        }
-      ]
+      "gaps": []
     },
     {
       "route": "/changelog",
       "name": "Changelog",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:56.240Z",
+      "timestamp": "2026-02-15T19:08:36.882Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -120,7 +107,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 443
+        "domContentLoadedMs": 451
       },
       "gaps": [
         {
@@ -142,7 +129,7 @@
       "name": "Contributing",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:56.955Z",
+      "timestamp": "2026-02-15T19:08:37.684Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -157,7 +144,7 @@
         "verificationLinkLocation": "main-content",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 427
+        "domContentLoadedMs": 472
       },
       "gaps": [
         {
@@ -179,12 +166,12 @@
       "name": "Documentation",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:53.818Z",
+      "timestamp": "2026-02-15T19:08:34.664Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
-        "primaryActionType": "primary-button",
+        "primaryActionType": "cta-link",
         "hasNextStepNavigation": true,
         "nextStepLinkCount": 2,
         "codeBlockCount": 2,
@@ -194,16 +181,29 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 626
+        "domContentLoadedMs": 538
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "docs-conversion-no-primary-above-fold",
+          "title": "No primary CTA above the fold",
+          "severity": "high",
+          "category": "conversion",
+          "description": "No primary call-to-action is visible in the first viewport height",
+          "route": "/docs",
+          "evidence": "Primary CTA above fold count: 0",
+          "screenshotPath": "e2e/screenshots/product-heuristics/docs/light/desktop/conversion-no-above-fold-cta.png",
+          "suggestedFix": "Move a single primary action higher so users can act without scrolling",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/privacy",
       "name": "Privacy Policy",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:58.157Z",
+      "timestamp": "2026-02-15T19:08:38.913Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -218,7 +218,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 384
+        "domContentLoadedMs": 393
       },
       "gaps": []
     },
@@ -227,14 +227,14 @@
       "name": "Browse Servers",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:50.691Z",
+      "timestamp": "2026-02-15T19:08:31.032Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "primary-button",
         "hasNextStepNavigation": true,
-        "nextStepLinkCount": 3,
+        "nextStepLinkCount": 8,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
@@ -242,7 +242,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 1399
+        "domContentLoadedMs": 1913
       },
       "gaps": [
         {
@@ -263,7 +263,7 @@
       "name": "Browse Servers (Search Results)",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:51.323Z",
+      "timestamp": "2026-02-15T19:08:32.001Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -278,7 +278,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 1,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 591
+        "domContentLoadedMs": 885
       },
       "gaps": [
         {
@@ -299,7 +299,7 @@
       "name": "Server Detail",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:53.041Z",
+      "timestamp": "2026-02-15T19:08:33.794Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -314,7 +314,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 2,
-        "domContentLoadedMs": 1568
+        "domContentLoadedMs": 1723
       },
       "gaps": [
         {
@@ -335,7 +335,7 @@
       "name": "Sign In",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:59.810Z",
+      "timestamp": "2026-02-15T19:08:40.566Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -349,41 +349,86 @@
         "linksToVerification": true,
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
-        "disabledControlCount": 0,
-        "domContentLoadedMs": 940
+        "disabledControlCount": 1,
+        "domContentLoadedMs": 1082
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "signin-friction-disabled-controls",
+          "title": "Disabled controls in main content",
+          "severity": "low",
+          "category": "friction",
+          "description": "Page has 1 disabled interactive controls",
+          "route": "/signin",
+          "evidence": "1 disabled controls",
+          "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/submit",
       "name": "Submit Server",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:44:00.853Z",
+      "timestamp": "2026-02-15T19:08:41.818Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
         "hasPrimaryAction": true,
         "primaryActionType": "cta-link",
-        "hasNextStepNavigation": true,
-        "nextStepLinkCount": 2,
+        "hasNextStepNavigation": false,
+        "nextStepLinkCount": 0,
         "codeBlockCount": 0,
         "hasRequiredSections": true,
         "missingSections": [],
         "linksToVerification": true,
-        "verificationLinkLocation": "main-content",
+        "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
-        "disabledControlCount": 0,
-        "domContentLoadedMs": 862
+        "disabledControlCount": 1,
+        "domContentLoadedMs": 1113
       },
-      "gaps": []
+      "gaps": [
+        {
+          "id": "submit-conversion-missing-social-proof",
+          "title": "No social proof near decision points",
+          "severity": "medium",
+          "category": "conversion",
+          "description": "Page does not present trust or adoption signals to reinforce action",
+          "route": "/submit",
+          "suggestedFix": "Add lightweight social proof such as verification freshness, view count, or usage indicators",
+          "effortEstimate": "S"
+        },
+        {
+          "id": "submit-navigation-dead-end",
+          "title": "Dead-end page",
+          "severity": "medium",
+          "category": "navigation",
+          "description": "Page has no internal links to guide users to next steps",
+          "route": "/submit",
+          "screenshotPath": "e2e/screenshots/product-heuristics/submit/light/desktop/dead-end.png",
+          "suggestedFix": "Add related links or 'next steps' section to guide users",
+          "effortEstimate": "M"
+        },
+        {
+          "id": "submit-friction-disabled-controls",
+          "title": "Disabled controls in main content",
+          "severity": "low",
+          "category": "friction",
+          "description": "Page has 1 disabled interactive controls",
+          "route": "/submit",
+          "evidence": "1 disabled controls",
+          "suggestedFix": "Review if disabled controls are necessary or should be removed/enabled",
+          "effortEstimate": "S"
+        }
+      ]
     },
     {
       "route": "/terms",
       "name": "Terms of Service",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:58.714Z",
+      "timestamp": "2026-02-15T19:08:39.395Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -398,7 +443,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 402
+        "domContentLoadedMs": 411
       },
       "gaps": []
     },
@@ -407,7 +452,7 @@
       "name": "Verification",
       "theme": "light",
       "viewport": "desktop",
-      "timestamp": "2026-02-15T13:43:55.525Z",
+      "timestamp": "2026-02-15T19:08:36.104Z",
       "checks": {
         "status": 200,
         "h1Count": 1,
@@ -422,7 +467,7 @@
         "verificationLinkLocation": "footer",
         "comingSoonCount": 0,
         "disabledControlCount": 0,
-        "domContentLoadedMs": 484
+        "domContentLoadedMs": 457
       },
       "gaps": [
         {
@@ -442,20 +487,20 @@
   ],
   "summary": {
     "totalPages": 14,
-    "totalGaps": 8,
+    "totalGaps": 12,
     "gapsBySeverity": {
       "critical": 0,
       "high": 5,
-      "medium": 0,
-      "low": 3
+      "medium": 2,
+      "low": 5
     },
     "topOffenders": [
       {
-        "route": "/about",
-        "gapCount": 1
+        "route": "/submit",
+        "gapCount": 3
       },
       {
-        "route": "/api",
+        "route": "/about",
         "gapCount": 1
       },
       {
@@ -467,7 +512,7 @@
         "gapCount": 1
       },
       {
-        "route": "/servers",
+        "route": "/docs",
         "gapCount": 1
       }
     ]

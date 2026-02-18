@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-15T13:44:19.553Z",
+  "generatedAt": "2026-02-15T18:16:45.032Z",
   "baseUrl": "http://localhost:3000",
   "pageCount": 12,
-  "totalInternalLinks": 12,
+  "totalInternalLinks": 17,
   "uniqueInternalLinks": [
     "/",
     "/about",
@@ -12,6 +12,11 @@
     "/docs",
     "/privacy",
     "/servers",
+    "/servers/filesystem",
+    "/servers/github",
+    "/servers/postgres",
+    "/servers/slack",
+    "/servers/web-search",
     "/signin",
     "/submit",
     "/terms",
@@ -95,7 +100,7 @@
         "hasOgDescription": true
       },
       "h1Text": "MCP Server Registry",
-      "internalLinkCount": 12,
+      "internalLinkCount": 17,
       "internalLinks": [
         "/",
         "/about",
@@ -105,6 +110,11 @@
         "/docs",
         "/privacy",
         "/servers",
+        "/servers/filesystem",
+        "/servers/github",
+        "/servers/postgres",
+        "/servers/slack",
+        "/servers/web-search",
         "/signin",
         "/submit",
         "/terms",
@@ -181,7 +191,7 @@
       "hasEmptyState": false,
       "hasCodeBlock": false,
       "hasTable": true,
-      "hasForm": true,
+      "hasForm": false,
       "hasSearchInput": false,
       "headerLinks": [
         "API",
@@ -818,7 +828,32 @@
     "pagesWithEmptyState": 0,
     "pagesWithCodeBlocks": 0,
     "pagesWithTables": 1,
-    "pagesWithForms": 4,
+    "pagesWithForms": 3,
     "pagesWithBreadcrumbs": 8
+  },
+  "linkValidation": {
+    "checkedAt": "2026-02-15T18:16:45.621Z",
+    "linksChecked": 12,
+    "results": {
+      "ok": 12,
+      "notFound": 0,
+      "errors": 0
+    },
+    "statusByUrl": {
+      "/": 200,
+      "/about": 200,
+      "/api": 200,
+      "/changelog": 200,
+      "/contributing": 200,
+      "/docs": 200,
+      "/privacy": 200,
+      "/servers": 200,
+      "/signin": 200,
+      "/submit": 200,
+      "/terms": 200,
+      "/verification": 200
+    },
+    "brokenLinks": [],
+    "brokenLinksDetailed": []
   }
 }
